@@ -1,1 +1,1 @@
-# all functions related to EEG or MEG preprocessing
+# EEG or MEG preprocessing
