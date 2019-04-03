@@ -1,0 +1,6 @@
+{
+    "paths":{
+        "rawData":"/mnt/45ba1941-1401-4786-a294-120ec48e09bd/projects/laminar_eeg_fmri/rawData",
+        "processedData":"/mnt/45ba1941-1401-4786-a294-120ec48e09bd/projects/laminar_eeg_fmri/subjectData"
+    }
+}
