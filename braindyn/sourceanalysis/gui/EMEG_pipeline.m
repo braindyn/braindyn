@@ -647,7 +647,7 @@ if recompute
     if ~isfield(mri, 'hdr') % If the position of the anatomical landmarks (fiducials, e.g. LPA, RPA, NASion) are not specified in the volume,
         cfg = [];
         cfg.method = 'interactive';
-        mri = ft_volumerealign(cfg, mri); % Creates a 4×4 homogenous affine transformation matrix from fiducials/landmarks using a right-handed convention
+        mri = ft_volumerealign(cfg, mri); % Creates a 4Ã—4 homogenous affine transformation matrix from fiducials/landmarks using a right-handed convention
         fiducials.vox = [mri.cfg.fiducial.nas; mri.cfg.fiducial.lpa; mri.cfg.fiducial.rpa];
     else % If all the fiducials exist
         cfg = [];
@@ -655,7 +655,7 @@ if recompute
         cfg.fiducial.nas = mri.hdr.fiducial.mri.nas; % Position of nasion
         cfg.fiducial.lpa = mri.hdr.fiducial.mri.lpa; % Position of LPA
         cfg.fiducial.rpa = mri.hdr.fiducial.mri.rpa; % Position of RPA
-        mri = ft_volumerealign(cfg, mri); % Creates a 4×4 homogenous affine transformation matrix from fiducials/landmarks using a right-handed convention
+        mri = ft_volumerealign(cfg, mri); % Creates a 4Ã—4 homogenous affine transformation matrix from fiducials/landmarks using a right-handed convention
         fiducials.vox = [mri.hdr.fiducial.mri.nas; mri.hdr.fiducial.mri.lpa; mri.hdr.fiducial.mri.rpa];
     end % if ~all(isfield(mri.hdr.fiducial.mri, {'nas', 'lpa', 'rpa'}))
     fiducials = IJKtransformXYZ(mri.transform, 'voxel', fiducials.vox);
