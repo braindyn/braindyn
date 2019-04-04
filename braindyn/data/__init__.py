@@ -1,0 +1,1 @@
+from braindyn.data.example_data import get_path
