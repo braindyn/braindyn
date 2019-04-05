@@ -1,5 +1,5 @@
 function convert_mne_to_spm(orig_res4_file, mne_file, epoched)
-% convert_mne_to_spm  Convert MNE file (fif format) to SPM
+% CONVERT_MNE_TO_SPM  Convert MNE file (fif format) to SPM
 %    convert_mne_to_spm(orig_res4_file, mne_file, epoched)
 %        orig_res4_file = file path of the original data 
 %        mne_file = file path of the MNE (fif file) to convert
