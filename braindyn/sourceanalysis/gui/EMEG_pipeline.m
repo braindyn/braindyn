@@ -94,9 +94,11 @@ txtMEGLabel = uicontrol(panelIP, 'Style', 'text', 'String', 'MEG', 'Units', 'nor
 B = B + 1.1 * H;
 panelFP = uipanel(panelPipeline, 'Title', ' 8- Forward problem', 'Units', 'normalized', 'Position', [L B W H], 'ForegroundColor', 0.4*[1 1 1]); %
 pbFP = uicontrol(panelFP, 'Style', 'pushbutton', 'String', 'Forward problem', 'Units', 'normalized', 'Position', PB, 'Enable', 'off', 'callback', @ForwardProblem, 'FontSize', 8);
-cbFPSource = uicontrol(panelFP, 'Style', 'checkbox', 'String', 'Source', 'Value', 0, 'Units', 'normalized', 'Position', [Lin(1) Bin(1) Win Hin(1)], 'Enable', 'off', 'callback', @ForwardProblem_checkBox);
-cbFPEEG = uicontrol(panelFP, 'Style', 'checkbox', 'String', 'EEG', 'Value', 0, 'Units', 'normalized', 'Position', [Lin(2) Bin(1) Win Hin(1)], 'Enable', 'off', 'callback', @ForwardProblem_checkBox);
-cbFPMEG = uicontrol(panelFP, 'Style', 'checkbox', 'String', 'MEG', 'Value', 0, 'Units', 'normalized', 'Position', [Lin(3) Bin(1) Win Hin(1)], 'Enable', 'off', 'callback', @ForwardProblem_checkBox);
+% cbFPSource = uicontrol(panelFP, 'Style', 'checkbox', 'String', 'Source', 'Value', 0, 'Units', 'normalized', 'Position', [Lin(1) Bin(1) Win Hin(1)], 'Enable', 'off', 'callback', @ForwardProblem_checkBox);
+pmFPSource = uicontrol(panelFP, 'Style', 'popupmenu', 'String', {'', 'White matter', 'In-between', 'Pial', 'White matter + Pial', 'White matter + In-between + Pial'}, 'Value', 1, 'Units', 'normalized', 'Position', [Lin(1) 0.25 Lin(2)+Win-Lin(1)-.09 0.5], 'Enable', 'off', 'callback', @ForwardProblem_popupmenu); % Lin(1) 0.25 2*Win-.05 0.5
+cbFPEEG = uicontrol(panelFP, 'Style', 'checkbox', 'String', 'EEG', 'Value', 0, 'Units', 'normalized', 'Position', [Lin(3) Bin(1) Win Hin(1)], 'Enable', 'off', 'callback', @ForwardProblem_checkBox);
+cbFPMEG = uicontrol(panelFP, 'Style', 'checkbox', 'String', 'MEG', 'Value', 0, 'Units', 'normalized', 'Position', [Lin(4)-.01 Bin(1) Win Hin(1)], 'Enable', 'off', 'callback', @ForwardProblem_checkBox);
+txtSourceLabel = uicontrol(panelFP, 'Style', 'text', 'String', 'Source models', 'Units', 'normalized' , 'Position', [Lin(1) .8 Lin(2)+Win-Lin(1)-.09 .2], 'horizontalalignment', 'center', 'Enable', 'off', 'FontSize', 6, 'BackgroundColor', 0.8*ones(1, 3));
 
 B = B + 1.1 * H;
 panelLF = uipanel(panelPipeline, 'Title', ' 7- Lead-field', 'Units', 'normalized', 'Position', [L B W H], 'ForegroundColor', 0.4*[1 1 1]); %
@@ -115,8 +117,8 @@ B = B + 1.1 * H;
 panelSrc = uipanel(panelPipeline, 'Title', ' 5- Source model', 'Units', 'normalized', 'Position', [L B W H], 'ForegroundColor', 0.4*[1 1 1]); %
 pbSrc = uicontrol(panelSrc, 'Style', 'pushbutton', 'String', 'Source model', 'Units', 'normalized', 'Position', PB, 'Enable', 'off', 'callback', @SourceModel, 'FontSize', 8);
 cbSrcWhite = uicontrol(panelSrc, 'Style', 'checkbox', 'String', 'White matter', 'Units', 'normalized', 'Position', [Lin(1) Bin(1) Win Hin(1)], 'Enable', 'off', 'callback', @SourceModel_checkBox);
-cbSrcPial = uicontrol(panelSrc, 'Style', 'checkbox', 'String', 'Pial', 'Units', 'normalized', 'Position', [Lin(2) Bin(1) Win Hin(1)], 'Enable', 'off', 'callback', @SourceModel_checkBox);
-cbSrcBetween = uicontrol(panelSrc, 'Style', 'checkbox', 'String', 'In-between', 'Units', 'normalized', 'Position', [Lin(3) Bin(1) Win Hin(1)], 'Enable', 'off', 'callback', @SourceModel_checkBox);
+cbSrcBetween = uicontrol(panelSrc, 'Style', 'checkbox', 'String', 'In-between', 'Units', 'normalized', 'Position', [Lin(2) Bin(1) Win Hin(1)], 'Enable', 'off', 'callback', @SourceModel_checkBox);
+cbSrcPial = uicontrol(panelSrc, 'Style', 'checkbox', 'String', 'Pial', 'Units', 'normalized', 'Position', [Lin(3) Bin(1) Win Hin(1)], 'Enable', 'off', 'callback', @SourceModel_checkBox);
 
 B = B + 1.1 * H;
 % H = 0.1;
@@ -196,6 +198,12 @@ panelMessagePath = uipanel(h, 'Title', '', 'Units', 'normalized', 'Position', [t
 txtMesgPath = uicontrol(panelMessagePath, 'Style', 'text', 'String', 'String', 'Units', 'normalized', 'Position', [.02 .02 .83 .75], 'horizontalalignment', 'left', 'Visible', 'off', 'FontSize', 8, 'FontWeight', 'bold', 'BackgroundColor', [250, 128, 114] / 255);
 pbOk = uicontrol(panelMessagePath, 'Style', 'pushbutton', 'String', 'Ok', 'Units', 'normalized', 'Position', [.92 .25 .07 .5], 'FontWeight', 'bold', 'Visible', 'on', 'callback', @OK);
 
+temp = get(panelMRI, 'Position');
+panelbgLOF = uibuttongroup(panelPipeline, 'Title', 'Layer-of-interst', 'Units', 'normalized', 'Position', [.01 temp(2) temp(1)-.02 temp(4)], 'Visible', 'off', 'SelectionChangedFcn', @FP_buttongroup);
+rbWhite = uicontrol(panelbgLOF, 'Style', 'radiobutton', 'String', 'White matter surface', 'Units', 'normalized', 'Position', [.1 .1 .25 .8]);
+rbBetween = uicontrol(panelbgLOF, 'Style', 'radiobutton', 'String', 'In-between surface', 'Units', 'normalized', 'Position', [.4 .1 .25 .8]);
+rbPial = uicontrol(panelbgLOF, 'Style', 'radiobutton', 'String', 'Pial surface', 'Units', 'normalized', 'Position', [.7 .1 .25 .8]);
+
 % align([pbMRI edtFT pbFT], 'Distribute', 'Center');
 
 % remember the various handles
@@ -227,6 +235,7 @@ opt.panelLF = panelLF;
 opt.panelFP = panelFP;
 opt.panelIP = panelIP;
 opt.panelMessagePath = panelMessagePath;
+opt.panelbgLOF = panelbgLOF;
 
 opt.pbAddpath = pbAddpath;
 opt.pbMRI = pbMRI;
@@ -269,7 +278,7 @@ opt.cbSegAll = cbSegAll;
 opt.cbFiducl = cbFiducl;
 opt.cbVolEEG = cbVolEEG;
 opt.cbVolMEG = cbVolMEG;
-opt.cbFPSource = cbFPSource;
+% opt.cbFPSource = cbFPSource;
 opt.cbFPEEG = cbFPEEG;
 opt.cbFPMEG = cbFPMEG;
 opt.cbIPDICSPowEEG = cbIPDICSPowEEG;
@@ -278,6 +287,10 @@ opt.cbIPLCMVPowEEG = cbIPLCMVPowEEG;
 opt.cbIPLCMVMomEEG = cbIPLCMVMomEEG;
 opt.cbIPLCMVPowMEG = cbIPLCMVPowMEG;
 opt.cbIPLCMVMomMEG = cbIPLCMVMomMEG;
+
+opt.rbWhite = rbWhite;
+opt.rbBetween = rbBetween;
+opt.rbPial = rbPial;
 
 opt.sEEGSourceUp = sEEGSourceUp;
 opt.sEEGSourceLeft = sEEGSourceLeft;
@@ -312,16 +325,19 @@ opt.txtFreq = txtFreq;
 opt.txtTrialsNum = txtTrialsNum;
 opt.txtLambda = txtLambda;
 opt.txtMesgPath = txtMesgPath;
-
 opt.txtFT = txtFT;
 opt.txtSub = txtSub;
-
 % opt.txtFPSigma2 = txtFPSigma2;
+opt.txtSourceLabel = txtSourceLabel;
+
+opt.pmFPSource = pmFPSource;
 
 opt.cfg.address.subject = [];
 
 opt.rotate3d = rotate3d;
 opt.view = [40 25];
+
+opt.LOI.name = 'white';
 
 setappdata(h, 'opt', opt);
 
@@ -433,13 +449,13 @@ h = getparent(h);
 opt = getappdata(h, 'opt');
 % % --------------------------------- Temporary
 % % folder_name = 'D:\Related tools\FieldTrip\fieldtrip-master\fieldtrip-master'; % Office
-% folder_name = 'D:\Andrea\Utilities\FT\fieldtrip-20171218'; % Office
-% % folder_name = 'E:\Ph.D\Related works\FT\Toolbox\fieldtrip-20180603'; % Laptop
+% % folder_name = 'D:\Andrea\Utilities\FT\fieldtrip-20171218'; % Office
+% folder_name = 'E:\Ph.D\Related works\FT\Toolbox\fieldtrip-20180603'; % Laptop
 % opt.cfg.EEG.EEGsensLoad = fullfile(folder_name, filesep, 'template', filesep, 'electrode', filesep, 'standard_1020.elc'); % sensor file directory
 % addpath(folder_name)
 % ft_defaults;
-% folder_name = 'D:\Related tools\FieldTrip\tutorial\Dataset\Subject01'; % Office
-% % folder_name = 'E:\Ph.D\Related works\FT\Toolbox\tutorial\Subject01'; % Laptop
+% % folder_name = 'D:\Related tools\FieldTrip\tutorial\Dataset\Subject01'; % Office
+% folder_name = 'E:\Ph.D\Related works\FT\Toolbox\tutorial\Subject01'; % Laptop
 % opt.cfg.address.subject = folder_name;
 % addressLoad = [folder_name filesep 'Pipeline Results'];
 % if exist(addressLoad, 'dir') ~= 7 % If the directory does not exist, creates the directory
@@ -562,6 +578,10 @@ if exist(opt.cfg.EEG.MRIDir, 'file')
                 opt.cfg.EEG = rmfield(opt.cfg.EEG, 'Fidh');
                 opt.cfg.EEG = rmfield(opt.cfg.EEG, 'Fiducials');
             end
+            if strcmp(get(opt.panelbgLOF, 'Visible'), 'on')
+                opt.LOI.name = 'white';
+                set(opt.panelbgLOF, 'SelectedObject', opt.rbWhite, 'Visible', 'off');
+            end
             panels = {'panelSegMRI', 'panelMesh', 'panelVol', 'panelSrc', 'panelSns', 'panelLF', 'panelFP', 'panelIP'};
             for i = 1 : length(panels)
                 set(opt.(panels{i}), 'ForegroundColor', 0.4*[1 1 1], 'FontWeight', 'normal');
@@ -582,10 +602,15 @@ if exist(opt.cfg.EEG.MRIDir, 'file')
                 'cbVolEEG', 'cbVolMEG', ...
                 'cbSrcWhite', 'cbSrcPial', 'cbSrcBetween', ...
                 'cbSnsEEG', 'cbSnsMEG', ...
-                'cbFPSource', 'cbFPEEG', 'cbFPMEG', ...
+                'pmFPSource', 'cbFPEEG', 'cbFPMEG', ...
                 'cbIPDICSPowEEG', 'cbIPDICSPowMEG', 'cbIPLCMVPowEEG', 'cbIPLCMVMomEEG', 'cbIPLCMVPowMEG', 'cbIPLCMVMomMEG'};
             for i = 1 : length(checkBoxes)
-                set(opt.(checkBoxes{i}), 'Enable', 'off', 'Value', 0);
+                if  strcmp(checkBoxes{i}, 'pmFPSource')
+                    set(opt.(checkBoxes{i}), 'Enable', 'off', 'Value', 1);
+                    set(opt.txtSourceLabel, 'Enable', 'off');
+                else
+                    set(opt.(checkBoxes{i}), 'Enable', 'off', 'Value', 0);
+                end
             end % for i = 1 : length(checkBoxes)
             
             plots = {'MRIhx', 'MRIhy', 'MRIhz', ...
@@ -647,7 +672,7 @@ if recompute
     if ~isfield(mri, 'hdr') % If the position of the anatomical landmarks (fiducials, e.g. LPA, RPA, NASion) are not specified in the volume,
         cfg = [];
         cfg.method = 'interactive';
-        mri = ft_volumerealign(cfg, mri); % Creates a 4Ã—4 homogenous affine transformation matrix from fiducials/landmarks using a right-handed convention
+        mri = ft_volumerealign(cfg, mri); % Creates a 4×4 homogenous affine transformation matrix from fiducials/landmarks using a right-handed convention
         fiducials.vox = [mri.cfg.fiducial.nas; mri.cfg.fiducial.lpa; mri.cfg.fiducial.rpa];
     else % If all the fiducials exist
         cfg = [];
@@ -655,7 +680,7 @@ if recompute
         cfg.fiducial.nas = mri.hdr.fiducial.mri.nas; % Position of nasion
         cfg.fiducial.lpa = mri.hdr.fiducial.mri.lpa; % Position of LPA
         cfg.fiducial.rpa = mri.hdr.fiducial.mri.rpa; % Position of RPA
-        mri = ft_volumerealign(cfg, mri); % Creates a 4Ã—4 homogenous affine transformation matrix from fiducials/landmarks using a right-handed convention
+        mri = ft_volumerealign(cfg, mri); % Creates a 4×4 homogenous affine transformation matrix from fiducials/landmarks using a right-handed convention
         fiducials.vox = [mri.hdr.fiducial.mri.nas; mri.hdr.fiducial.mri.lpa; mri.hdr.fiducial.mri.rpa];
     end % if ~all(isfield(mri.hdr.fiducial.mri, {'nas', 'lpa', 'rpa'}))
     fiducials = IJKtransformXYZ(mri.transform, 'voxel', fiducials.vox);
@@ -777,6 +802,10 @@ else
         [opt.view(1), opt.view(2)] = view;
     end
     [opt.cfg.EEG.MRIhx, opt.cfg.EEG.MRIhy, opt.cfg.EEG.MRIhz] = ft_plot_ortho(opt.cfg.EEG.MRI.anatomy, 'style', 'intersect', 'transform', opt.cfg.EEG.MRI.transform, 'location', pos.pnt, 'unit', opt.cfg.EEG.MRI.unit);
+    if isfield(opt, 'lighth')
+        delete(opt.lighth)
+        opt = rmfield(opt, 'lighth');
+    end
     %     if exist('az', 'var')
     %         view([az, el])
     %     else
@@ -852,6 +881,10 @@ if any(isfield(opt.cfg.EEG, allHandle))
     elseif get(opt.cbSegAll, 'Value') == 1 % CSF
         [opt.cfg.EEG.SegAllhx, opt.cfg.EEG.SegAllhy, opt.cfg.EEG.SegAllhz] = ft_plot_ortho(opt.cfg.EEG.segMRI.segmentedMRIAllIndexed.seg, 'style', 'intersect', 'transform', opt.cfg.EEG.segMRI.segmentedMRIAllIndexed.transform, 'location', pos.pnt, 'unit', opt.cfg.EEG.segMRI.segmentedMRIAllIndexed.unit, 'colormap', 'jet');
     end % if get(opt.cbSegBrain, 'Value') == 1
+    if isfield(opt, 'lighth')
+        delete(opt.lighth)
+        opt = rmfield(opt, 'lighth');
+    end
 end % if any(isfield(opt.cfg.EEG, allHandle))
 
 % view([az, el])
@@ -942,7 +975,10 @@ if exist(opt.cfg.EEG.segMRIDir, 'file')
             recompute = false; % If 'true' read & process MRI, if 'false', loads preprocessed MRI
         case 'Yes'
             recompute = true; % If 'true' read & process MRI, if 'false', loads preprocessed MRI
-            
+            if strcmp(get(opt.panelbgLOF, 'Visible'), 'on')
+                opt.LOI.name = 'white';
+                set(opt.panelbgLOF, 'SelectedObject', opt.rbWhite, 'Visible', 'off');
+            end
             panels = {'panelSegMRI', 'panelMesh', 'panelVol', 'panelSrc', 'panelSns', 'panelLF', 'panelFP', 'panelIP'};
             for i = 2 : length(panels)
                 set(opt.(panels{i}), 'ForegroundColor', 0.4*[1 1 1], 'FontWeight', 'normal');
@@ -963,10 +999,15 @@ if exist(opt.cfg.EEG.segMRIDir, 'file')
                 'cbVolEEG', 'cbVolMEG', ...
                 'cbSrcWhite', 'cbSrcPial', 'cbSrcBetween', ...
                 'cbSnsEEG', 'cbSnsMEG', ...
-                'cbFPSource', 'cbFPEEG', 'cbFPMEG', ...
+                'pmFPSource', 'cbFPEEG', 'cbFPMEG', ...
                 'cbIPDICSPowEEG', 'cbIPDICSPowMEG', 'cbIPLCMVPowEEG', 'cbIPLCMVMomEEG', 'cbIPLCMVPowMEG', 'cbIPLCMVMomMEG'};
             for i = 3 : length(checkBoxes)
-                set(opt.(checkBoxes{i}), 'Enable', 'off', 'Value', 0);
+                if  strcmp(checkBoxes{i}, 'pmFPSource')
+                    set(opt.(checkBoxes{i}), 'Enable', 'off', 'Value', 1);
+                    set(opt.txtSourceLabel, 'Enable', 'off');
+                else
+                    set(opt.(checkBoxes{i}), 'Enable', 'off', 'Value', 0);
+                end
             end % for i = 1 : length(checkBoxes)
             
             plots = {'MRIhx', 'MRIhy', 'MRIhz', ...
@@ -1265,6 +1306,10 @@ else
         valNorm = (valNorm - min(valNorm(:))) / (max(valNorm(:)) - min(valNorm(:))); % Normalizing the values
         [opt.cfg.EEG.SegAllhx, opt.cfg.EEG.SegAllhy, opt.cfg.EEG.SegAllhz] = ft_plot_ortho(valNorm, 'style', 'intersect', 'transform', opt.cfg.EEG.segMRI.segmentedMRIAllIndexed.transform, 'location', pos.pnt, 'unit', opt.cfg.EEG.segMRI.segmentedMRIAllIndexed.unit, 'colormap', 'jet');
     end % if get(opt.cbSegBrain, 'Value') == 1
+    if isfield(opt, 'lighth')
+        delete(opt.lighth)
+        opt = rmfield(opt, 'lighth');
+    end
     %     if exist('az', 'var')
     %         view([az, el]);
     %     else
@@ -1309,7 +1354,10 @@ if exist(opt.cfg.EEG.meshDir, 'file')
             recompute = false; % If 'true' read & process MRI, if 'false', loads preprocessed MRI
         case 'Yes'
             recompute = true; % If 'true' read & process MRI, if 'false', loads preprocessed MRI
-            
+            if strcmp(get(opt.panelbgLOF, 'Visible'), 'on')
+                opt.LOI.name = 'white';
+                set(opt.panelbgLOF, 'SelectedObject', opt.rbWhite, 'Visible', 'off');
+            end
             panels = {'panelSegMRI', 'panelMesh', 'panelVol', 'panelSrc', 'panelSns', 'panelLF', 'panelFP', 'panelIP'};
             for i = 3 : length(panels)
                 set(opt.(panels{i}), 'ForegroundColor', 0.4*[1 1 1], 'FontWeight', 'normal');
@@ -1330,10 +1378,15 @@ if exist(opt.cfg.EEG.meshDir, 'file')
                 'cbVolEEG', 'cbVolMEG', ...
                 'cbSrcWhite', 'cbSrcPial', 'cbSrcBetween', ...
                 'cbSnsEEG', 'cbSnsMEG', ...
-                'cbFPSource', 'cbFPEEG', 'cbFPMEG', ...
+                'pmFPSource', 'cbFPEEG', 'cbFPMEG', ...
                 'cbIPDICSPowEEG', 'cbIPDICSPowMEG', 'cbIPLCMVPowEEG', 'cbIPLCMVMomEEG', 'cbIPLCMVPowMEG', 'cbIPLCMVMomMEG'};
             for i = 10 : length(checkBoxes)
-                set(opt.(checkBoxes{i}), 'Enable', 'off', 'Value', 0);
+                if  strcmp(checkBoxes{i}, 'pmFPSource')
+                    set(opt.(checkBoxes{i}), 'Enable', 'off', 'Value', 1);
+                    set(opt.txtSourceLabel, 'Enable', 'off');
+                else
+                    set(opt.(checkBoxes{i}), 'Enable', 'off', 'Value', 0);
+                end
             end % for i = 1 : length(checkBoxes)
             
             plots = {'MRIhx', 'MRIhy', 'MRIhz', ...
@@ -1595,32 +1648,32 @@ else
     temp = round(linspace(1, size(C, 1), 6));
     
     if get(opt.cbMeshWhite, 'Value') == 1 && ~isfield(opt.cfg.EEG, 'MeshWhiteh') % White matter
-        opt.cfg.EEG.MeshWhiteh = ft_plot_mesh_mod(opt.cfg.EEG.Mesh.brain(2), 'vertexcolor', C(temp(1), :), 'edgecolor', C(temp(1), :), 'edgealpha', 0.95, 'facecolor', C(temp(1), :), 'facealpha', 0.95); hold on
+        opt.cfg.EEG.MeshWhiteh = ft_plot_mesh_mod(opt.cfg.EEG.Mesh.brain(2), 'vertexcolor', C(temp(1), :), 'edgecolor', C(temp(1), :), 'facecolor', C(temp(1), :), 'facealpha', 0.6); hold on % , 'edgealpha', 0.6,
     elseif get(opt.cbMeshWhite, 'Value') == 0 && isfield(opt.cfg.EEG, 'MeshWhiteh') % White matter
         delete(opt.cfg.EEG.MeshWhiteh)
         opt.cfg.EEG = rmfield(opt.cfg.EEG, 'MeshWhiteh');
     elseif get(opt.cbMeshGray, 'Value') == 1 && ~isfield(opt.cfg.EEG, 'MeshGrayh') % Gray matter
-        opt.cfg.EEG.MeshGrayh = ft_plot_mesh_mod(opt.cfg.EEG.Mesh.brain(1), 'vertexcolor', C(temp(2), :), 'edgecolor', C(temp(2), :), 'edgealpha', 0.77, 'facecolor', C(temp(2), :), 'facealpha', 0.77); hold on
+        opt.cfg.EEG.MeshGrayh = ft_plot_mesh_mod(opt.cfg.EEG.Mesh.brain(1), 'vertexcolor', C(temp(2), :), 'edgecolor', C(temp(2), :), 'facecolor', C(temp(2), :), 'facealpha', 0.5); hold on %  'edgealpha', 0.5,
     elseif get(opt.cbMeshGray, 'Value') == 0 && isfield(opt.cfg.EEG, 'MeshGrayh') % White matter
         delete(opt.cfg.EEG.MeshGrayh)
         opt.cfg.EEG = rmfield(opt.cfg.EEG, 'MeshGrayh');
     elseif get(opt.cbMeshCSF, 'Value') == 1 && ~isfield(opt.cfg.EEG, 'MeshCSFh') % CSF
-        opt.cfg.EEG.MeshCSFh = ft_plot_mesh_mod(opt.cfg.EEG.Mesh.brain(3), 'vertexcolor', C(temp(3), :), 'edgecolor', C(temp(3), :), 'edgealpha', 0.59, 'facecolor', C(temp(3), :), 'facealpha', 0.59); hold on
+        opt.cfg.EEG.MeshCSFh = ft_plot_mesh_mod(opt.cfg.EEG.Mesh.brain(3), 'vertexcolor', C(temp(3), :), 'edgecolor', C(temp(3), :), 'facecolor', C(temp(3), :), 'facealpha', 0.4); hold on %  'edgealpha', 0.4,
     elseif get(opt.cbMeshCSF, 'Value') == 0 && isfield(opt.cfg.EEG, 'MeshCSFh') % White matter
         delete(opt.cfg.EEG.MeshCSFh)
         opt.cfg.EEG = rmfield(opt.cfg.EEG, 'MeshCSFh');
     elseif get(opt.cbMeshBrain, 'Value') == 1 && ~isfield(opt.cfg.EEG, 'MeshBrainh') % Brain
-        opt.cfg.EEG.MeshBrainh = ft_plot_mesh_mod(opt.cfg.EEG.Mesh.head(1), 'vertexcolor', C(temp(4), :), 'edgecolor', C(temp(4), :), 'edgealpha', 0.41, 'facecolor', C(temp(4), :), 'facealpha', 0.41); hold on
+        opt.cfg.EEG.MeshBrainh = ft_plot_mesh_mod(opt.cfg.EEG.Mesh.head(1), 'vertexcolor', C(temp(4), :), 'edgecolor', C(temp(4), :), 'facecolor', C(temp(4), :), 'facealpha', 0.3); hold on % 'edgealpha', 0.3,
     elseif get(opt.cbMeshBrain, 'Value') == 0 && isfield(opt.cfg.EEG, 'MeshBrainh') % White matter
         delete(opt.cfg.EEG.MeshBrainh)
         opt.cfg.EEG = rmfield(opt.cfg.EEG, 'MeshBrainh');
     elseif get(opt.cbMeshSkull, 'Value') == 1 && ~isfield(opt.cfg.EEG, 'MeshSkullh') % Skull
-        opt.cfg.EEG.MeshSkullh = ft_plot_mesh_mod(opt.cfg.EEG.Mesh.head(2), 'vertexcolor', C(temp(5), :), 'edgecolor', C(temp(5), :), 'edgealpha', 0.25, 'facecolor', C(temp(5), :), 'facealpha', 0.25); hold on
+        opt.cfg.EEG.MeshSkullh = ft_plot_mesh_mod(opt.cfg.EEG.Mesh.head(2), 'vertexcolor', C(temp(5), :), 'edgecolor', C(temp(5), :), 'facecolor', C(temp(5), :), 'facealpha', 0.2); hold on % 'edgealpha', 0.2,
     elseif get(opt.cbMeshSkull, 'Value') == 0 && isfield(opt.cfg.EEG, 'MeshSkullh') % White matter
         delete(opt.cfg.EEG.MeshSkullh)
         opt.cfg.EEG = rmfield(opt.cfg.EEG, 'MeshSkullh');
     elseif get(opt.cbMeshScalp, 'Value') == 1 && ~isfield(opt.cfg.EEG, 'MeshScalph') % Scalp
-        opt.cfg.EEG.MeshScalph = ft_plot_mesh_mod(opt.cfg.EEG.Mesh.head(3), 'vertexcolor', C(temp(6), :), 'edgecolor', C(temp(6), :), 'edgealpha', 0.05, 'facecolor', C(temp(6), :), 'facealpha', 0.05); hold on
+        opt.cfg.EEG.MeshScalph = ft_plot_mesh_mod(opt.cfg.EEG.Mesh.head(3), 'vertexcolor', C(temp(6), :), 'edgecolor', C(temp(6), :), 'facecolor', C(temp(6), :), 'facealpha', 0.1); hold on % 'edgealpha', 0.1,
     elseif get(opt.cbMeshScalp, 'Value') == 0 && isfield(opt.cfg.EEG, 'MeshScalph') % White matter
         delete(opt.cfg.EEG.MeshScalph)
         opt.cfg.EEG = rmfield(opt.cfg.EEG, 'MeshScalph');
@@ -1671,7 +1724,10 @@ if exist(opt.cfg.EEG.volDir, 'file')
             recompute = false; % If 'true' read & process MRI, if 'false', loads preprocessed MRI
         case 'Yes'
             recompute = true; % If 'true' read & process MRI, if 'false', loads preprocessed MRI
-            
+            if strcmp(get(opt.panelbgLOF, 'Visible'), 'on')
+                opt.LOI.name = 'white';
+                set(opt.panelbgLOF, 'SelectedObject', opt.rbWhite, 'Visible', 'off');
+            end
             panels = {'panelSegMRI', 'panelMesh', 'panelVol', 'panelSrc', 'panelSns', 'panelLF', 'panelFP', 'panelIP'};
             for i = 4 : length(panels)
                 set(opt.(panels{i}), 'ForegroundColor', 0.4*[1 1 1], 'FontWeight', 'normal');
@@ -1692,10 +1748,15 @@ if exist(opt.cfg.EEG.volDir, 'file')
                 'cbVolEEG', 'cbVolMEG', ...
                 'cbSrcWhite', 'cbSrcPial', 'cbSrcBetween', ...
                 'cbSnsEEG', 'cbSnsMEG', ...
-                'cbFPSource', 'cbFPEEG', 'cbFPMEG', ...
+                'pmFPSource', 'cbFPEEG', 'cbFPMEG', ...
                 'cbIPDICSPowEEG', 'cbIPDICSPowMEG', 'cbIPLCMVPowEEG', 'cbIPLCMVMomEEG', 'cbIPLCMVPowMEG', 'cbIPLCMVMomMEG'};
             for i = 16 : length(checkBoxes)
-                set(opt.(checkBoxes{i}), 'Enable', 'off', 'Value', 0);
+                if  strcmp(checkBoxes{i}, 'pmFPSource')
+                    set(opt.(checkBoxes{i}), 'Enable', 'off', 'Value', 1);
+                    set(opt.txtSourceLabel, 'Enable', 'off');
+                else
+                    set(opt.(checkBoxes{i}), 'Enable', 'off', 'Value', 0);
+                end
             end % for i = 1 : length(checkBoxes)
             
             plots = {'MRIhx', 'MRIhy', 'MRIhz', ...
@@ -1974,24 +2035,32 @@ else
     %     end
     if strcmp(get(opt.rotate3d, 'Enable'), 'on') %isfield(opt.cfg.EEG, 'MRIhx') || isfield(opt.cfg.EEG, 'MRIhx')
         %         [az, el] = view;
-        [opt.view(1), opt.view(2)] = view
+        [opt.view(1), opt.view(2)] = view;
     end % if isfield(opt.cfg.EEG, 'MRIhx')
     
     %     C = colormap('jet');
     %     temp = round(linspace(1, size(C, 1), 6));
     
-    if get(opt.cbVolEEG, 'Value') == 1 && ~isfield(opt.cfg.EEG, 'VolEEGh') % White matter
-        h1 = ft_plot_mesh_mod(opt.cfg.EEG.HeadModel.head.bnd(1), 'vertexcolor', 'none', 'edgecolor', 'none', 'facealpha', 0.8, 'facecolor', [0.7922 0.3922 0.3922]);
-        h2 = ft_plot_mesh_mod(opt.cfg.EEG.HeadModel.head.bnd(2), 'vertexcolor', 'none', 'edgecolor', 'none', 'facealpha', 0.55, 'facecolor', [1.0000 0.8784 0.7412]);
+    if get(opt.cbVolEEG, 'Value') == 1 && ~isfield(opt.cfg.EEG, 'VolEEGh')
+        h1 = ft_plot_mesh_mod(opt.cfg.EEG.HeadModel.head.bnd(1), 'vertexcolor', 'none', 'edgecolor', 'none', 'facealpha', 0.6, 'facecolor', [0.7922 0.3922 0.3922]);
+        h2 = ft_plot_mesh_mod(opt.cfg.EEG.HeadModel.head.bnd(2), 'vertexcolor', 'none', 'edgecolor', 'none', 'facealpha', 0.45, 'facecolor', [1.0000 0.8784 0.7412]);
         h3 = ft_plot_mesh_mod(opt.cfg.EEG.HeadModel.head.bnd(3), 'vertexcolor', 'none', 'edgecolor', 'none', 'facealpha', 0.3, 'facecolor', [1.0000 0.8784 0.7412]);
+        if ~isfield(opt, 'lighth')
+            opt.lighth = light;
+        end
+        lighting gouraud; material dull
         opt.cfg.EEG.VolEEGh = [h1; h2; h3];
         %         opt.cfg.EEG.MeshWhiteh = ft_plot_mesh_mod(opt.cfg.EEG.Mesh.brain(1), 'vertexcolor', C(temp(1), :), 'edgecolor', C(temp(1), :), 'edgealpha', 0.95, 'facecolor', C(temp(1), :), 'facealpha', 0.95); hold on
-    elseif get(opt.cbVolEEG, 'Value') == 0 && isfield(opt.cfg.EEG, 'VolEEGh') % White matter
+    elseif get(opt.cbVolEEG, 'Value') == 0 && isfield(opt.cfg.EEG, 'VolEEGh')
         delete(opt.cfg.EEG.VolEEGh)
         opt.cfg.EEG = rmfield(opt.cfg.EEG, 'VolEEGh');
-    elseif get(opt.cbVolMEG, 'Value') == 1 && ~isfield(opt.cfg.EEG, 'VolMEGh') % Gray matter
-        opt.cfg.EEG.VolMEGh = ft_plot_mesh_mod(opt.cfg.EEG.HeadModel.brain.bnd, 'vertexcolor', 'none', 'edgecolor', 'none', 'facealpha', 0.8, 'facecolor', [0.7922 0.3922 0.3922]);
-    elseif get(opt.cbVolMEG, 'Value') == 0 && isfield(opt.cfg.EEG, 'VolMEGh') % White matter
+    elseif get(opt.cbVolMEG, 'Value') == 1 && ~isfield(opt.cfg.EEG, 'VolMEGh')
+        opt.cfg.EEG.VolMEGh = ft_plot_mesh_mod(opt.cfg.EEG.HeadModel.brain.bnd, 'vertexcolor', 'none', 'edgecolor', 'none', 'facealpha', 0.6, 'facecolor', [0.7922 0.3922 0.3922]);
+        if ~isfield(opt, 'lighth')
+            opt.lighth = light;
+        end
+        lighting gouraud; material dull
+    elseif get(opt.cbVolMEG, 'Value') == 0 && isfield(opt.cfg.EEG, 'VolMEGh')
         delete(opt.cfg.EEG.VolMEGh)
         opt.cfg.EEG = rmfield(opt.cfg.EEG, 'VolMEGh');
     end % if get(opt.cbSegBrain, 'Value') == 1
@@ -2041,7 +2110,10 @@ if exist(opt.cfg.EEG.sourceModelDir, 'file')
             recompute = false; % If 'true' read & process MRI, if 'false', loads preprocessed MRI
         case 'Yes'
             recompute = true; % If 'true' read & process MRI, if 'false', loads preprocessed MRI
-            
+            if strcmp(get(opt.panelbgLOF, 'Visible'), 'on')
+                opt.LOI.name = 'white';
+                set(opt.panelbgLOF, 'SelectedObject', opt.rbWhite, 'Visible', 'off');
+            end
             panels = {'panelSegMRI', 'panelMesh', 'panelVol', 'panelSrc', 'panelSns', 'panelLF', 'panelFP', 'panelIP'};
             for i = 5 : length(panels)
                 set(opt.(panels{i}), 'ForegroundColor', 0.4*[1 1 1], 'FontWeight', 'normal');
@@ -2062,10 +2134,15 @@ if exist(opt.cfg.EEG.sourceModelDir, 'file')
                 'cbVolEEG', 'cbVolMEG', ...
                 'cbSrcWhite', 'cbSrcPial', 'cbSrcBetween', ...
                 'cbSnsEEG', 'cbSnsMEG', ...
-                'cbFPSource', 'cbFPEEG', 'cbFPMEG', ...
+                'pmFPSource', 'cbFPEEG', 'cbFPMEG', ...
                 'cbIPDICSPowEEG', 'cbIPDICSPowMEG', 'cbIPLCMVPowEEG', 'cbIPLCMVMomEEG', 'cbIPLCMVPowMEG', 'cbIPLCMVMomMEG'};
             for i = 18 : length(checkBoxes)
-                set(opt.(checkBoxes{i}), 'Enable', 'off', 'Value', 0);
+                if  strcmp(checkBoxes{i}, 'pmFPSource')
+                    set(opt.(checkBoxes{i}), 'Enable', 'off', 'Value', 1);
+                    set(opt.txtSourceLabel, 'Enable', 'off');
+                else
+                    set(opt.(checkBoxes{i}), 'Enable', 'off', 'Value', 0);
+                end
             end % for i = 1 : length(checkBoxes)
             
             plots = {'MRIhx', 'MRIhy', 'MRIhz', ...
@@ -2171,24 +2248,47 @@ if recompute
     grid.between.tri(ismember(grid.between.tri, Outliers)) = nan;
     grid.between.pos(Outliers, :) = nan;
     
+    cfg = [];
+    cfg.grid.unit = opt.cfg.EEG.unit;
+    cfg.grid.pos = [bndBrain(2).pos; bndBrain(1).pos];
+    cfg.grid.tri = [bndBrain(2).tri; bndBrain(1).tri+size(bndBrain(2).pos, 1)];
+    grid.whitePial = ft_prepare_sourcemodel(cfg, volBrain);
+    Outliers = find(~grid.whitePial.inside);
+    grid.whitePial.tri(ismember(grid.whitePial.tri, Outliers)) = nan;
+    grid.whitePial.pos(Outliers, :) = nan;
+    
+    cfg = [];
+    cfg.grid.unit = opt.cfg.EEG.unit;
+    cfg.grid.pos = [bndBrain(2).pos; (bndBrain(1).pos + bndBrain(2).pos) / 2; bndBrain(1).pos];
+    cfg.grid.tri = [bndBrain(2).tri; bndBrain(2).tri+size(bndBrain(2).pos, 1); bndBrain(1).tri+2*size(bndBrain(2).pos, 1)];
+    grid.whiteBetweenPial = ft_prepare_sourcemodel(cfg, volBrain);
+    Outliers = find(~grid.whiteBetweenPial.inside);
+    grid.whiteBetweenPial.tri(ismember(grid.whiteBetweenPial.tri, Outliers)) = nan;
+    grid.whiteBetweenPial.pos(Outliers, :) = nan;
     
     % --> check and determine the coordinate-system of the volume conduction model of the head:
     if ~isfield(grid.white, 'coordsys') || ~strcmp(grid.white.coordsys, opt.cfg.EEG.coordSys)
         grid.white = ft_determine_coordsys(grid.white);
-        grid.pial = ft_determine_coordsys(grid.pial);
         grid.between = ft_determine_coordsys(grid.between);
+        grid.pial = ft_determine_coordsys(grid.pial);
+        grid.whitePial = ft_determine_coordsys(grid.whitePial);
+        grid.whiteBetweenPial = ft_determine_coordsys(grid.whiteBetweenPial);
     end % if ~isfield(grid, 'coordsys') || ~strcmp(grid.coordsys, my_cfg.coordSys)
     
     % --> Check the unit (assuming that the common unit is mm for EEG and cm for MEG):
     if ~isfield(grid.white, 'unit') || ~strcmp(grid.white.unit, opt.cfg.EEG.unit) % True, if there isn't 'unit' field or unit isn't desired one (mm/cm)
-        grid.white = ft_convert_units(grid.white, my_cfg.unit);
-        grid.pial = ft_convert_units(grid.pial, my_cfg.unit);
-        grid.between = ft_convert_units(grid.between, my_cfg.unit);
+        grid.white = ft_convert_units(grid.white, opt.cfg.EEG.unit);
+        grid.pial = ft_convert_units(grid.pial, opt.cfg.EEG.unit);
+        grid.between = ft_convert_units(grid.between, opt.cfg.EEG.unit);
+        grid.whitePial = ft_convert_units(grid.whitePial, opt.cfg.EEG.unit);
+        grid.whiteBetweenPial = ft_convert_units(grid.whiteBetweenPial, opt.cfg.EEG.unit);
     end % if ~isfield(bnd, 'unit') || ~strcmp(bnd(1).unit, my_cfg.unit)
     
     grid.white.fiducials = bndBrain(1).fiducials;
     grid.pial.fiducials = bndBrain(1).fiducials;
     grid.between.fiducials = bndBrain(1).fiducials;
+    grid.whitePial.fiducials = bndBrain(1).fiducials;
+    grid.whiteBetweenPial.fiducials = bndBrain(1).fiducials;
     
     save(opt.cfg.EEG.sourceModelDir, 'grid');
     Recover(h, CurrentState);
@@ -2300,17 +2400,17 @@ else
     end % if isfield(opt.cfg.EEG, 'MRIhx')
     
     if get(opt.cbSrcWhite, 'Value') == 1 && ~isfield(opt.cfg.EEG, 'SrcWhiteh') % White matter
-        opt.cfg.EEG.SrcWhiteh = ft_plot_mesh_mod(opt.cfg.EEG.SourceModel.white, 'vertexcolor', 'b', 'edgecolor', 'b', 'facealpha', 0.75, 'facecolor', 'b');
+        opt.cfg.EEG.SrcWhiteh = ft_plot_mesh_mod(opt.cfg.EEG.SourceModel.white, 'vertexcolor', 'b', 'edgecolor', 'b', 'facealpha', 0.2, 'facecolor', 'b');
     elseif get(opt.cbSrcWhite, 'Value') == 0 && isfield(opt.cfg.EEG, 'SrcWhiteh') % White matter
         delete(opt.cfg.EEG.SrcWhiteh)
         opt.cfg.EEG = rmfield(opt.cfg.EEG, 'SrcWhiteh');
     elseif get(opt.cbSrcPial, 'Value') == 1 && ~isfield(opt.cfg.EEG, 'SrcPialh') % Gray matter
-        opt.cfg.EEG.SrcPialh = ft_plot_mesh_mod(opt.cfg.EEG.SourceModel.pial, 'vertexcolor', 'r', 'edgecolor', 'r', 'facealpha', 0.5, 'facecolor', 'r');
+        opt.cfg.EEG.SrcPialh = ft_plot_mesh_mod(opt.cfg.EEG.SourceModel.pial, 'vertexcolor', 'r', 'edgecolor', 'r', 'facealpha', 0.2, 'facecolor', 'r');
     elseif get(opt.cbSrcPial, 'Value') == 0 && isfield(opt.cfg.EEG, 'SrcPialh') % White matter
         delete(opt.cfg.EEG.SrcPialh)
         opt.cfg.EEG = rmfield(opt.cfg.EEG, 'SrcPialh');
     elseif get(opt.cbSrcBetween, 'Value') == 1 && ~isfield(opt.cfg.EEG, 'SrcBetweenh') % Gray matter
-        opt.cfg.EEG.SrcBetweenh = ft_plot_mesh_mod(opt.cfg.EEG.SourceModel.between, 'vertexcolor', 'g', 'edgecolor', 'g', 'facealpha', 0.65, 'facecolor', 'g');
+        opt.cfg.EEG.SrcBetweenh = ft_plot_mesh_mod(opt.cfg.EEG.SourceModel.between, 'vertexcolor', 'g', 'edgecolor', 'g', 'facealpha', 0.2, 'facecolor', 'g');
     elseif get(opt.cbSrcBetween, 'Value') == 0 && isfield(opt.cfg.EEG, 'SrcBetweenh') % White matter
         delete(opt.cfg.EEG.SrcBetweenh)
         opt.cfg.EEG = rmfield(opt.cfg.EEG, 'SrcBetweenh');
@@ -2361,7 +2461,10 @@ if exist(opt.cfg.EEG.sensDir, 'file')
             recompute = false; % If 'true' read & process MRI, if 'false', loads preprocessed MRI
         case 'Yes'
             recompute = true; % If 'true' read & process MRI, if 'false', loads preprocessed MRI
-            
+            if strcmp(get(opt.panelbgLOF, 'Visible'), 'on')
+                opt.LOI.name = 'white';
+                set(opt.panelbgLOF, 'SelectedObject', opt.rbWhite, 'Visible', 'off');
+            end
             panels = {'panelSegMRI', 'panelMesh', 'panelVol', 'panelSrc', 'panelSns', 'panelLF', 'panelFP', 'panelIP'};
             for i = 6 : length(panels)
                 set(opt.(panels{i}), 'ForegroundColor', 0.4*[1 1 1], 'FontWeight', 'normal');
@@ -2382,10 +2485,15 @@ if exist(opt.cfg.EEG.sensDir, 'file')
                 'cbVolEEG', 'cbVolMEG', ...
                 'cbSrcWhite', 'cbSrcPial', 'cbSrcBetween', ...
                 'cbSnsEEG', 'cbSnsMEG', ...
-                'cbFPSource', 'cbFPEEG', 'cbFPMEG', ...
+                'pmFPSource', 'cbFPEEG', 'cbFPMEG', ...
                 'cbIPDICSPowEEG', 'cbIPDICSPowMEG', 'cbIPLCMVPowEEG', 'cbIPLCMVMomEEG', 'cbIPLCMVPowMEG', 'cbIPLCMVMomMEG'};
             for i = 21 : length(checkBoxes)
-                set(opt.(checkBoxes{i}), 'Enable', 'off', 'Value', 0);
+                if  strcmp(checkBoxes{i}, 'pmFPSource')
+                    set(opt.(checkBoxes{i}), 'Enable', 'off', 'Value', 1);
+                    set(opt.txtSourceLabel, 'Enable', 'off');
+                else
+                    set(opt.(checkBoxes{i}), 'Enable', 'off', 'Value', 0);
+                end
             end % for i = 1 : length(checkBoxes)
             
             plots = {'MRIhx', 'MRIhy', 'MRIhz', ...
@@ -2487,6 +2595,28 @@ if recompute
     cfg.fiducial = fid.label;  % labels of fiducials in fid and in elec
     sens.EEG = ft_electroderealign(cfg); % both electrodes and anatomical MRI are expressed in the same head-coordinate system (same fiducials)
     
+    %     [sens.EEG.chanpos, ind, ~] = unique(sens.EEG.chanpos, 'rows'); % Remove repetitive electrodes
+    %     sens.EEG.elecpos = sens.EEG.elecpos(ind, :);
+    %     tmp1 = cell(length(ind), 1);
+    %     tmp2 = cell(length(ind), 1);
+    %     tmp3 = cell(length(ind), 1);
+    %     for i = 1 : length(ind)
+    %         tmp1{i} = sens.EEG.chantype{ind(i)};
+    %         tmp2{i} = sens.EEG.chanunit{ind(i)};
+    %         tmp3{i} = sens.EEG.label{ind(i)};
+    %     end
+    %     sens.EEG.chantype = tmp1;
+    %     sens.EEG.chanunit = tmp2;
+    %     sens.EEG.label = tmp3;
+    % {'all', '-POz', '-Fp1', -EOG'}
+    %     [~, ~, ib] = unique(sens.EEG.chanpos, 'rows', 'stable');
+    % indDoubleElec = find(hist(ib, unique(ib)) > 1);
+    % desiredChan = cell(1, length(indDoubleElec) + 1);
+    % desiredChan{1} = 'all';
+    % for i = 1 : length(indDoubleElec)
+    %     desiredChan{i + 1} = sprintf('-%s', sens.EEG.label{indDoubleElec(i)});
+    % end
+    % [sens.EEG2] = ft_channelselection(desiredChan, sens.EEG, 'eeg');
     
     %     cfg = [];
     %     cfg.method = 'interactive';
@@ -2594,14 +2724,14 @@ else
         [opt.view(1), opt.view(2)] = view;
     end % if isfield(opt.cfg.EEG, 'MRIhx')
     
-    if get(opt.cbSnsEEG, 'Value') == 1 && ~isfield(opt.cfg.EEG, 'SnsEEGh') % White matter
+    if get(opt.cbSnsEEG, 'Value') == 1 && ~isfield(opt.cfg.EEG, 'SnsEEGh') % EEG sensor
         opt.cfg.EEG.SnsEEGh = ft_plot_sens_mod(opt.cfg.EEG.SensorModel.EEG, 'style', opt.cfg.EEG.channelsSymb(end), 'label', 'label');
-    elseif get(opt.cbSnsEEG, 'Value') == 0 && isfield(opt.cfg.EEG, 'SnsEEGh') % White matter
+    elseif get(opt.cbSnsEEG, 'Value') == 0 && isfield(opt.cfg.EEG, 'SnsEEGh') % EEG sensor
         delete(opt.cfg.EEG.SnsEEGh)
         opt.cfg.EEG = rmfield(opt.cfg.EEG, 'SnsEEGh');
-    elseif get(opt.cbSnsMEG, 'Value') == 1 && ~isfield(opt.cfg.EEG, 'SnsMEGh') % Gray matter
+    elseif get(opt.cbSnsMEG, 'Value') == 1 && ~isfield(opt.cfg.EEG, 'SnsMEGh') % MEG sensor
         opt.cfg.EEG.SnsMEGh = ft_plot_sens_mod(opt.cfg.EEG.SensorModel.MEG, 'style', opt.cfg.EEG.channelsSymb(end), 'label', 'label');
-    elseif get(opt.cbSnsMEG, 'Value') == 0 && isfield(opt.cfg.EEG, 'SnsMEGh') % White matter
+    elseif get(opt.cbSnsMEG, 'Value') == 0 && isfield(opt.cfg.EEG, 'SnsMEGh') % MEG sensor
         delete(opt.cfg.EEG.SnsMEGh)
         opt.cfg.EEG = rmfield(opt.cfg.EEG, 'SnsMEGh');
     end % if get(opt.cbSegBrain, 'Value') == 1
@@ -2651,7 +2781,10 @@ if exist(opt.cfg.EEG.LFDir, 'file')
             recompute = false; % If 'true' read & process MRI, if 'false', loads preprocessed MRI
         case 'Yes'
             recompute = true; % If 'true' read & process MRI, if 'false', loads preprocessed MRI
-            
+            if strcmp(get(opt.panelbgLOF, 'Visible'), 'on')
+                opt.LOI.name = 'white';
+                set(opt.panelbgLOF, 'SelectedObject', opt.rbWhite, 'Visible', 'off');
+            end
             panels = {'panelSegMRI', 'panelMesh', 'panelVol', 'panelSrc', 'panelSns', 'panelLF', 'panelFP', 'panelIP'};
             for i = 7 : length(panels)
                 set(opt.(panels{i}), 'ForegroundColor', 0.4*[1 1 1], 'FontWeight', 'normal');
@@ -2672,10 +2805,15 @@ if exist(opt.cfg.EEG.LFDir, 'file')
                 'cbVolEEG', 'cbVolMEG', ...
                 'cbSrcWhite', 'cbSrcPial', 'cbSrcBetween', ...
                 'cbSnsEEG', 'cbSnsMEG', ...
-                'cbFPSource', 'cbFPEEG', 'cbFPMEG', ...
+                'pmFPSource', 'cbFPEEG', 'cbFPMEG', ...
                 'cbIPDICSPowEEG', 'cbIPDICSPowMEG', 'cbIPLCMVPowEEG', 'cbIPLCMVMomEEG', 'cbIPLCMVPowMEG', 'cbIPLCMVMomMEG'};
             for i = 23 : length(checkBoxes)
-                set(opt.(checkBoxes{i}), 'Enable', 'off', 'Value', 0);
+                if  strcmp(checkBoxes{i}, 'pmFPSource')
+                    set(opt.(checkBoxes{i}), 'Enable', 'off', 'Value', 1);
+                    set(opt.txtSourceLabel, 'Enable', 'off');
+                else
+                    set(opt.(checkBoxes{i}), 'Enable', 'off', 'Value', 0);
+                end
             end % for i = 1 : length(checkBoxes)
             
             plots = {'MRIhx', 'MRIhy', 'MRIhz', ...
@@ -2743,7 +2881,7 @@ if recompute
     opt = rmfield(opt, 'choice'); % Initialize 'choice' field
     
     set(opt.panelMessage, 'Visible', 'on', 'BackgroundColor', [238, 221, 130] / 255, 'ShadowColor', [238, 221, 130] / 255, 'HighlightColor', [238, 221, 130] / 255);
-    set(opt.txtMesg, 'Visible', 'on', 'BackgroundColor', [238, 221, 130] / 255, 'String', 'Lead-field preparation (please wait ...)'); % , 'HorizontalAlignment', 'center'
+    %     set(opt.txtMesg, 'Visible', 'on', 'BackgroundColor', [238, 221, 130] / 255, 'String', 'Lead-field preparation (please wait ...)'); % , 'HorizontalAlignment', 'center'
     set(opt.pbYes, 'Visible', 'off')
     set(opt.pbNo, 'Visible', 'off')
     setappdata(h, 'opt', opt);
@@ -2754,56 +2892,63 @@ if recompute
     sourceModel = load(opt.cfg.EEG.sourceModelDir);
     load(opt.cfg.EEG.sensDir)
     
-    cfg = [];
-    cfg.grid = sourceModel.grid.white;
-    cfg.normalize = normalize; % normalize the leadfield (yes: removes depth bias (Q in eq. 27 of van Veen et al, 1997))
-    % cfg.vol = my_cfg.Vol; % Volume conduction head model
-    % cfg.grid.pos = my_cfg.Bnd_pnt; % Source space
-    % cfg.grid.inside = 1 : size(my_cfg.Bnd_pnt, 1);
-    %     if strcmp(opt.cfg.EEG.name, 'EEG') % ft_senstype(opt.cfg.EEG.Sens, 'eeg')
-    cfg.senstype = 'eeg';
-    cfg.elec = sens.EEG; % Sensor model
-    %     cfg.vol = vol.head; % Volume conduction head model
-    cfg.headmodel = vol.head; % Volume conduction head model
-    cfg.channel = {'all', '-Nz', '-LPA', '-RPA'}; % Should be generalised based on the different fiducial label conventions
-    EEGLF = ft_prepare_leadfield(cfg); % Leadfield
+    LeadField = [];
+    SourceModels = {'white', 'pial', 'between', 'whitePial', 'whiteBetweenPial'};
+    for j = 1 : length(SourceModels)
+        eval(['set(opt.txtMesg, ''Visible'', ''on'', ''BackgroundColor'', [238, 221, 130] / 255, ''String'', ''Lead-field preparation ... (please wait ',num2str(j),'/',num2str(length(SourceModels)),')'');']) % , 'HorizontalAlignment', 'center'
+        pause(0.001)
+        cfg = [];
+        cfg.grid = sourceModel.grid.(SourceModels{j});
+        cfg.normalize = normalize; % normalize the leadfield (yes: removes depth bias (Q in eq. 27 of van Veen et al, 1997))
+        % cfg.vol = my_cfg.Vol; % Volume conduction head model
+        % cfg.grid.pos = my_cfg.Bnd_pnt; % Source space
+        % cfg.grid.inside = 1 : size(my_cfg.Bnd_pnt, 1);
+        %     if strcmp(opt.cfg.EEG.name, 'EEG') % ft_senstype(opt.cfg.EEG.Sens, 'eeg')
+        cfg.senstype = 'eeg';
+        cfg.elec = sens.EEG; % Sensor model
+        %     cfg.vol = vol.head; % Volume conduction head model
+        cfg.headmodel = vol.head; % Volume conduction head model
+        cfg.channel = {'all', '-Nz', '-LPA', '-RPA'}; % Should be generalised based on the different fiducial label conventions
+        EEGLF = ft_prepare_leadfield(cfg); % Leadfield
+        
+        LF_cat = zeros(length(EEGLF.label), 3 * length(find(EEGLF.inside))); % Concatenated lead-field
+        c = 1;
+        for i = 1 : length(EEGLF.leadfield)
+            if ~isempty(EEGLF.leadfield{i})
+                LF_cat(:, (c - 1) * size(EEGLF.leadfield{i}, 2) + 1 : c * size(EEGLF.leadfield{i}, 2)) = EEGLF.leadfield{i};
+                c = c + 1;
+            end
+        end % for i = 1 : length(EEGLF.leadfield)
+        
+        EEGLF.LF_cat = LF_cat; % Concatenated lead-field
+        
+        %     elseif strcmp(opt.cfg.EEG.name, 'MEG') % ft_senstype(opt.cfg.EEG.Sens, 'meg')
+        cfg.senstype = 'meg';
+        cfg.grad = sens.MEG; % Sensor model
+        %     cfg.vol = vol.brain; % Volume conduction head model
+        cfg.headmodel = vol.brain; % Volume conduction head model
+        cfg.channel = {'MEG'};
+        %     end % if strcmp(opt.cfg.EEG.name, 'EEG')
+        MEGLF = ft_prepare_leadfield(cfg); % Leadfield
+        
+        LF_cat = zeros(length(MEGLF.label), 3 * length(find(MEGLF.inside))); % Concatenated lead-field
+        c = 1;
+        for i = 1 : length(MEGLF.leadfield)
+            if ~isempty(MEGLF.leadfield{i})
+                LF_cat(:, (c - 1) * size(MEGLF.leadfield{i}, 2) + 1 : c * size(MEGLF.leadfield{i}, 2)) = MEGLF.leadfield{i};
+                c = c + 1;
+            end
+        end % for i = 1 : length(MEGLF.leadfield)
+        
+        MEGLF.LF_cat = LF_cat; % Concatenated lead-field
+        
+        LF = [];
+        LF.EEG = EEGLF;
+        LF.MEG = MEGLF;
+        eval(['LeadField.(SourceModels{j}) = LF;'])
+    end % for j = 1 : length(SourceModels)
     
-    LF_cat = zeros(length(EEGLF.label), 3 * length(find(EEGLF.inside))); % Concatenated lead-field
-    c = 1;
-    for i = 1 : length(EEGLF.leadfield)
-        if ~isempty(EEGLF.leadfield{i})
-            LF_cat(:, (c - 1) * size(EEGLF.leadfield{i}, 2) + 1 : c * size(EEGLF.leadfield{i}, 2)) = EEGLF.leadfield{i};
-            c = c + 1;
-        end
-    end % for i = 1 : length(EEGLF.leadfield)
-    
-    EEGLF.LF_cat = LF_cat; % Concatenated lead-field
-    
-    %     elseif strcmp(opt.cfg.EEG.name, 'MEG') % ft_senstype(opt.cfg.EEG.Sens, 'meg')
-    cfg.senstype = 'meg';
-    cfg.grad = sens.MEG; % Sensor model
-    %     cfg.vol = vol.brain; % Volume conduction head model
-    cfg.headmodel = vol.brain; % Volume conduction head model
-    cfg.channel = {'MEG'};
-    %     end % if strcmp(opt.cfg.EEG.name, 'EEG')
-    MEGLF = ft_prepare_leadfield(cfg); % Leadfield
-    
-    LF_cat = zeros(length(MEGLF.label), 3 * length(find(MEGLF.inside))); % Concatenated lead-field
-    c = 1;
-    for i = 1 : length(MEGLF.leadfield)
-        if ~isempty(MEGLF.leadfield{i})
-            LF_cat(:, (c - 1) * size(MEGLF.leadfield{i}, 2) + 1 : c * size(MEGLF.leadfield{i}, 2)) = MEGLF.leadfield{i};
-            c = c + 1;
-        end
-    end % for i = 1 : length(MEGLF.leadfield)
-    
-    MEGLF.LF_cat = LF_cat; % Concatenated lead-field
-    
-    LF = [];
-    LF.EEGLF = EEGLF;
-    LF.MEGLF = MEGLF;
-    
-    save(opt.cfg.EEG.LFDir, 'LF');
+    save(opt.cfg.EEG.LFDir, 'LeadField');
     Recover(h, CurrentState);
 end % if recompute
 
@@ -2832,7 +2977,7 @@ if isfield(opt.cfg.EEG, 'ForwardProblem')
     opt.cfg.EEG = rmfield(opt.cfg.EEG, 'ForwardProblem');
 end
 
-set(opt.cbFPSource, 'Value', 0)
+set(opt.pmFPSource, 'Value', 1)
 set(opt.cbFPEEG, 'Value', 0)
 set(opt.cbFPMEG, 'Value', 0)
 
@@ -2857,7 +3002,10 @@ if exist(opt.cfg.EEG.FPDir, 'file')
             recompute = false; % If 'true' read & process MRI, if 'false', loads preprocessed MRI
         case 'Yes'
             recompute = true; % If 'true' read & process MRI, if 'false', loads preprocessed MRI
-            
+            if strcmp(get(opt.panelbgLOF, 'Visible'), 'on')
+                opt.LOI.name = 'white';
+                set(opt.panelbgLOF, 'SelectedObject', opt.rbWhite, 'Visible', 'off');
+            end
             panels = {'panelSegMRI', 'panelMesh', 'panelVol', 'panelSrc', 'panelSns', 'panelLF', 'panelFP', 'panelIP'};
             for i = 8 : length(panels)
                 set(opt.(panels{i}), 'ForegroundColor', 0.4*[1 1 1], 'FontWeight', 'normal');
@@ -2878,11 +3026,17 @@ if exist(opt.cfg.EEG.FPDir, 'file')
                 'cbVolEEG', 'cbVolMEG', ...
                 'cbSrcWhite', 'cbSrcPial', 'cbSrcBetween', ...
                 'cbSnsEEG', 'cbSnsMEG', ...
-                'cbFPSource', 'cbFPEEG', 'cbFPMEG', ...
+                'pmFPSource', 'cbFPEEG', 'cbFPMEG', ...
                 'cbIPDICSPowEEG', 'cbIPDICSPowMEG', 'cbIPLCMVPowEEG', 'cbIPLCMVMomEEG', 'cbIPLCMVPowMEG', 'cbIPLCMVMomMEG'};
             for i = 23 : length(checkBoxes)
-                set(opt.(checkBoxes{i}), 'Enable', 'off', 'Value', 0);
+                if  strcmp(checkBoxes{i}, 'pmFPSource')
+                    set(opt.(checkBoxes{i}), 'Enable', 'off', 'Value', 1);
+                    set(opt.txtSourceLabel, 'Enable', 'off');
+                else
+                    set(opt.(checkBoxes{i}), 'Enable', 'off', 'Value', 0);
+                end
             end % for i = 1 : length(checkBoxes)
+            
             
             plots = {'MRIhx', 'MRIhy', 'MRIhz', ...
                 'SegBrainhx', 'SegSkullhx', 'SegScalphx', 'SegWhitehx', 'SegGrayhx', 'SegCSFhx', 'SegAllhx', ...
@@ -2951,8 +3105,6 @@ if recompute
         load(opt.cfg.EEG.volDir)
         
         sourceModel = grid.white;
-        %     fig = figure;
-        % subplot(121)
         nodes = [(1 : size(sourceModel.pos, 1))' sourceModel.pos];
         sel = nchoosek(1:size(sourceModel.tri, 2), 2); % Indices of different edges of the polygone (triangle)
         edges = nan(3*size(sourceModel.tri, 1), 2); % Initialisation
@@ -2985,7 +3137,12 @@ if recompute
         set(opt.AxeFPSourceActivity, 'Visible', 'on')
         hold on
         FPSourceActivityh = ft_plot_mesh_mod(sourceModel, 'vertexcolor', 'b', 'edgecolor', 'b', 'facecolor', 'w');
+        if ~isfield(opt, 'lighth')
+            opt.lighth = light;
+        end
+        lighting gouraud; material dull
         view(opt.view)
+        drawnow
         %         if strcmp(get(opt.rotate3d, 'Enable'), 'on') %isfield(opt.cfg.EEG, 'MRIhx') || isfield(opt.cfg.EEG, 'MRIhx')
         %             %             [az, el] = view;
         %             [opt.view(1), opt.view(2)] = view;
@@ -3005,27 +3162,31 @@ if recompute
         activePatchAmp = nan(1, size(sourceModel.pos, 1)); % length(AllSourceCenterInd) ---> 1
         sourceActivity = cell(size(activePatchAmp, 1), length(time_FP)); %zeros(size(grid.pos));
         sourceActivityPow = cell(1, size(activePatchAmp, 1));
-        EEGActivity = cell(1, size(activePatchAmp, 1)); %nan(size(LF.LF_cat, 1), length(AllSourceCenterInd));
-        MEGActivity = cell(1, size(activePatchAmp, 1)); %nan(size(LF.LF_cat, 1), length(AllSourceCenterInd));
+        %         EEGActivity = cell(1, size(activePatchAmp, 1)); %nan(size(LF.LF_cat, 1), length(AllSourceCenterInd));
+        %         MEGActivity = cell(1, size(activePatchAmp, 1)); %nan(size(LF.LF_cat, 1), length(AllSourceCenterInd));
         
-        opt.forwardProblem = [];
-        opt.forwardProblem.Msc.isselected = false;
+        %         opt.forwardProblem = [];
+        %         opt.forwardProblem.Msc.isselected = false;
+        opt.isselected = false;
         setappdata(h, 'opt', opt);
-        while ~opt.forwardProblem.Msc.isselected
+        while ~opt.isselected
             h = getparent(h);
             opt = getappdata(h, 'opt');
             %     ft_plot_mesh(sourceModel, 'surfaceonly', 'yes', 'vertexcolor', 'b', 'edgecolor', 'b');
             %     hold on
+            %             pause(0.001)
             drawnow
             %     dcm_obj = datacursormode(h);
             %     set(dcm_obj, 'SnapToDataVertex', 'on', 'Enable' , 'on') % , 'DisplayStyle', 'window'
-            while ~opt.forwardProblem.Msc.isselected
+            while ~opt.isselected
+                %                 waitforbuttonpress
                 h = getparent(h);
                 opt = getappdata(h, 'opt');
                 %         waitfor(dcm_obj, 'Enable' , 'on');
                 %         while strcmp(get(dcm_obj, 'Enable'), 'on')
                 drawnow
-                if ~isempty(getCursorInfo(opt.dcm_obj)) && ~opt.forwardProblem.Msc.isselected
+                % pause(0.001)
+                if ~isempty(getCursorInfo(opt.dcm_obj)) && ~opt.isselected
                     temp = getCursorInfo(opt.dcm_obj);
                     [~, AllSourceCenterInd] = min(sum(abs(sourceModel.pos - temp.Position) , 2));
                     opt.dcm_obj.removeAllDataCursors()
@@ -3081,7 +3242,7 @@ if recompute
             %         MEGActivity = cell(1, length(AllSourceCenterInd)); %nan(size(LF.LF_cat, 1), length(AllSourceCenterInd));
             %
             %     sigma2 = my_cfg.sourceActivity.sigma2; % Maximum: 10000
-            if ~opt.forwardProblem.Msc.isselected
+            if ~opt.isselected
                 if strcmp(get(opt.sFPSigma2, 'Enable'), 'off')
                     set(opt.sFPSigma2, 'Enable', 'on')
                     set(opt.txtFPSigma2, 'Enable', 'on')
@@ -3124,11 +3285,11 @@ if recompute
                         %                 ft_plot_mesh(sourceModel, 'vertexcolor', sourceActivityPow{i}(:, ii), 'edgecolor', 'k', 'colormap', 'jet'); % , 'surfaceonly', 'yes'
                         %                 lighting gouraud; material dull
                         
-                        temp = sourceActivity{i, ii}(LF.EEGLF.inside, :)';
-                        EEGActivity{i}(:, ii) = LF.EEGLF.LF_cat * temp(:);
-                        
-                        temp = sourceActivity{i, ii}(LF.MEGLF.inside, :)';
-                        MEGActivity{i}(:, ii) = LF.MEGLF.LF_cat * temp(:);
+                        % % %                         temp = sourceActivity{i, ii}(LeadField.white.EEG.inside, :)';
+                        % % %                         EEGActivity{i}(:, ii) = LeadField.white.EEG.LF_cat * temp(:);
+                        % % %
+                        % % %                         temp = sourceActivity{i, ii}(LeadField.white.MEG.inside, :)';
+                        % % %                         MEGActivity{i}(:, ii) = LeadField.white.MEG.LF_cat * temp(:);
                         % -> representation
                         %                 subplot(122)
                         %                 %         ft_plot_topo(sens.chanpos(:, 1, :), y, val, ...)
@@ -3141,41 +3302,47 @@ if recompute
                         % ft_plot_topo3d(sens.chanpos(ismember(sens.label, LF.label), :), Field, 'colormap', 'jet')
                         %                 pause(.01)
                         % drawnow
-                    end
+                    end % for ii = 1 : length(time_FP)
                 end % for i = 1 : length(AllSourceCenterInd)
                 
-                set(opt.txtAxe, 'Visible', 'on')
-                axes(opt.AxeFPSourceActivity)
+                %                 set(opt.txtAxe, 'Visible', 'on')
+                %                 axes(opt.AxeFPSourceActivity)
                 %                 set(opt.AxeFPSourceActivity, 'Visible', 'on')
                 
                 tmp = ft_plot_mesh_mod(sourceModel, 'vertexcolor', sourceActivityPow{1}(:, 1), 'edgecolor', 'k', 'colormap', 'jet'); % , 'facecolor', 'w'
+                if ~isfield(opt, 'lighth')
+                    opt.lighth = light;
+                end
+                lighting gouraud; material dull
+                %                 drawnow
+                % pause(0.001)
                 if isfield(opt.cfg.EEG, 'FPSourceActivityh')
-                    delete(opt.cfg.EEG.FPSourceActivityh)
+                    %                     delete(opt.cfg.EEG.FPSourceActivityh)
                 end
                 opt.cfg.EEG.FPSourceActivityh = tmp;
-                delete(FPSourceActivityh)
-                pause(0.001)
+                %                 delete(FPSourceActivityh)
+                %                 pause(0.001)
                 %                 if strcmp(get(opt.sFPSigma2, 'Visible'), 'off')
                 %                     set(opt.sFPSigma2, 'Visible', 'on')
                 %                     set(opt.txtFPSigma2, 'Visible', 'on')
                 %                     set(opt.pbFPIsSel, 'Visible', 'on')
                 %                 end
                 %     forwardProblem = [];
-                opt.forwardProblem.maxMom = maxMom;
-                opt.forwardProblem.maxPow = maxPow;
+                % % %                 opt.forwardProblem.maxMom = maxMom;
+                % % %                 opt.forwardProblem.maxPow = maxPow;
                 opt.forwardProblem.sourceModel = sourceModel;
-                opt.forwardProblem.sourceActivity = sourceActivity;
-                opt.forwardProblem.sourceActivityWidth = sigma2;
-                opt.forwardProblem.sourceActivityPow = sourceActivityPow;
-                opt.forwardProblem.EEGActivity = EEGActivity;
-                opt.forwardProblem.MEGActivity = MEGActivity;
-                opt.forwardProblem.activePatchAmp = activePatchAmp;
+                % % %                 opt.forwardProblem.sourceActivity = sourceActivity;
+                % % %                 opt.forwardProblem.sourceActivityWidth = sigma2;
+                % % %                 opt.forwardProblem.sourceActivityPow = sourceActivityPow;
+                % % %                 opt.forwardProblem.EEGActivity = EEGActivity;
+                % % %                 opt.forwardProblem.MEGActivity = MEGActivity;
+                % % %                 opt.forwardProblem.activePatchAmp = activePatchAmp;
                 opt.forwardProblem.Msc.segments = segments;
                 opt.forwardProblem.Msc.AllSourceCenterInd = AllSourceCenterInd;
                 opt.forwardProblem.Msc.nodes = nodes;
-                opt.forwardProblem.Msc.time_FP = time_FP;
-                opt.forwardProblem.Msc.Oscil_FP = Oscil_FP;
-                opt.forwardProblem.Msc.LF = LF;
+                % % %                 opt.forwardProblem.Msc.time_FP = time_FP;
+                % % %                 opt.forwardProblem.Msc.Oscil_FP = Oscil_FP;
+                % % %                 opt.forwardProblem.Msc.LF = LF;
                 %                 [opt.view(1), opt.view(2)] = view;
                 %                 %         opt.forwardProblem = forwardProblem;
                 %                 setappdata(h, 'opt', opt);
@@ -3186,6 +3353,7 @@ if recompute
         end % while ~opt.forwardProblem.Msc.isselected
         h = getparent(h);
         opt = getappdata(h, 'opt');
+        opt = rmfield(opt, 'isselected');
         set(opt.sFPSigma2, 'Visible', 'off', 'Enable', 'off')
         set(opt.txtFPSigma2, 'Visible', 'off', 'Enable', 'off')
         set(opt.pbFPIsSel, 'Visible', 'off', 'Enable', 'off')
@@ -3198,18 +3366,140 @@ if recompute
         set(opt.txtAxe, 'Visible', 'off')
         pause(.001)
         
-        forwardProblem = opt.forwardProblem;
+        SourceModels = {'white', 'pial', 'between', 'whitePial', 'whiteBetweenPial'};
+        forwardProblem = [];
+        temp = get(opt.panelFP, 'Position');
+        set(opt.panelMessage, 'Visible', 'on', 'Position', [0.01, temp(2), temp(1)-.02, temp(4)], 'BackgroundColor', [238, 221, 130] / 255, 'ShadowColor', [238, 221, 130] / 255, 'HighlightColor', [238, 221, 130] / 255);
+        for j = 1 : length(SourceModels)
+            eval(['set(opt.txtMesg, ''Visible'', ''on'', ''BackgroundColor'', [238, 221, 130] / 255, ''String'', ''Forward problem solution ... (please wait ',num2str(j),'/',num2str(length(SourceModels)),')'');']) % , 'HorizontalAlignment', 'center'
+            drawnow
+            sourceModel = grid.(SourceModels{j});
+            if ismember(SourceModels{j}, {'white', 'pial', 'between'})
+                nodes = [(1 : size(sourceModel.pos, 1))' sourceModel.pos];
+                sel = nchoosek(1 : size(sourceModel.tri, 2), 2); % Indices of different edges of the polygone (triangle)
+                edges = nan(3 * size(sourceModel.tri, 1), 2); % Initialisation
+                for i = 1 : size(sel, 1) % All edges
+                    edges(size(sourceModel.tri, 1)*(i - 1) + 1 : size(sourceModel.tri, 1)*i, :) = sourceModel.tri(:, sel(i, :));
+                end % for i = 1 : size(sel, 1)
+                segments = [(1 : size(edges, 1))' edges];
+                %         Freq_FP = 10;
+                %         time_FP = linspace(0, 1/Freq_FP, 10); % Time vector specific for fprward problem 1/Freq_FP
+                %         Oscil_FP =  abs(sin(2 * pi * Freq_FP * time_FP)); % ones(1, length(time_FP));%
+                %         % patchWidth = 100; % # of neighbours
+                %         % activePatchInd = nan(length(AllSourceCenterInd), patchWidth);
+                %         % activePatchAmp = nan(length(AllSourceCenterInd), patchWidth);
+                activePatchAmp = nan(length(AllSourceCenterInd), size(sourceModel.pos, 1));
+                sourceActivity = cell(length(AllSourceCenterInd), 1); %zeros(size(grid.pos)); length(time_FP)
+                sourceActivityPow = cell(1, length(AllSourceCenterInd));
+                EEGActivity = cell(1, size(activePatchAmp, 1)); %nan(size(LF.LF_cat, 1), length(AllSourceCenterInd));
+                MEGActivity = cell(1, size(activePatchAmp, 1)); %nan(size(LF.LF_cat, 1), length(AllSourceCenterInd));
+                sigma2 = get(opt.sFPSigma2, 'Value');
+                for i = 1 : length(AllSourceCenterInd)
+                    [patchCenterAllDist, ~] = dijkstra(nodes, segments, AllSourceCenterInd(i));
+                    activePatchAmp(i, :) = exp(-((patchCenterAllDist.^2) / (2 * sigma2) ));
+                    
+                    sourceActivityPow{i} = nan(size(activePatchAmp, 2), 1); % length(time_FP)
+                    ii = 1 ; % Time counter
+                    sourceActivity{i, ii} = zeros(size(sourceModel.pos));
+                    if strcmp(SourceModels{j}, 'white')
+                        dipMom = rand(1, 3);
+                    else
+                        dipMom = forwardProblem.white.dipMom;
+                    end
+                    maxMom = repmat(activePatchAmp(i, :)', 1, 3) .* repmat(dipMom./norm(dipMom), size(activePatchAmp(i, :), 2), 1);
+                    maxPow = sqrt(sum(maxMom.^ 2, 2));
+                    sourceActivity{i, ii} = maxMom;
+                    sourceActivityPow{i}(:, ii) = sqrt(sum(sourceActivity{i, ii}.^ 2, 2));
+                    LF = LeadField.(SourceModels{j});
+                    temp = sourceActivity{i, ii}(LF.EEG.inside, :)';
+                    EEGActivity{i}(:, ii) = LF.EEG.LF_cat * temp(:);
+                    temp = sourceActivity{i, ii}(LF.MEG.inside, :)';
+                    MEGActivity{i}(:, ii) = LF.MEG.LF_cat * temp(:);
+                end % for i = 1 : length(AllSourceCenterInd)
+                
+                forwardProblem.(SourceModels{j}) = [];
+                forwardProblem.(SourceModels{j}).maxMom = maxMom;
+                forwardProblem.(SourceModels{j}).dipMom = dipMom;
+                forwardProblem.(SourceModels{j}).maxPow = maxPow;
+                forwardProblem.(SourceModels{j}).sourceModel = sourceModel;
+                forwardProblem.(SourceModels{j}).sourceActivity = sourceActivity;
+                forwardProblem.(SourceModels{j}).sourceActivityWidth = sigma2;
+                forwardProblem.(SourceModels{j}).sourceActivityPow = sourceActivityPow;
+                forwardProblem.(SourceModels{j}).EEGActivity = EEGActivity;
+                forwardProblem.(SourceModels{j}).MEGActivity = MEGActivity;
+                forwardProblem.(SourceModels{j}).activePatchAmp = activePatchAmp;
+                forwardProblem.(SourceModels{j}).Msc.segments = segments;
+                forwardProblem.(SourceModels{j}).Msc.AllSourceCenterInd = AllSourceCenterInd;
+                %             forwardProblem.(SourceModels{j}).Msc.nodes = nodes;
+                %                 forwardProblem.(SourceModels{j}).Msc.time_FP = time_FP;
+                %                 forwardProblem.(SourceModels{j}).Msc.Oscil_FP = Oscil_FP;
+                forwardProblem.(SourceModels{j}).Msc.LeadField = LeadField.(SourceModels{j});
+            elseif strcmp(SourceModels{j}, 'whitePial')
+                forwardProblem.(SourceModels{j}) = [];
+                forwardProblem.(SourceModels{j}).maxMom = [forwardProblem.white.maxMom; forwardProblem.pial.maxMom];
+                forwardProblem.(SourceModels{j}).dipMom = dipMom;
+                forwardProblem.(SourceModels{j}).maxPow = [forwardProblem.white.maxPow; forwardProblem.pial.maxPow];
+                forwardProblem.(SourceModels{j}).sourceModel = sourceModel;
+                %             for i = 1 : length(forwardProblem.white.Msc.time_FP)
+                i = 1;
+                forwardProblem.(SourceModels{j}).sourceActivity{1, i} = [forwardProblem.white.sourceActivity{1, i}; forwardProblem.pial.sourceActivity{1, i}];
+                temp2 = forwardProblem.(SourceModels{j}).sourceActivity{1, i}(LeadField.(SourceModels{j}).EEG.inside, :)';
+                forwardProblem.(SourceModels{j}).EEGActivity{1}(:, i) = LeadField.(SourceModels{j}).EEG.LF_cat * temp2(:);
+                temp2 = forwardProblem.(SourceModels{j}).sourceActivity{1, i}(LeadField.(SourceModels{j}).MEG.inside, :)';
+                forwardProblem.(SourceModels{j}).MEGActivity{1}(:, i) = LeadField.(SourceModels{j}).MEG.LF_cat * temp2(:);
+                %             end
+                forwardProblem.(SourceModels{j}).sourceActivityWidth = sigma2;
+                forwardProblem.(SourceModels{j}).sourceActivityPow{1} = [forwardProblem.white.sourceActivityPow{1}; forwardProblem.pial.sourceActivityPow{1}];
+                %             forwardProblem.(SourceModels{j}).Field = [forwardProblem.white.Field{1}; forwardProblem.pial.Field{1}];
+                forwardProblem.(SourceModels{j}).activePatchAmp = [forwardProblem.white.activePatchAmp forwardProblem.pial.activePatchAmp];
+                forwardProblem.(SourceModels{j}).Msc.segments = [forwardProblem.white.Msc.segments; forwardProblem.pial.Msc.segments + repmat([size(forwardProblem.white.Msc.segments, 1) size(forwardProblem.white.sourceModel.pos, 1)*ones(1, 2)], size(forwardProblem.pial.Msc.segments, 1), 1)];
+                forwardProblem.(SourceModels{j}).Msc.AllSourceCenterInd = [forwardProblem.white.Msc.AllSourceCenterInd forwardProblem.pial.Msc.AllSourceCenterInd + size(forwardProblem.white.sourceModel.pos, 1)];
+                %             forwardProblem.(SourceModels{j}).Msc.nodes = nodes;
+                %             forwardProblem.(SourceModels{j}).Msc.time_FP = time_FP;
+                %             forwardProblem.(SourceModels{j}).Msc.Oscil_FP = Oscil_FP;
+                forwardProblem.(SourceModels{j}).Msc.LeadField = LeadField.(SourceModels{j});
+            elseif strcmp(SourceModels{j}, 'whiteBetweenPial')
+                forwardProblem.(SourceModels{j}) = [];
+                forwardProblem.(SourceModels{j}).maxMom = [forwardProblem.white.maxMom; forwardProblem.between.maxMom; forwardProblem.pial.maxMom];
+                forwardProblem.(SourceModels{j}).dipMom = dipMom;
+                forwardProblem.(SourceModels{j}).maxPow = [forwardProblem.white.maxPow; forwardProblem.between.maxPow; forwardProblem.pial.maxPow];
+                forwardProblem.(SourceModels{j}).sourceModel = sourceModel;
+                %             for i = 1 : length(forwardProblem.white.Msc.time_FP)
+                i = 1;
+                forwardProblem.(SourceModels{j}).sourceActivity{1, i} = [forwardProblem.white.sourceActivity{1, i}; forwardProblem.between.sourceActivity{1, i}; forwardProblem.pial.sourceActivity{1, i}];
+                temp2 = forwardProblem.(SourceModels{j}).sourceActivity{1, i}(LeadField.(SourceModels{j}).EEG.inside, :)';
+                forwardProblem.(SourceModels{j}).EEGActivity{1}(:, i) = LeadField.(SourceModels{j}).EEG.LF_cat * temp2(:);
+                temp2 = forwardProblem.(SourceModels{j}).sourceActivity{1, i}(LeadField.(SourceModels{j}).MEG.inside, :)';
+                forwardProblem.(SourceModels{j}).MEGActivity{1}(:, i) = LeadField.(SourceModels{j}).MEG.LF_cat * temp2(:);
+                %             end
+                forwardProblem.(SourceModels{j}).sourceActivityWidth = sigma2;
+                forwardProblem.(SourceModels{j}).sourceActivityPow{1} = [forwardProblem.white.sourceActivityPow{1}; forwardProblem.between.sourceActivityPow{1}; forwardProblem.pial.sourceActivityPow{1}];
+                %             forwardProblem.(SourceModels{j}).Field = [forwardProblem.white.Field{1}; forwardProblem.pial.Field{1}];
+                forwardProblem.(SourceModels{j}).activePatchAmp = [forwardProblem.white.activePatchAmp forwardProblem.between.activePatchAmp forwardProblem.pial.activePatchAmp];
+                forwardProblem.(SourceModels{j}).Msc.segments = [forwardProblem.white.Msc.segments; ...
+                    forwardProblem.between.Msc.segments + repmat([size(forwardProblem.white.Msc.segments, 1) size(forwardProblem.white.sourceModel.pos, 1)*ones(1, 2)], size(forwardProblem.between.Msc.segments, 1), 1); ...
+                    forwardProblem.pial.Msc.segments + repmat([size(forwardProblem.white.Msc.segments, 1)+size(forwardProblem.between.Msc.segments, 1) (size(forwardProblem.white.sourceModel.pos, 1) + size(forwardProblem.between.sourceModel.pos, 1))*ones(1, 2)], size(forwardProblem.pial.Msc.segments, 1), 1)];
+                forwardProblem.(SourceModels{j}).Msc.AllSourceCenterInd = [forwardProblem.white.Msc.AllSourceCenterInd forwardProblem.between.Msc.AllSourceCenterInd+size(forwardProblem.white.sourceModel.pos, 1) forwardProblem.pial.Msc.AllSourceCenterInd+size(forwardProblem.white.sourceModel.pos, 1)+size(forwardProblem.between.sourceModel.pos, 1)];
+                %             forwardProblem.(SourceModels{j}).Msc.nodes = nodes;
+                %             forwardProblem.(SourceModels{j}).Msc.time_FP = time_FP;
+                %             forwardProblem.(SourceModels{j}).Msc.Oscil_FP = Oscil_FP;
+                forwardProblem.(SourceModels{j}).Msc.LeadField = LeadField.(SourceModels{j});
+            end % if ismember(SourceModels{j}, {'white', 'pial', 'between'})
+        end % for j = 1 : length(SourceModels)
+        
         forwardProblem.sens = sens;
         save(opt.cfg.EEG.FPDir, 'forwardProblem');
+        set(opt.panelMessage, 'Visible', 'off')
         Recover(h, CurrentState);
     end % if strcmp(opt.choice, 'No')
 end % if recompute
 % opt.forwardProblem = forwardProblem;
 set(opt.panelMessage, 'Visible', 'off')
 set(opt.pbFP, 'BackgroundColor', [152 251 152] / 255)
-set(opt.cbFPSource, 'Enable', 'on')
-set(opt.cbFPEEG, 'Enable', 'on')
-set(opt.cbFPMEG, 'Enable', 'on')
+set(opt.pmFPSource, 'Enable', 'on')
+set(opt.txtSourceLabel, 'Enable', 'on');
+% set(opt.cbFPEEG, 'Enable', 'on')
+% set(opt.cbFPMEG, 'Enable', 'on')
 % set(opt.AxeFPSourceActivity, 'Visible', 'off')
 if exist('flag', 'var') && flag
     set(opt.sEEGSourceUp, 'Visible', 'on')
@@ -3242,23 +3532,24 @@ for i = 1 : length(opt.forwardProblem.Msc.AllSourceCenterInd)
     %         activePatchAmp(i, :) = exp(-(((sourceModel.pos(activePatchInd(i, :), 1) - sourceModel.pos(AllSourceCenterInd(i), 1)).^2 / (2 * sigma2)) + ...
     %             ((sourceModel.pos(activePatchInd(i, :), 2) - sourceModel.pos(AllSourceCenterInd(i), 2)).^2 / (2 * sigma2)) + ...
     %             ((sourceModel.pos(activePatchInd(i, :), 3) - sourceModel.pos(AllSourceCenterInd(i), 3)).^2 / (2 * sigma2))));
-    opt.forwardProblem.activePatchAmp(i, :) = exp(-((patchCenterAllDist.^2) / (2 * sigma2) ));
+    %     opt.forwardProblem.activePatchAmp(i, :) = exp(-((patchCenterAllDist.^2) / (2 * sigma2) ));
+    activePatchAmp(i, :) = exp(-((patchCenterAllDist.^2) / (2 * sigma2) ));
     
-    opt.forwardProblem.sourceActivityPow{i} = nan(size(opt.forwardProblem.activePatchAmp, 2), length(opt.forwardProblem.Msc.time_FP));
+    sourceActivityPow{i} = nan(size(activePatchAmp, 2), 1); % length(opt.forwardProblem.Msc.time_FP)
     for ii = 1 %: length(time_FP)
         
         
-        opt.forwardProblem.sourceActivity{i, ii} = zeros(size(opt.forwardProblem.sourceModel.pos));
+        sourceActivity{i, ii} = zeros(size(opt.forwardProblem.sourceModel.pos));
         %             for j = 1 : size(activePatchAmp, 2)
         %                 temp = rand(1, 3);
         %                 %             opt.forwardProblem.sourceActivity{i, ii}(activePatchInd(i, j), :) = Oscil_FP(ii) * activePatchAmp(i, j) * temp./norm(temp);
         %                 opt.forwardProblem.sourceActivity{i, ii}(j, :) = Oscil_FP(ii) * activePatchAmp(i, j) * temp./norm(temp);
         %             end
         temp = rand(1, 3);
-        opt.forwardProblem.maxMom = repmat(opt.forwardProblem.activePatchAmp(i, :)', 1, 3) .* repmat(temp./norm(temp), size(opt.forwardProblem.activePatchAmp(i, :), 2), 1);
-        opt.forwardProblem.maxPow = sqrt(sum(opt.forwardProblem.maxMom.^ 2, 2));
-        opt.forwardProblem.sourceActivity{i, ii} = opt.forwardProblem.Msc.Oscil_FP(ii) * opt.forwardProblem.maxMom;
-        opt.forwardProblem.sourceActivityPow{i}(:, ii) = sqrt(sum(opt.forwardProblem.sourceActivity{i, ii}.^ 2, 2));
+        maxMom = repmat(activePatchAmp(i, :)', 1, 3) .* repmat(temp./norm(temp), size(activePatchAmp(i, :), 2), 1);
+        maxPow = sqrt(sum(maxMom.^ 2, 2));
+        sourceActivity{i, ii} = maxMom; % opt.forwardProblem.Msc.Oscil_FP(ii) *
+        sourceActivityPow{i}(:, ii) = sqrt(sum(sourceActivity{i, ii}.^ 2, 2));
         % -> representation
         %                 subplot(121)
         % figure
@@ -3266,11 +3557,11 @@ for i = 1 : length(opt.forwardProblem.Msc.AllSourceCenterInd)
         %                 ft_plot_mesh(sourceModel, 'vertexcolor', opt.forwardProblem.sourceActivityPow{i}(:, ii), 'edgecolor', 'k', 'colormap', 'jet'); % , 'surfaceonly', 'yes'
         %                 lighting gouraud; material dull
         
-        temp = opt.forwardProblem.sourceActivity{i, ii}(opt.forwardProblem.Msc.LF.EEGLF.inside, :)';
-        opt.forwardProblem.EEGActivity{i}(:, ii) = opt.forwardProblem.Msc.LF.EEGLF.LF_cat * temp(:);
-        
-        temp = opt.forwardProblem.sourceActivity{i, ii}(opt.forwardProblem.Msc.LF.MEGLF.inside, :)';
-        opt.forwardProblem.MEGActivity{i}(:, ii) = opt.forwardProblem.Msc.LF.MEGLF.LF_cat * temp(:);
+        %         temp = sourceActivity{i, ii}(opt.forwardProblem.Msc.LF.EEGLF.inside, :)';
+        %         opt.forwardProblem.EEGActivity{i}(:, ii) = opt.forwardProblem.Msc.LF.EEGLF.LF_cat * temp(:);
+        %
+        %         temp = sourceActivity{i, ii}(opt.forwardProblem.Msc.LF.MEGLF.inside, :)';
+        %         opt.forwardProblem.MEGActivity{i}(:, ii) = opt.forwardProblem.Msc.LF.MEGLF.LF_cat * temp(:);
         % -> representation
         %                 subplot(122)
         %                 %         ft_plot_topo(sens.chanpos(:, 1, :), y, val, ...)
@@ -3288,10 +3579,14 @@ end % for i = 1 : length(AllSourceCenterInd)
 
 axes(opt.AxeFPSourceActivity)
 
-tmp = ft_plot_mesh_mod(opt.forwardProblem.sourceModel, 'vertexcolor', opt.forwardProblem.sourceActivityPow{1}(:, 1), 'edgecolor', 'k', 'colormap', 'jet'); % , 'facecolor', 'w'
-delete(opt.cfg.EEG.FPSourceActivityh)
+tmp = ft_plot_mesh_mod(opt.forwardProblem.sourceModel, 'vertexcolor', sourceActivityPow{1}(:, 1), 'edgecolor', 'k', 'colormap', 'jet'); % , 'facecolor', 'w'
+if ~isfield(opt, 'lighth')
+    opt.lighth = light;
+end
+lighting gouraud; material dull
+% delete(opt.cfg.EEG.FPSourceActivityh)
 opt.cfg.EEG.FPSourceActivityh = tmp;
-opt.forwardProblem.sourceActivityWidth = sigma2;
+% opt.forwardProblem.sourceActivityWidth = sigma2;
 
 
 % S2 = round(get(opt.sEEGSourceLeft, 'Value'));
@@ -3351,7 +3646,7 @@ setappdata(h, 'opt', opt);
 function FPIsSel(h, eventdata)
 h = getparent(h);
 opt = getappdata(h, 'opt');
-opt.forwardProblem.Msc.isselected = true;
+opt.isselected = true; % Accept button is pressed
 axes(opt.AxeEEGSource)
 rotate3d on
 set(opt.rotate3d, 'Enable', 'on')
@@ -3360,7 +3655,7 @@ setappdata(h, 'opt', opt);
 function ForwardProblem_checkBox(h, eventdata)
 h = getparent(h);
 opt = getappdata(h, 'opt');
-if get(opt.cbFPSource, 'Value') == 0 && get(opt.cbFPEEG, 'Value') == 0 && get(opt.cbFPMEG, 'Value') == 0
+if get(opt.pmFPSource, 'Value') == 1 && get(opt.cbFPEEG, 'Value') == 0 && get(opt.cbFPMEG, 'Value') == 0
     
     allHandle = {'FPSrch', 'FPEEGh', 'FPMEGh'}; % Delete previous geometrical elements
     temp = allHandle{isfield(opt.cfg.EEG, allHandle)};
@@ -3419,31 +3714,24 @@ else
     %     end
     
     axes(opt.AxeEEGSource)
-    hold on
+    %     hold on
     
     if strcmp(get(opt.rotate3d, 'Enable'), 'on') %isfield(opt.cfg.EEG, 'MRIhx') || isfield(opt.cfg.EEG, 'MRIhx')
         %         [az, el] = view;
         [opt.view(1), opt.view(2)] = view;
     end % if isfield(opt.cfg.EEG, 'MRIhx')
     
-    if get(opt.cbFPSource, 'Value') == 1 && ~isfield(opt.cfg.EEG, 'FPSrch')
-        valNorm = opt.cfg.EEG.ForwardProblem.sourceActivityPow{1}(:, 1);
+    if get(opt.cbFPEEG, 'Value') == 1 && ~isfield(opt.cfg.EEG, 'FPEEGh')
+        valNorm = opt.cfg.EEG.ForwardProblem.(opt.SourceModelSel).EEGActivity{1}(:, 1);
         valNorm = (valNorm - min(valNorm(:))) / (max(valNorm(:)) - min(valNorm(:))); % Normalizing the values
-        opt.cfg.EEG.FPSrch = ft_plot_mesh_mod(opt.cfg.EEG.ForwardProblem.sourceModel, 'vertexcolor', valNorm, 'edgecolor', 'none', 'colormap', 'jet');
-    elseif get(opt.cbFPSource, 'Value') == 0 && isfield(opt.cfg.EEG, 'FPSrch')
-        delete(opt.cfg.EEG.FPSrch)
-        opt.cfg.EEG = rmfield(opt.cfg.EEG, 'FPSrch');
-    elseif get(opt.cbFPEEG, 'Value') == 1 && ~isfield(opt.cfg.EEG, 'FPEEGh')
-        valNorm = opt.cfg.EEG.ForwardProblem.EEGActivity{1}(:, 1);
-        valNorm = (valNorm - min(valNorm(:))) / (max(valNorm(:)) - min(valNorm(:))); % Normalizing the values
-        opt.cfg.EEG.FPEEGh = ft_plot_topo3d_mod(opt.cfg.EEG.ForwardProblem.sens.EEG.chanpos(ismember(opt.cfg.EEG.ForwardProblem.sens.EEG.label, opt.cfg.EEG.ForwardProblem.Msc.LF.EEGLF.label), :), valNorm, 'colormap', 'jet');
+        opt.cfg.EEG.FPEEGh = ft_plot_topo3d_mod(opt.cfg.EEG.ForwardProblem.sens.EEG.chanpos(ismember(opt.cfg.EEG.ForwardProblem.sens.EEG.label, opt.cfg.EEG.ForwardProblem.(opt.SourceModelSel).Msc.LeadField.EEG.label), :), valNorm, 'colormap', 'jet', 'refine', 3);
     elseif get(opt.cbFPEEG, 'Value') == 0 && isfield(opt.cfg.EEG, 'FPEEGh')
         delete(opt.cfg.EEG.FPEEGh)
         opt.cfg.EEG = rmfield(opt.cfg.EEG, 'FPEEGh');
     elseif get(opt.cbFPMEG, 'Value') == 1 && ~isfield(opt.cfg.EEG, 'FPMEGh')
-        valNorm = opt.cfg.EEG.ForwardProblem.MEGActivity{1}(:, 1);
+        valNorm = opt.cfg.EEG.ForwardProblem.(opt.SourceModelSel).MEGActivity{1}(:, 1);
         valNorm = (valNorm - min(valNorm(:))) / (max(valNorm(:)) - min(valNorm(:))); % Normalizing the values
-        opt.cfg.EEG.FPMEGh = ft_plot_topo3d_mod(opt.cfg.EEG.ForwardProblem.sens.MEG.chanpos(ismember(opt.cfg.EEG.ForwardProblem.sens.MEG.label, opt.cfg.EEG.ForwardProblem.Msc.LF.MEGLF.label), :), valNorm, 'colormap', 'jet');
+        opt.cfg.EEG.FPMEGh = ft_plot_topo3d_mod(opt.cfg.EEG.ForwardProblem.sens.MEG.chanpos(ismember(opt.cfg.EEG.ForwardProblem.sens.MEG.label, opt.cfg.EEG.ForwardProblem.(opt.SourceModelSel).Msc.LeadField.MEG.label), :), valNorm, 'colormap', 'jet', 'refine', 3);
     elseif get(opt.cbFPMEG, 'Value') == 0 && isfield(opt.cfg.EEG, 'FPMEGh')
         delete(opt.cfg.EEG.FPMEGh)
         opt.cfg.EEG = rmfield(opt.cfg.EEG, 'FPMEGh');
@@ -3486,6 +3774,495 @@ set(opt.rotate3d, 'Enable', 'off')
 set(opt.dcm_obj, 'Enable' , 'on')
 setappdata(h, 'opt', opt);
 
+function ForwardProblem_popupmenu(h, eventdata)
+h = getparent(h);
+opt = getappdata(h, 'opt');
+
+if ~isfield(opt.cfg.EEG, 'ForwardProblem') % One of the checkboxes in panel has been already selected
+    load(opt.cfg.EEG.FPDir);
+    opt.cfg.EEG.ForwardProblem = forwardProblem;
+    clear forwardProblem
+end % if isfield(opt.cfg.EEG, 'Mesh')
+
+axes(opt.AxeEEGSource)
+if strcmp(get(opt.rotate3d, 'Enable'), 'on') %isfield(opt.cfg.EEG, 'MRIhx') || isfield(opt.cfg.EEG, 'MRIhx')
+    %         [az, el] = view;
+    [opt.view(1), opt.view(2)] = view;
+end % if isfield(opt.cfg.EEG, 'MRIhx')
+
+SourceModels = {'white', 'between', 'pial', 'whitePial', 'whiteBetweenPial'};
+allHandleIP = {'DICSPowEEGh', 'DICSPowMEGh', 'LCMVPowEEGh', 'LCMVMomEEGh', 'LCMVPowMEGh', 'LCMVMomMEGh'};
+if get(opt.pmFPSource, 'Value') == 2  %&& ~isfield(opt.cfg.EEG, 'FPSrch')
+    if strcmp(get(opt.panelbgLOF, 'Visible'), 'on')
+        opt.LOI.name = 'white';
+        set(opt.panelbgLOF, 'SelectedObject', opt.rbWhite, 'Visible', 'off');
+    end
+    opt.SourceModelSel = SourceModels{1};
+    valNorm = opt.cfg.EEG.ForwardProblem.(opt.SourceModelSel).sourceActivityPow{1}(:, 1);
+    valNorm = (valNorm - min(valNorm(:))) / (max(valNorm(:)) - min(valNorm(:))); % Normalizing the values
+    temp = ft_plot_mesh_mod(opt.cfg.EEG.ForwardProblem.(opt.SourceModelSel).sourceModel, 'vertexcolor', valNorm, 'edgecolor', 'none', 'colormap', 'jet');
+    if ~isfield(opt, 'lighth')
+        opt.lighth = light;
+    end
+    lighting gouraud; material dull
+    if isfield(opt.cfg.EEG, 'FPSrch')
+        delete(opt.cfg.EEG.FPSrch)
+    end % if isfield(opt.cfg.EEG, 'FPSrch')
+    opt.cfg.EEG.FPSrch = temp;
+    
+    if strcmp(get(opt.cbFPEEG, 'Enable'), 'off') || strcmp(get(opt.cbFPMEG, 'Enable'), 'off')
+        set(opt.cbFPEEG, 'Enable', 'on')
+        set(opt.cbFPMEG, 'Enable', 'on')
+    end % if strcmp(get(opt.cbFPEEG, 'Enable'), 'off') || strcmp(get(opt.cbFPMEG, 'Enable'), 'off')
+    if all(get(opt.pbIP, 'BackgroundColor') == [152 251 152] / 255) && strcmp(get(opt.cbIPDICSPowEEG, 'Enable'), 'off') % If IP push button is green
+        set(opt.cbIPDICSPowEEG, 'Enable', 'on')
+        set(opt.cbIPDICSPowMEG, 'Enable', 'on')
+        set(opt.cbIPLCMVPowEEG, 'Enable', 'on')
+        set(opt.cbIPLCMVMomEEG, 'Enable', 'on')
+        set(opt.cbIPLCMVPowMEG, 'Enable', 'on')
+        set(opt.cbIPLCMVMomMEG, 'Enable', 'on')
+        set(opt.txtLCMVLabel, 'Enable', 'on')
+        set(opt.txtDICSLabel, 'Enable', 'on')
+        set(opt.txtEEGLabel, 'Enable', 'on')
+        set(opt.txtMEGLabel, 'Enable', 'on')
+    end % if all(get(opt.pbIP, 'BackgroundColor') == [152 251 152] / 255)
+    
+    if any(isfield(opt.cfg.EEG, allHandleIP))
+        temp = allHandleIP{isfield(opt.cfg.EEG, allHandleIP)};
+        delete(opt.cfg.EEG.(temp))
+        opt.cfg.EEG = rmfield(opt.cfg.EEG, temp);
+        temp = ['cbIP' temp(1 : end - 1)]; % Remove h letter
+        set(opt.(temp), 'Value', 0)
+    end % if any(isfield(opt.cfg.EEG, allHandleIP))
+    
+    %     set(opt.cbFPEEG, 'Enable', 'on', 'Value', 0)
+    if get(opt.cbFPEEG, 'Value') == 1
+        valNorm = opt.cfg.EEG.ForwardProblem.(opt.SourceModelSel).EEGActivity{1}(:, 1);
+        valNorm = (valNorm - min(valNorm(:))) / (max(valNorm(:)) - min(valNorm(:))); % Normalizing the values
+        temp = ft_plot_topo3d_mod(opt.cfg.EEG.ForwardProblem.sens.EEG.chanpos(ismember(opt.cfg.EEG.ForwardProblem.sens.EEG.label, opt.cfg.EEG.ForwardProblem.(opt.SourceModelSel).Msc.LeadField.EEG.label), :), valNorm, 'colormap', 'jet', 'refine', 3);
+        if isfield(opt.cfg.EEG, 'FPEEGh')
+            delete(opt.cfg.EEG.FPEEGh)
+            %         opt.cfg.EEG = rmfield(opt.cfg.EEG, 'FPEEGh');
+        end
+        opt.cfg.EEG.FPEEGh = temp;
+    end % if get(opt.cbFPEEG, 'Value') == 1
+    %     set(opt.cbFPMEG, 'Enable', 'on', 'Value', 0)
+    if get(opt.cbFPMEG, 'Value') == 1
+        valNorm = opt.cfg.EEG.ForwardProblem.(opt.SourceModelSel).MEGActivity{1}(:, 1);
+        valNorm = (valNorm - min(valNorm(:))) / (max(valNorm(:)) - min(valNorm(:))); % Normalizing the values
+        temp = ft_plot_topo3d_mod(opt.cfg.EEG.ForwardProblem.sens.MEG.chanpos(ismember(opt.cfg.EEG.ForwardProblem.sens.MEG.label, opt.cfg.EEG.ForwardProblem.(opt.SourceModelSel).Msc.LeadField.MEG.label), :), valNorm, 'colormap', 'jet', 'refine', 3);
+        if isfield(opt.cfg.EEG, 'FPMEGh')
+            delete(opt.cfg.EEG.FPMEGh)
+            %         opt.cfg.EEG = rmfield(opt.cfg.EEG, 'FPMEGh');
+        end
+        opt.cfg.EEG.FPMEGh = temp;
+    end % if get(opt.cbFPEEG, 'Value') == 1
+elseif get(opt.pmFPSource, 'Value') == 3 %&& ~isfield(opt.cfg.EEG, 'FPSrch')
+    if strcmp(get(opt.panelbgLOF, 'Visible'), 'on')
+        opt.LOI.name = 'white';
+        set(opt.panelbgLOF, 'SelectedObject', opt.rbWhite, 'Visible', 'off');
+    end
+    opt.SourceModelSel = SourceModels{2};
+    valNorm = opt.cfg.EEG.ForwardProblem.(opt.SourceModelSel).sourceActivityPow{1}(:, 1);
+    valNorm = (valNorm - min(valNorm(:))) / (max(valNorm(:)) - min(valNorm(:))); % Normalizing the values
+    temp = ft_plot_mesh_mod(opt.cfg.EEG.ForwardProblem.(opt.SourceModelSel).sourceModel, 'vertexcolor', valNorm, 'edgecolor', 'none', 'colormap', 'jet');
+    if ~isfield(opt, 'lighth')
+        opt.lighth = light;
+    end
+    lighting gouraud; material dull
+    if isfield(opt.cfg.EEG, 'FPSrch')
+        delete(opt.cfg.EEG.FPSrch)
+    end % if isfield(opt.cfg.EEG, 'FPSrch')
+    opt.cfg.EEG.FPSrch = temp;
+    
+    if strcmp(get(opt.cbFPEEG, 'Enable'), 'off') || strcmp(get(opt.cbFPMEG, 'Enable'), 'off')
+        set(opt.cbFPEEG, 'Enable', 'on')
+        set(opt.cbFPMEG, 'Enable', 'on')
+    end % if strcmp(get(opt.cbFPEEG, 'Enable'), 'off') || strcmp(get(opt.cbFPMEG, 'Enable'), 'off')
+    if all(get(opt.pbIP, 'BackgroundColor') == [152 251 152] / 255) && strcmp(get(opt.cbIPDICSPowEEG, 'Enable'), 'off') % If IP push button is green
+        set(opt.cbIPDICSPowEEG, 'Enable', 'on')
+        set(opt.cbIPDICSPowMEG, 'Enable', 'on')
+        set(opt.cbIPLCMVPowEEG, 'Enable', 'on')
+        set(opt.cbIPLCMVMomEEG, 'Enable', 'on')
+        set(opt.cbIPLCMVPowMEG, 'Enable', 'on')
+        set(opt.cbIPLCMVMomMEG, 'Enable', 'on')
+        set(opt.txtLCMVLabel, 'Enable', 'on')
+        set(opt.txtDICSLabel, 'Enable', 'on')
+        set(opt.txtEEGLabel, 'Enable', 'on')
+        set(opt.txtMEGLabel, 'Enable', 'on')
+    end % if all(get(opt.pbIP, 'BackgroundColor') == [152 251 152] / 255)
+    
+    if any(isfield(opt.cfg.EEG, allHandleIP))
+        temp = allHandleIP{isfield(opt.cfg.EEG, allHandleIP)};
+        delete(opt.cfg.EEG.(temp))
+        opt.cfg.EEG = rmfield(opt.cfg.EEG, temp);
+        temp = ['cbIP' temp(1 : end - 1)]; % Remove h letter
+        set(opt.(temp), 'Value', 0)
+    end % if any(isfield(opt.cfg.EEG, allHandleIP))
+    
+    %     set(opt.cbFPEEG, 'Enable', 'on', 'Value', 0)
+    if get(opt.cbFPEEG, 'Value') == 1
+        valNorm = opt.cfg.EEG.ForwardProblem.(opt.SourceModelSel).EEGActivity{1}(:, 1);
+        valNorm = (valNorm - min(valNorm(:))) / (max(valNorm(:)) - min(valNorm(:))); % Normalizing the values
+        temp = ft_plot_topo3d_mod(opt.cfg.EEG.ForwardProblem.sens.EEG.chanpos(ismember(opt.cfg.EEG.ForwardProblem.sens.EEG.label, opt.cfg.EEG.ForwardProblem.(opt.SourceModelSel).Msc.LeadField.EEG.label), :), valNorm, 'colormap', 'jet', 'refine', 3);
+        if isfield(opt.cfg.EEG, 'FPEEGh')
+            delete(opt.cfg.EEG.FPEEGh)
+            %         opt.cfg.EEG = rmfield(opt.cfg.EEG, 'FPEEGh');
+        end
+        opt.cfg.EEG.FPEEGh = temp;
+    end % if get(opt.cbFPEEG, 'Value') == 1
+    %     set(opt.cbFPMEG, 'Enable', 'on', 'Value', 0)
+    if get(opt.cbFPMEG, 'Value') == 1
+        valNorm = opt.cfg.EEG.ForwardProblem.(opt.SourceModelSel).MEGActivity{1}(:, 1);
+        valNorm = (valNorm - min(valNorm(:))) / (max(valNorm(:)) - min(valNorm(:))); % Normalizing the values
+        temp = ft_plot_topo3d_mod(opt.cfg.EEG.ForwardProblem.sens.MEG.chanpos(ismember(opt.cfg.EEG.ForwardProblem.sens.MEG.label, opt.cfg.EEG.ForwardProblem.(opt.SourceModelSel).Msc.LeadField.MEG.label), :), valNorm, 'colormap', 'jet', 'refine', 3);
+        if isfield(opt.cfg.EEG, 'FPMEGh')
+            delete(opt.cfg.EEG.FPMEGh)
+            %         opt.cfg.EEG = rmfield(opt.cfg.EEG, 'FPMEGh');
+        end
+        opt.cfg.EEG.FPMEGh = temp;
+    end % if get(opt.cbFPEEG, 'Value') == 1
+elseif get(opt.pmFPSource, 'Value') == 4%&& ~isfield(opt.cfg.EEG, 'FPSrch')
+    if strcmp(get(opt.panelbgLOF, 'Visible'), 'on')
+        opt.LOI.name = 'white';
+        set(opt.panelbgLOF, 'SelectedObject', opt.rbWhite, 'Visible', 'off');
+    end
+    opt.SourceModelSel = SourceModels{3};
+    valNorm = opt.cfg.EEG.ForwardProblem.(opt.SourceModelSel).sourceActivityPow{1}(:, 1);
+    valNorm = (valNorm - min(valNorm(:))) / (max(valNorm(:)) - min(valNorm(:))); % Normalizing the values
+    temp = ft_plot_mesh_mod(opt.cfg.EEG.ForwardProblem.(opt.SourceModelSel).sourceModel, 'vertexcolor', valNorm, 'edgecolor', 'none', 'colormap', 'jet');
+    if ~isfield(opt, 'lighth')
+        opt.lighth = light;
+    end
+    lighting gouraud; material dull
+    if isfield(opt.cfg.EEG, 'FPSrch')
+        delete(opt.cfg.EEG.FPSrch)
+    end % if isfield(opt.cfg.EEG, 'FPSrch')
+    opt.cfg.EEG.FPSrch = temp;
+    
+    if strcmp(get(opt.cbFPEEG, 'Enable'), 'off') || strcmp(get(opt.cbFPMEG, 'Enable'), 'off')
+        set(opt.cbFPEEG, 'Enable', 'on')
+        set(opt.cbFPMEG, 'Enable', 'on')
+    end % if strcmp(get(opt.cbFPEEG, 'Enable'), 'off') || strcmp(get(opt.cbFPMEG, 'Enable'), 'off')
+    if all(get(opt.pbIP, 'BackgroundColor') == [152 251 152] / 255) && strcmp(get(opt.cbIPDICSPowEEG, 'Enable'), 'off') % If IP push button is green
+        set(opt.cbIPDICSPowEEG, 'Enable', 'on')
+        set(opt.cbIPDICSPowMEG, 'Enable', 'on')
+        set(opt.cbIPLCMVPowEEG, 'Enable', 'on')
+        set(opt.cbIPLCMVMomEEG, 'Enable', 'on')
+        set(opt.cbIPLCMVPowMEG, 'Enable', 'on')
+        set(opt.cbIPLCMVMomMEG, 'Enable', 'on')
+        set(opt.txtLCMVLabel, 'Enable', 'on')
+        set(opt.txtDICSLabel, 'Enable', 'on')
+        set(opt.txtEEGLabel, 'Enable', 'on')
+        set(opt.txtMEGLabel, 'Enable', 'on')
+    end % if all(get(opt.pbIP, 'BackgroundColor') == [152 251 152] / 255)
+    
+    if any(isfield(opt.cfg.EEG, allHandleIP))
+        temp = allHandleIP{isfield(opt.cfg.EEG, allHandleIP)};
+        delete(opt.cfg.EEG.(temp))
+        opt.cfg.EEG = rmfield(opt.cfg.EEG, temp);
+        temp = ['cbIP' temp(1 : end - 1)]; % Remove h letter
+        set(opt.(temp), 'Value', 0)
+    end % if any(isfield(opt.cfg.EEG, allHandleIP))
+    
+    %     set(opt.cbFPEEG, 'Enable', 'on', 'Value', 0)
+    if get(opt.cbFPEEG, 'Value') == 1
+        valNorm = opt.cfg.EEG.ForwardProblem.(opt.SourceModelSel).EEGActivity{1}(:, 1);
+        valNorm = (valNorm - min(valNorm(:))) / (max(valNorm(:)) - min(valNorm(:))); % Normalizing the values
+        temp = ft_plot_topo3d_mod(opt.cfg.EEG.ForwardProblem.sens.EEG.chanpos(ismember(opt.cfg.EEG.ForwardProblem.sens.EEG.label, opt.cfg.EEG.ForwardProblem.(opt.SourceModelSel).Msc.LeadField.EEG.label), :), valNorm, 'colormap', 'jet', 'refine', 3);
+        if isfield(opt.cfg.EEG, 'FPEEGh')
+            delete(opt.cfg.EEG.FPEEGh)
+            %         opt.cfg.EEG = rmfield(opt.cfg.EEG, 'FPEEGh');
+        end
+        opt.cfg.EEG.FPEEGh = temp;
+    end % if get(opt.cbFPEEG, 'Value') == 1
+    %     set(opt.cbFPMEG, 'Enable', 'on', 'Value', 0)
+    if get(opt.cbFPMEG, 'Value') == 1
+        valNorm = opt.cfg.EEG.ForwardProblem.(opt.SourceModelSel).MEGActivity{1}(:, 1);
+        valNorm = (valNorm - min(valNorm(:))) / (max(valNorm(:)) - min(valNorm(:))); % Normalizing the values
+        temp = ft_plot_topo3d_mod(opt.cfg.EEG.ForwardProblem.sens.MEG.chanpos(ismember(opt.cfg.EEG.ForwardProblem.sens.MEG.label, opt.cfg.EEG.ForwardProblem.(opt.SourceModelSel).Msc.LeadField.MEG.label), :), valNorm, 'colormap', 'jet', 'refine', 3);
+        if isfield(opt.cfg.EEG, 'FPMEGh')
+            delete(opt.cfg.EEG.FPMEGh)
+            %         opt.cfg.EEG = rmfield(opt.cfg.EEG, 'FPMEGh');
+        end
+        opt.cfg.EEG.FPMEGh = temp;
+    end % if get(opt.cbFPEEG, 'Value') == 1
+elseif get(opt.pmFPSource, 'Value') == 5 %&& ~isfield(opt.cfg.EEG, 'FPSrch')
+    set(opt.rbBetween, 'Visible', 'off')
+    if strcmp(opt.LOI.name, 'between')
+        opt.LOI.name = 'white';
+        set(opt.panelbgLOF, 'SelectedObject', opt.rbWhite);
+    end
+    set(opt.panelbgLOF, 'Visible', 'on')
+    opt.SourceModelSel = SourceModels{4};
+    
+    switch opt.LOI.name
+        case 'white'
+            posRange = 1 : size(opt.cfg.EEG.ForwardProblem.white.sourceModel.pos, 1);
+            triRange = 1 : size(opt.cfg.EEG.ForwardProblem.white.sourceModel.tri, 1);
+        case 'pial'
+            posRange = size(opt.cfg.EEG.ForwardProblem.white.sourceModel.pos, 1) + 1 : size(opt.cfg.EEG.ForwardProblem.white.sourceModel.pos, 1) + size(opt.cfg.EEG.ForwardProblem.pial.sourceModel.pos, 1);
+            triRange = size(opt.cfg.EEG.ForwardProblem.white.sourceModel.tri, 1) + 1 : size(opt.cfg.EEG.ForwardProblem.white.sourceModel.tri, 1) + size(opt.cfg.EEG.ForwardProblem.pial.sourceModel.tri, 1);
+    end
+    opt.LOI.posRange = posRange;
+    opt.LOI.triRange = triRange;
+    valNorm = opt.cfg.EEG.ForwardProblem.(opt.SourceModelSel).sourceActivityPow{1}(posRange, 1);
+    valNorm = (valNorm - min(valNorm(:))) / (max(valNorm(:)) - min(valNorm(:))); % Normalizing the values
+    selectedSourceModel = [];
+    selectedSourceModel.pos = opt.cfg.EEG.ForwardProblem.(opt.SourceModelSel).sourceModel.pos(posRange, :);
+    selectedSourceModel.inside = opt.cfg.EEG.ForwardProblem.(opt.SourceModelSel).sourceModel.inside(posRange);
+    if strcmp(opt.LOI.name, 'white')
+        opt.LOI.triValCorr = 0; % Edge value correction
+        %         selectedSourceModel.tri = opt.cfg.EEG.ForwardProblem.(opt.SourceModelSel).sourceModel.tri(triRange, :);
+    elseif strcmp(opt.LOI.name, 'pial')
+        opt.LOI.triValCorr = size(opt.cfg.EEG.ForwardProblem.white.sourceModel.pos, 1); % Edge value correction
+        %         selectedSourceModel.tri = opt.cfg.EEG.ForwardProblem.(opt.SourceModelSel).sourceModel.tri(triRange, :) - (size(opt.cfg.EEG.ForwardProblem.white.sourceModel.pos, 1));
+    end
+    selectedSourceModel.tri = opt.cfg.EEG.ForwardProblem.(opt.SourceModelSel).sourceModel.tri(triRange, :) - opt.LOI.triValCorr;
+    temp = ft_plot_mesh_mod(selectedSourceModel, 'vertexcolor', valNorm, 'edgecolor', 'none', 'colormap', 'jet');
+    if ~isfield(opt, 'lighth')
+        opt.lighth = light;
+    end
+    lighting gouraud; material dull
+    if isfield(opt.cfg.EEG, 'FPSrch')
+        delete(opt.cfg.EEG.FPSrch)
+    end % if isfield(opt.cfg.EEG, 'FPSrch')
+    opt.cfg.EEG.FPSrch = temp;
+    
+    if strcmp(get(opt.cbFPEEG, 'Enable'), 'off') || strcmp(get(opt.cbFPMEG, 'Enable'), 'off')
+        set(opt.cbFPEEG, 'Enable', 'on')
+        set(opt.cbFPMEG, 'Enable', 'on')
+    end % if strcmp(get(opt.cbFPEEG, 'Enable'), 'off') || strcmp(get(opt.cbFPMEG, 'Enable'), 'off')
+    if all(get(opt.pbIP, 'BackgroundColor') == [152 251 152] / 255) && strcmp(get(opt.cbIPDICSPowEEG, 'Enable'), 'off') % If IP push button is green
+        set(opt.cbIPDICSPowEEG, 'Enable', 'on')
+        set(opt.cbIPDICSPowMEG, 'Enable', 'on')
+        set(opt.cbIPLCMVPowEEG, 'Enable', 'on')
+        set(opt.cbIPLCMVMomEEG, 'Enable', 'on')
+        set(opt.cbIPLCMVPowMEG, 'Enable', 'on')
+        set(opt.cbIPLCMVMomMEG, 'Enable', 'on')
+        set(opt.txtLCMVLabel, 'Enable', 'on')
+        set(opt.txtDICSLabel, 'Enable', 'on')
+        set(opt.txtEEGLabel, 'Enable', 'on')
+        set(opt.txtMEGLabel, 'Enable', 'on')
+    end % if all(get(opt.pbIP, 'BackgroundColor') == [152 251 152] / 255)
+    
+    if any(isfield(opt.cfg.EEG, allHandleIP))
+        temp = allHandleIP{isfield(opt.cfg.EEG, allHandleIP)};
+        delete(opt.cfg.EEG.(temp))
+        opt.cfg.EEG = rmfield(opt.cfg.EEG, temp);
+        temp = ['cbIP' temp(1 : end - 1)]; % Remove h letter
+        set(opt.(temp), 'Value', 0)
+    end % if any(isfield(opt.cfg.EEG, allHandleIP))
+    
+    %     set(opt.cbFPEEG, 'Enable', 'on', 'Value', 0)
+    if get(opt.cbFPEEG, 'Value') == 1
+        valNorm = opt.cfg.EEG.ForwardProblem.(opt.SourceModelSel).EEGActivity{1}(:, 1);
+        valNorm = (valNorm - min(valNorm(:))) / (max(valNorm(:)) - min(valNorm(:))); % Normalizing the values
+        temp = ft_plot_topo3d_mod(opt.cfg.EEG.ForwardProblem.sens.EEG.chanpos(ismember(opt.cfg.EEG.ForwardProblem.sens.EEG.label, opt.cfg.EEG.ForwardProblem.(opt.SourceModelSel).Msc.LeadField.EEG.label), :), valNorm, 'colormap', 'jet', 'refine', 3);
+        if isfield(opt.cfg.EEG, 'FPEEGh')
+            delete(opt.cfg.EEG.FPEEGh)
+            %         opt.cfg.EEG = rmfield(opt.cfg.EEG, 'FPEEGh');
+        end
+        opt.cfg.EEG.FPEEGh = temp;
+    end % if get(opt.cbFPEEG, 'Value') == 1
+    %     set(opt.cbFPMEG, 'Enable', 'on', 'Value', 0)
+    if get(opt.cbFPMEG, 'Value') == 1
+        valNorm = opt.cfg.EEG.ForwardProblem.(opt.SourceModelSel).MEGActivity{1}(:, 1);
+        valNorm = (valNorm - min(valNorm(:))) / (max(valNorm(:)) - min(valNorm(:))); % Normalizing the values
+        temp = ft_plot_topo3d_mod(opt.cfg.EEG.ForwardProblem.sens.MEG.chanpos(ismember(opt.cfg.EEG.ForwardProblem.sens.MEG.label, opt.cfg.EEG.ForwardProblem.(opt.SourceModelSel).Msc.LeadField.MEG.label), :), valNorm, 'colormap', 'jet', 'refine', 3);
+        if isfield(opt.cfg.EEG, 'FPMEGh')
+            delete(opt.cfg.EEG.FPMEGh)
+            %         opt.cfg.EEG = rmfield(opt.cfg.EEG, 'FPMEGh');
+        end
+        opt.cfg.EEG.FPMEGh = temp;
+    end % if get(opt.cbFPEEG, 'Value') == 1
+elseif get(opt.pmFPSource, 'Value') == 6 %&& ~isfield(opt.cfg.EEG, 'FPSrch')
+    set(opt.rbBetween, 'Visible', 'on')
+    set(opt.panelbgLOF, 'Visible', 'on')
+    opt.SourceModelSel = SourceModels{5};
+    switch opt.LOI.name
+        case 'white'
+            posRange = 1 : size(opt.cfg.EEG.ForwardProblem.white.sourceModel.pos, 1);
+            triRange = 1 : size(opt.cfg.EEG.ForwardProblem.white.sourceModel.tri, 1);
+        case 'between'
+            posRange = size(opt.cfg.EEG.ForwardProblem.white.sourceModel.pos, 1) + 1 : size(opt.cfg.EEG.ForwardProblem.white.sourceModel.pos, 1) + size(opt.cfg.EEG.ForwardProblem.between.sourceModel.pos, 1);
+            triRange = size(opt.cfg.EEG.ForwardProblem.white.sourceModel.tri, 1) + 1 : size(opt.cfg.EEG.ForwardProblem.white.sourceModel.tri, 1) + size(opt.cfg.EEG.ForwardProblem.between.sourceModel.tri, 1);
+        case 'pial'
+            posRange = size(opt.cfg.EEG.ForwardProblem.white.sourceModel.pos, 1) + size(opt.cfg.EEG.ForwardProblem.between.sourceModel.pos, 1) + 1 : size(opt.cfg.EEG.ForwardProblem.white.sourceModel.pos, 1) + size(opt.cfg.EEG.ForwardProblem.between.sourceModel.pos, 1) + size(opt.cfg.EEG.ForwardProblem.pial.sourceModel.pos, 1);
+            triRange = size(opt.cfg.EEG.ForwardProblem.white.sourceModel.tri, 1) + size(opt.cfg.EEG.ForwardProblem.between.sourceModel.tri, 1) +  1 : size(opt.cfg.EEG.ForwardProblem.white.sourceModel.tri, 1) + size(opt.cfg.EEG.ForwardProblem.between.sourceModel.tri, 1) + size(opt.cfg.EEG.ForwardProblem.pial.sourceModel.tri, 1);
+    end
+    opt.LOI.posRange = posRange;
+    opt.LOI.triRange = triRange;
+    valNorm = opt.cfg.EEG.ForwardProblem.(opt.SourceModelSel).sourceActivityPow{1}(posRange, 1);
+    valNorm = (valNorm - min(valNorm(:))) / (max(valNorm(:)) - min(valNorm(:))); % Normalizing the values
+    selectedSourceModel = [];
+    selectedSourceModel.pos = opt.cfg.EEG.ForwardProblem.(opt.SourceModelSel).sourceModel.pos(posRange, :);
+    selectedSourceModel.inside = opt.cfg.EEG.ForwardProblem.(opt.SourceModelSel).sourceModel.inside(posRange);
+    if strcmp(opt.LOI.name, 'white')
+        opt.LOI.triValCorr = 0; % Edge value correction
+        %         selectedSourceModel.tri = opt.cfg.EEG.ForwardProblem.(opt.SourceModelSel).sourceModel.tri(triRange, :);
+    elseif strcmp(opt.LOI.name, 'between')
+        opt.LOI.triValCorr = size(opt.cfg.EEG.ForwardProblem.white.sourceModel.pos, 1); % Edge value correction
+        %         selectedSourceModel.tri = opt.cfg.EEG.ForwardProblem.(opt.SourceModelSel).sourceModel.tri(triRange, :) - (size(opt.cfg.EEG.ForwardProblem.white.sourceModel.pos, 1));
+    elseif strcmp(opt.LOI.name, 'pial')
+        opt.LOI.triValCorr = size(opt.cfg.EEG.ForwardProblem.white.sourceModel.pos, 1) + size(opt.cfg.EEG.ForwardProblem.between.sourceModel.pos, 1); % Edge value correction
+        %         selectedSourceModel.tri = opt.cfg.EEG.ForwardProblem.(opt.SourceModelSel).sourceModel.tri(triRange, :) - (size(opt.cfg.EEG.ForwardProblem.white.sourceModel.pos, 1) + size(opt.cfg.EEG.ForwardProblem.between.sourceModel.pos, 1));
+    end
+    selectedSourceModel.tri = opt.cfg.EEG.ForwardProblem.(opt.SourceModelSel).sourceModel.tri(triRange, :) - opt.LOI.triValCorr;
+    temp = ft_plot_mesh_mod(selectedSourceModel, 'vertexcolor', valNorm, 'edgecolor', 'none', 'colormap', 'jet');
+    if ~isfield(opt, 'lighth')
+        opt.lighth = light;
+    end
+    lighting gouraud; material dull
+    if isfield(opt.cfg.EEG, 'FPSrch')
+        delete(opt.cfg.EEG.FPSrch)
+    end % if isfield(opt.cfg.EEG, 'FPSrch')
+    opt.cfg.EEG.FPSrch = temp;
+    
+    if strcmp(get(opt.cbFPEEG, 'Enable'), 'off') || strcmp(get(opt.cbFPMEG, 'Enable'), 'off')
+        set(opt.cbFPEEG, 'Enable', 'on')
+        set(opt.cbFPMEG, 'Enable', 'on')
+    end % if strcmp(get(opt.cbFPEEG, 'Enable'), 'off') || strcmp(get(opt.cbFPMEG, 'Enable'), 'off')
+    if all(get(opt.pbIP, 'BackgroundColor') == [152 251 152] / 255) && strcmp(get(opt.cbIPDICSPowEEG, 'Enable'), 'off')% If IP push button is green
+        set(opt.cbIPDICSPowEEG, 'Enable', 'on')
+        set(opt.cbIPDICSPowMEG, 'Enable', 'on')
+        set(opt.cbIPLCMVPowEEG, 'Enable', 'on')
+        set(opt.cbIPLCMVMomEEG, 'Enable', 'on')
+        set(opt.cbIPLCMVPowMEG, 'Enable', 'on')
+        set(opt.cbIPLCMVMomMEG, 'Enable', 'on')
+        set(opt.txtLCMVLabel, 'Enable', 'on')
+        set(opt.txtDICSLabel, 'Enable', 'on')
+        set(opt.txtEEGLabel, 'Enable', 'on')
+        set(opt.txtMEGLabel, 'Enable', 'on')
+    end % if all(get(opt.pbIP, 'BackgroundColor') == [152 251 152] / 255)
+    
+    if any(isfield(opt.cfg.EEG, allHandleIP))
+        temp = allHandleIP{isfield(opt.cfg.EEG, allHandleIP)};
+        delete(opt.cfg.EEG.(temp))
+        opt.cfg.EEG = rmfield(opt.cfg.EEG, temp);
+        temp = ['cbIP' temp(1 : end - 1)]; % Remove h letter
+        set(opt.(temp), 'Value', 0)
+    end % if any(isfield(opt.cfg.EEG, allHandleIP))
+    
+    %     set(opt.cbFPEEG, 'Enable', 'on', 'Value', 0)
+    if get(opt.cbFPEEG, 'Value') == 1
+        valNorm = opt.cfg.EEG.ForwardProblem.(opt.SourceModelSel).EEGActivity{1}(:, 1);
+        valNorm = (valNorm - min(valNorm(:))) / (max(valNorm(:)) - min(valNorm(:))); % Normalizing the values
+        temp = ft_plot_topo3d_mod(opt.cfg.EEG.ForwardProblem.sens.EEG.chanpos(ismember(opt.cfg.EEG.ForwardProblem.sens.EEG.label, opt.cfg.EEG.ForwardProblem.(opt.SourceModelSel).Msc.LeadField.EEG.label), :), valNorm, 'colormap', 'jet', 'refine', 3);
+        if isfield(opt.cfg.EEG, 'FPEEGh')
+            delete(opt.cfg.EEG.FPEEGh)
+            %         opt.cfg.EEG = rmfield(opt.cfg.EEG, 'FPEEGh');
+        end
+        opt.cfg.EEG.FPEEGh = temp;
+    end % if get(opt.cbFPEEG, 'Value') == 1
+    %     set(opt.cbFPMEG, 'Enable', 'on', 'Value', 0)
+    if get(opt.cbFPMEG, 'Value') == 1
+        valNorm = opt.cfg.EEG.ForwardProblem.(opt.SourceModelSel).MEGActivity{1}(:, 1);
+        valNorm = (valNorm - min(valNorm(:))) / (max(valNorm(:)) - min(valNorm(:))); % Normalizing the values
+        temp = ft_plot_topo3d_mod(opt.cfg.EEG.ForwardProblem.sens.MEG.chanpos(ismember(opt.cfg.EEG.ForwardProblem.sens.MEG.label, opt.cfg.EEG.ForwardProblem.(opt.SourceModelSel).Msc.LeadField.MEG.label), :), valNorm, 'colormap', 'jet', 'refine', 3);
+        if isfield(opt.cfg.EEG, 'FPMEGh')
+            delete(opt.cfg.EEG.FPMEGh)
+            %         opt.cfg.EEG = rmfield(opt.cfg.EEG, 'FPMEGh');
+        end
+        opt.cfg.EEG.FPMEGh = temp;
+    end % if get(opt.cbFPEEG, 'Value') == 1
+elseif get(opt.pmFPSource, 'Value') == 1
+    if strcmp(get(opt.panelbgLOF, 'Visible'), 'on')
+        opt.LOI.name = 'white';
+        set(opt.panelbgLOF, 'SelectedObject', opt.rbWhite, 'Visible', 'off');
+    end
+    if isfield(opt.cfg.EEG, 'FPSrch')
+        delete(opt.cfg.EEG.FPSrch)
+        opt.cfg.EEG = rmfield(opt.cfg.EEG, 'FPSrch');
+    end
+    set(opt.cbFPEEG, 'Enable', 'off', 'Value', 0)
+    if isfield(opt.cfg.EEG, 'FPEEGh')
+        delete(opt.cfg.EEG.FPEEGh)
+        opt.cfg.EEG = rmfield(opt.cfg.EEG, 'FPEEGh');
+    end
+    set(opt.cbFPMEG, 'Enable', 'off', 'Value', 0)
+    if isfield(opt.cfg.EEG, 'FPMEGh')
+        delete(opt.cfg.EEG.FPMEGh)
+        opt.cfg.EEG = rmfield(opt.cfg.EEG, 'FPMEGh');
+    end
+    
+    if all(get(opt.pbIP, 'BackgroundColor') == [152 251 152] / 255) % If IP push button is green
+        set(opt.cbIPDICSPowEEG, 'Enable', 'off', 'Value', 0)
+        set(opt.cbIPDICSPowMEG, 'Enable', 'off', 'Value', 0)
+        set(opt.cbIPLCMVPowEEG, 'Enable', 'off', 'Value', 0)
+        set(opt.cbIPLCMVMomEEG, 'Enable', 'off', 'Value', 0)
+        set(opt.cbIPLCMVPowMEG, 'Enable', 'off', 'Value', 0)
+        set(opt.cbIPLCMVMomMEG, 'Enable', 'off', 'Value', 0)
+        set(opt.txtLCMVLabel, 'Enable', 'off', 'Value', 0)
+        set(opt.txtDICSLabel, 'Enable', 'off', 'Value', 0)
+        set(opt.txtEEGLabel, 'Enable', 'off', 'Value', 0)
+        set(opt.txtMEGLabel, 'Enable', 'off', 'Value', 0)
+        %         allHandleIP = {'DICSPowEEGh', 'DICSPowMEGh', 'LCMVPowEEGh', 'LCMVMomEEGh', 'LCMVPowMEGh', 'LCMVMomMEGh'};
+        if any(isfield(opt.cfg.EEG, allHandleIP))
+            temp = allHandleIP{isfield(opt.cfg.EEG, allHandleIP)};
+            delete(opt.cfg.EEG.(temp))
+            opt.cfg.EEG = rmfield(opt.cfg.EEG, temp);
+        end % if any(isfield(opt.cfg.EEG, allHandleIP))
+    end % if all(get(opt.pbIP, 'BackgroundColor') == [152 251 152] / 255)
+end % if get(opt.pmFPSource, 'Value') == 2
+
+view(opt.view)
+set(opt.rotate3d, 'Enable', 'on');
+
+setappdata(h, 'opt', opt);
+
+function FP_buttongroup(h, eventdata)
+h = getparent(h);
+opt = getappdata(h, 'opt');
+allHandleIP = {'DICSPowEEGh', 'DICSPowMEGh', 'LCMVPowEEGh', 'LCMVMomEEGh', 'LCMVPowMEGh', 'LCMVMomMEGh'};
+switch eventdata.NewValue.String
+    case 'White matter surface'
+        opt.LOI.name = 'white';
+        set(opt.cbIPDICSPowEEG, 'Value', 0)
+        set(opt.cbIPDICSPowMEG, 'Value', 0)
+        set(opt.cbIPLCMVPowEEG, 'Value', 0)
+        set(opt.cbIPLCMVMomEEG, 'Value', 0)
+        set(opt.cbIPLCMVPowMEG, 'Value', 0)
+        set(opt.cbIPLCMVMomMEG, 'Value', 0)
+        if any(isfield(opt.cfg.EEG, allHandleIP))
+            temp = allHandleIP{isfield(opt.cfg.EEG, allHandleIP)};
+            delete(opt.cfg.EEG.(temp))
+            opt.cfg.EEG = rmfield(opt.cfg.EEG, temp);
+        end % if any(isfield(opt.cfg.EEG, allHandleIP))
+        setappdata(h, 'opt', opt);
+        ForwardProblem_popupmenu(h)
+    case 'In-between surface'
+        opt.LOI.name = 'between';
+        set(opt.cbIPDICSPowEEG, 'Value', 0)
+        set(opt.cbIPDICSPowMEG, 'Value', 0)
+        set(opt.cbIPLCMVPowEEG, 'Value', 0)
+        set(opt.cbIPLCMVMomEEG, 'Value', 0)
+        set(opt.cbIPLCMVPowMEG, 'Value', 0)
+        set(opt.cbIPLCMVMomMEG, 'Value', 0)
+        if any(isfield(opt.cfg.EEG, allHandleIP))
+            temp = allHandleIP{isfield(opt.cfg.EEG, allHandleIP)};
+            delete(opt.cfg.EEG.(temp))
+            opt.cfg.EEG = rmfield(opt.cfg.EEG, temp);
+        end % if any(isfield(opt.cfg.EEG, allHandleIP))
+        setappdata(h, 'opt', opt);
+        ForwardProblem_popupmenu(h)
+    case 'Pial surface'
+        opt.LOI.name = 'pial';
+        set(opt.cbIPDICSPowEEG, 'Value', 0)
+        set(opt.cbIPDICSPowMEG, 'Value', 0)
+        set(opt.cbIPLCMVPowEEG, 'Value', 0)
+        set(opt.cbIPLCMVMomEEG, 'Value', 0)
+        set(opt.cbIPLCMVPowMEG, 'Value', 0)
+        set(opt.cbIPLCMVMomMEG, 'Value', 0)
+        if any(isfield(opt.cfg.EEG, allHandleIP))
+            temp = allHandleIP{isfield(opt.cfg.EEG, allHandleIP)};
+            delete(opt.cfg.EEG.(temp))
+            opt.cfg.EEG = rmfield(opt.cfg.EEG, temp);
+        end % if any(isfield(opt.cfg.EEG, allHandleIP))
+        setappdata(h, 'opt', opt);
+        ForwardProblem_popupmenu(h)
+end
+
 function InverseProblem(h, eventdata)
 h = getparent(h);
 opt = getappdata(h, 'opt');
@@ -3511,7 +4288,10 @@ if exist(opt.cfg.EEG.IPDir, 'file')
             recompute = false; % If 'true' read & process MRI, if 'false', loads preprocessed MRI
         case 'Yes'
             recompute = true; % If 'true' read & process MRI, if 'false', loads preprocessed MRI
-            
+            %             if strcmp(get(opt.panelbgLOF, 'Visible'), 'on')
+            %                 opt.LOI.name = 'white';
+            %                 set(opt.panelbgLOF, 'SelectedObject', opt.rbWhite, 'Visible', 'off');
+            %             end
             % panels = {'panelSegMRI', 'panelMesh', 'panelVol', 'panelSrc', 'panelSns', 'panelLF', 'panelFP', 'panelIP'};
             % for i = 8 : length(panels)
             %     set(opt.(panels{i}), 'ForegroundColor', 0.4*[1 1 1], 'FontWeight', 'normal');
@@ -3532,10 +4312,15 @@ if exist(opt.cfg.EEG.IPDir, 'file')
                 'cbVolEEG', 'cbVolMEG', ...
                 'cbSrcWhite', 'cbSrcPial', 'cbSrcBetween', ...
                 'cbSnsEEG', 'cbSnsMEG', ...
-                'cbFPSource', 'cbFPEEG', 'cbFPMEG', ...
+                'pmFPSource', 'cbFPEEG', 'cbFPMEG', ...
                 'cbIPDICSPowEEG', 'cbIPDICSPowMEG', 'cbIPLCMVPowEEG', 'cbIPLCMVMomEEG', 'cbIPLCMVPowMEG', 'cbIPLCMVMomMEG'};
             for i = 26 : length(checkBoxes)
-                set(opt.(checkBoxes{i}), 'Enable', 'off', 'Value', 0);
+                if  strcmp(checkBoxes{i}, 'pmFPSource')
+                    set(opt.(checkBoxes{i}), 'Enable', 'off', 'Value', 1);
+                    set(opt.txtSourceLabel, 'Enable', 'off');
+                else
+                    set(opt.(checkBoxes{i}), 'Enable', 'off', 'Value', 0);
+                end
             end % for i = 1 : length(checkBoxes)
             
             plots = {'MRIhx', 'MRIhy', 'MRIhz', ...
@@ -3632,387 +4417,397 @@ if recompute
         load(opt.cfg.EEG.LFDir)
         load(opt.cfg.EEG.sensDir)
         load(opt.cfg.EEG.volDir)
-        %% Timelock data simulation
-        % create a dipole simulation with one dipole and a 10Hz sine wave
-        cfg = [];
-        %     if ft_senstype(sens, 'eeg')
-        cfg.senstype = 'eeg';
-        cfg.headmodel = vol.head; % volume conduction model (headmodel)
-        cfg.elec = sens.EEG;
-        %     elseif ft_senstype(sens, 'meg')
-        %         cfg.senstype = 'meg';
-        %         cfg.headmodel = vol.brain; % volume conduction model (headmodel)
-        %         cfg.grad = sens;
-        %     end
-        cfg.channel = LF.EEGLF.label;
-        cfg.dip.pos = forwardProblem.sourceModel.pos(forwardProblem.sourceModel.inside, :);
-        temp = forwardProblem.maxMom(LF.EEGLF.inside, :)';
-        cfg.dip.mom = temp(:);
-        %     figure % Plot real source activity
-        %     temp = forwardProblem.maxMom(:, :)'; %sourceActivity{1}(:, :)';
-        %     ft_plot_mesh(forwardProblem.sourceModel, 'vertexcolor', sqrt(sum(temp'.^ 2, 2)), 'edgecolor', 'k', 'colormap', 'jet'); % , 'surfaceonly', 'yes'
-        %     lighting gouraud; material dull
-        % note, it should be transposed
-        % cfg.dip.frequency = 10;
-        % cfg.dip.amplitude = 1; % per dipole
-        % cfg.dip.phase = pi/6; % In radians
-        % cfg.ntrials = 3;
-        % cfg.triallength = 1; % seconds
-        cfg.fsample = 250;
-        time = (-0.5*cfg.fsample : 1 *cfg.fsample)/cfg.fsample; % manually create a time axis
-        freq = sourceReconst.freq; % Source activity oscillation frequency
-        signal = zeros(1, length(time));
-        signal(time >= 0) = sin(2 * pi * freq * time(time >= 0)); % manually create a signal (sine wave)
-        % signal(time >= 0) = 1; % manually create a signal (step signal)
-        cfg.dip.signal = cell(1, sourceReconst.trialsNum);
-        for i = 1 : sourceReconst.trialsNum
-            cfg.dip.signal{i} = signal;  % # of trials
-        end % for i = 1 : my_cfg.sourceReconst.trialNum
-        cfg.relnoise = sourceReconst.relNoise;
-        rawData = [];
-        rawData.EEG = ft_dipolesimulation(cfg);
-        for i = 1 : length(rawData.EEG.time) % Correct the time course
-            rawData.EEG.time{i} = time;
-        end
         
-        cfg.senstype = 'meg';
-        cfg.headmodel = vol.brain; % volume conduction model (headmodel)
-        cfg.grad = sens.MEG;
-        cfg.channel = LF.MEGLF.label;
-        temp = forwardProblem.maxMom(LF.MEGLF.inside, :)';
-        cfg.dip.mom = temp(:);
-        rawData.MEG = ft_dipolesimulation(cfg);
-        for i = 1 : length(rawData.MEG.time) % Correct the time course
-            rawData.MEG.time{i} = time;
-        end
-        
-        % figure; % Plot raw data
-        % plot(rawData.time{1}, rawData.trial{1})
-        
-        for i = 1 : length(rawData.EEG.trial) % Demeaning the raw data
-            %         mean(rawData.trial{i}(1,1:find(rawData.time{i} >= 0, 1) - 1)) %[mean(rawData.trial{i}(1,1:find(rawData.time{i} >= 0, 1) - 1)) mean(rawData.trial{i}(1,find(rawData.time{i} >= 0, 1):end))]
-            rawData.EEG.trial{i} = ft_preproc_polyremoval(rawData.EEG.trial{i}, 0, 1, find(rawData.EEG.time{i} >= 0, 1) - 1); % this will also demean and detrend
-            %         mean(rawData.trial{i}(1,1:find(rawData.time{i} >= 0, 1) - 1)) %[mean(rawData.trial{i}(1,1:find(rawData.time{i} >= 0, 1) - 1)) mean(rawData.trial{i}(1,find(rawData.time{i} >= 0, 1):end))]
-            rawData.MEG.trial{i} = ft_preproc_polyremoval(rawData.MEG.trial{i}, 0, 1, find(rawData.MEG.time{i} >= 0, 1) - 1); % this will also demean and detrend
-        end % for i = 1 : length(rawData.trial)
-        
-        cfg = [];
-        cfg.toilim = [-inf 0-1./rawData.EEG.fsample];
-        rawDataPre.EEG = ft_redefinetrial(cfg, rawData.EEG);
-        cfg.toilim = [0 inf];
-        rawDataPost.EEG = ft_redefinetrial(cfg, rawData.EEG);
-        
-        cfg = [];
-        cfg.toilim = [-inf 0-1./rawData.MEG.fsample];
-        rawDataPre.MEG = ft_redefinetrial(cfg, rawData.MEG);
-        cfg.toilim = [0 inf];
-        rawDataPost.MEG = ft_redefinetrial(cfg, rawData.MEG);
-        
-        cfg = [];
-        cfg.covariance = 'yes';
-        cfg.covariancewindow = [-inf 0-1./rawData.EEG.fsample];
-        timeLock.EEG = ft_timelockanalysis(cfg, rawData.EEG);
-        % timeLock.fsample = rawData.fsample;
-        
-        cfg = [];
-        cfg.covariance = 'yes';
-        cfg.covariancewindow = [-inf 0-1./rawData.MEG.fsample];
-        timeLock.MEG = ft_timelockanalysis(cfg, rawData.MEG);
-        
-        cfg = [];
-        cfg.covariance = 'yes';
-        timeLockPre.EEG = ft_timelockanalysis(cfg, rawDataPre.EEG);
-        timeLockPost.EEG = ft_timelockanalysis(cfg, rawDataPost.EEG);
-        % figure; plot(timeLock.time, timeLock.avg(:, :));
-        cfg = [];
-        cfg.covariance = 'yes';
-        timeLockPre.MEG = ft_timelockanalysis(cfg, rawDataPre.MEG);
-        timeLockPost.MEG = ft_timelockanalysis(cfg, rawDataPost.MEG);
-        
-        
-        %% LCMV
-        %     switch my_cfg.sourceReconst.method
-        %         case 'LCMV'
-        Modalities = {'EEG', 'MEG'};
-        for i = 1 : length(Modalities)
+        SourceModels = {'white', 'pial', 'between', 'whitePial', 'whiteBetweenPial'}; % ADDED
+        for j = 1 : length(SourceModels)  % ADDED
+            eval(['set(opt.txtMesg, ''Visible'', ''on'', ''BackgroundColor'', [238, 221, 130] / 255, ''String'', ''Inverse problem solution ... (please wait ',num2str(j),'/',num2str(length(SourceModels)),')'');']) % , 'HorizontalAlignment', 'center'
+            drawnow
+            %% Timelock data simulation
+            % create a dipole simulation with one dipole and a 10Hz sine wave
             cfg = [];
-            cfg.method = 'lcmv';
-            % cfg.grid = leadfield;
-            cfg.grid = forwardProblem.sourceModel;
-            eval(['cfg.grid.leadfield = LF.',Modalities{i},'LF.leadfield;']) % leadfield
-            if strcmp(Modalities{i}, 'EEG') %ft_senstype(sens, 'eeg')
-                cfg.senstype = 'eeg';
-                cfg.headmodel = vol.head; % volume conduction model (headmodel)
-                cfg.elec = sens.(Modalities{i});
-            elseif strcmp(Modalities{i}, 'MEG') %ft_senstype(sens, 'meg')
-                cfg.senstype = 'meg';
-                cfg.headmodel = vol.brain; % volume conduction model (headmodel)
-                cfg.grad = sens.(Modalities{i});
-            end
-            cfg.channel = timeLock.(Modalities{i}).label;
-            cfg.lcmv.keepfilter = 'yes';
-            cfg.lcmv.fixedori = 'no'; % project on axis of most variance using SVD
-            cfg.lcmv.projectnoise = 'yes';
-            % cfg.lcmv.weightnorm = 'nai';
-            cfg.lcmv.lambda = sourceReconst.lambda;
-            sourceLCMV.(Modalities{i}) = ft_sourceanalysis(cfg, timeLock.(Modalities{i}));
-            % sourceLCMV.avg.pow = abs(sourceLCMV.avg.pow);
-            sourceLCMV.(Modalities{i}).avg.NAI = abs(sourceLCMV.(Modalities{i}).avg.pow) ./ sourceLCMV.(Modalities{i}).avg.noise; % Neural Activity Index (NAI)
-            
-            
-            % Instantpow = zeros(size(cfg.grid.pos, 1), length(sourceLCMV.time));
-            % h = waitbar(0, 'Please wait...');
-            % for i = 1 : length(timeLock.time)
-            %     cfgInst = [];
-            %     cfgInst.latency = [timeLock.time(1) timeLock.time(i)];
-            %     timelockInst = ft_selectdata(cfgInst, timeLock);
-            %     temp = ft_sourceanalysis(cfg, timelockInst);
-            %     Instantpow(:, i) = abs(temp.avg.pow) ./ temp.avg.noise;
-            %     waitbar(i / length(sourceLCMV.time))
-            % end
-            % close(h)
-            % sourceLCMV.avg.Instantpow = abs(Instantpow);
-            
-            %     source2NAI = source2;
-            %     source2NAI.avg.pow = abs(source2NAI.avg.pow) ./ source2NAI.avg.noise; % Neural Activity Index (NAI)
-            
-            % second and third call to ft_sourceanalysis now applying the precomputed filters to pre and %post intervals
-            cfg.grid.filter = sourceLCMV.(Modalities{i}).avg.filter; % Same cfg as the previous LCMV
-            cfg = rmfield(cfg, 'lcmv');
-            cfg.lcmv.projectnoise = 'yes';
-            sourceLCMVPre.(Modalities{i}) = ft_sourceanalysis(cfg, timeLockPre.(Modalities{i}));
-            sourceLCMVPost.(Modalities{i}) = ft_sourceanalysis(cfg, timeLockPost.(Modalities{i}));
-            
-            sourceLCMV.(Modalities{i}).avg.relPow = (abs(sourceLCMVPost.(Modalities{i}).avg.pow) - abs(sourceLCMVPre.(Modalities{i}).avg.pow)) ./ abs(sourceLCMVPre.(Modalities{i}).avg.pow);
-            
-            %     % contrast post stimulus onset activity with respect to baseline
-            %     sourceLCMVPre.time = 0; % FT_MATH requires the time axis needs to be the same
-            %     sourceLCMVPost.time = 0; % FT_MATH requires the time axis needs to be the same
-            %     cfg = [];
-            %     cfg.operation = '(abs(x2)-abs(x1))./abs(x1)';
-            %     cfg.parameter = 'avg.pow';
-            %     RelPow = ft_math(cfg, sourceLCMVPre, sourceLCMVPost);
-            
-            %
-            % sourcePreNAI = sourceLCMVPre;
-            % sourcePreNAI.avg.pow = sourcePreNAI.avg.pow ./ sourcePreNAI.avg.noise; % Neural Activity Index (NAI)
-            %
-            % sourcePostNAI = sourceLCMVPost;
-            % sourcePostNAI.avg.pow = sourcePostNAI.avg.pow ./ sourcePostNAI.avg.noise; % Neural Activity Index (NAI)
-            %
-            % RelPowNAI = sourcePostNAI;
-            % RelPowNAI.avg.pow = (abs(sourcePostNAI.avg.pow) - abs(sourcePreNAI.avg.pow))./abs(sourcePreNAI.avg.pow);
-            
-            % figure
-            % ft_plot_mesh(grid, 'vertexcolor', source2.avg.pow, 'edgecolor', 'none', 'colormap', 'jet'); % , 'surfaceonly', 'yes'
-            % lighting gouraud; material dull
-            
-            %     cfg = [];
-            %     cfg.method = 'surface';
-            %     cfg.funparameter = 'avg.pow';  %avg.pow
-            %     cfg.maskparameter = cfg.funparameter;
-            %     % cfg.funcolorlim    = [0.0 1.2];
-            %     cfg.funcolormap    = 'jet';
-            %     % cfg.ancolormap    = 'jet';
-            %     % cfg.opacitylim     = [0.0 1.2];
-            %     % cfg.opacitymap     = 'rampup';
-            %     cfg.projmethod     = 'nearest';
-            %     % cfg.surffile       = 'surface_white_both.mat';
-            %     % cfg.surfdownsample = 10;
-            %     ft_sourceplot(cfg, RelPow);
-            %     view ([0 90])
-            % figure
-            % ft_plot_mesh(forwardProblem.sourceModel, 'vertexcolor', sourceLCMV.avg.relPow, 'edgecolor', 'none', 'colormap', 'jet');
+            %     if ft_senstype(sens, 'eeg')
+            cfg.senstype = 'eeg';
+            cfg.headmodel = vol.head; % volume conduction model (headmodel)
+            cfg.elec = sens.EEG;
+            %     elseif ft_senstype(sens, 'meg')
+            %         cfg.senstype = 'meg';
+            %         cfg.headmodel = vol.brain; % volume conduction model (headmodel)
+            %         cfg.grad = sens;
+            %     end
+            cfg.channel = LeadField.(SourceModels{j}).EEG.label;
+            cfg.dip.pos = forwardProblem.(SourceModels{j}).sourceModel.pos(forwardProblem.(SourceModels{j}).sourceModel.inside, :);
+            temp = forwardProblem.(SourceModels{j}).maxMom(LeadField.(SourceModels{j}).EEG.inside, :)';
+            cfg.dip.mom = temp(:);
+            %     figure % Plot real source activity
+            %     temp = forwardProblem.maxMom(:, :)'; %sourceActivity{1}(:, :)';
+            %     ft_plot_mesh(forwardProblem.sourceModel, 'vertexcolor', sqrt(sum(temp'.^ 2, 2)), 'edgecolor', 'k', 'colormap', 'jet'); % , 'surfaceonly', 'yes'
             %     lighting gouraud; material dull
-            
-            % ind = source2.time >= 0;
-            % momPowAvgTim = nan(size(source2.avg.mom, 1), 1);
-            momPow = nan(size(sourceLCMV.(Modalities{i}).avg.mom, 1), length(sourceLCMV.(Modalities{i}).time));
-            for ii = 1 : size(momPow, 1)
-                if sourceLCMV.(Modalities{i}).inside(ii)
-                    momPow(ii, :) = sqrt(sum(abs(sourceLCMV.(Modalities{i}).avg.mom{ii}).^2, 1));
-                    % momPowNAI(i, :) = sqrt(sum(abs(sourceLCMV.avg.mom{i}).^2, 1)) / sourceLCMV.avg.noise(i);
-                    % momPowNAI(i, :) = mean(sqrt(sum(abs(sourceLCMV.avg.mom{i}).^2, 1))) / sourceLCMV.avg.noise(i);
-                    %         momPowAvgTim(i) = mean(abs(momPow(i, ind)));
-                end % if sourceLCMV.inside(i)
-            end % for i = 1 : size(momPow, 1)
-            % sourceLCMV.avg.momPowAvgTim = momPowAvgTim;
-            sourceLCMV.(Modalities{i}).avg.momPow = momPow;
-        end % for i = 1 : length(Modalities)
-        % % ind = find(source2.time >= 0);
-        % % momPowAvgTim = nan(size(source2.avg.mom, 1), 1);
-        % momPow = nan(size(RelPow.avg.mom, 1), length(RelPow.time));
-        % for i=1:size(momPow, 1)
-        %     if RelPow.inside(i)
-        %         momPow(i, :) = (sqrt(sum(abs(sourceLCMVPost.avg.mom{i}).^2, 1)) - sqrt(sum(abs(sourceLCMVPre.avg.mom{i}).^2, 1))) ./ sqrt(sum(abs(sourceLCMVPre.avg.mom{i}).^2, 1));
-        % %         momPow(i, :) = sqrt(sum(abs((sourceLCMVPost.avg.mom{i} - sourceLCMVPre.avg.mom{i}) ./ sourceLCMVPre.avg.mom{i}).^2, 1));
-        %
-        %         %     momPowAvgTim(i) = mean(abs(momPow(i, ind)));
-        % %         momPowAvgTim(i) = mean(abs(momPow(i, ind)));
-        %     end
-        % end
-        % % source2.avg.momPowAvgTim = momPowAvgTim;
-        % RelPow.avg.momPow = momPow;
-        %
-        
-        % momPow = nan(size(source2.avg.mom, 1), size(source2.avg.mom{i, 1}, 2));
-        % for i = 1 : size(source2.avg.mom, 1)
-        % momPow(i, :) = sqrt(sum((source2.avg.mom{i, 1}).^2));
-        % end
-        % source2.avg.momPow = momPow;
-        
-        % figure
-        % plot(source2.time, source2.avg.mom{1})
-        
-        % source is the result from a beamformer source estimation.
-        % cfg = [];
-        % cfg.projectmom = 'yes';
-        % sdSource2 = ft_sourcedescriptives(cfg, source2);
-        % % figure
-        % %         ft_plot_mesh(grid, 'vertexcolor', sdSource2.avg.pow, 'edgecolor', 'k', 'colormap', 'jet'); % , 'surfaceonly', 'yes'
-        % %         lighting gouraud; material dull
-        %
-        % momPow = nan(size(sdSource2.avg.mom, 1), size(sdSource2.avg.mom{i, 1}, 2));
-        %   for i=1:size(momPow, 1)
-        %     momPow(i,:) = sqrt(sum(abs(sdSource2.avg.mom{i}).^2, 1));
-        %   end
-        % sdSource2.avg.momPow = momPow;
-        
-        %     cfg = [];
-        %     cfg.funparameter = 'momPow'; % 'momPow', 'pow'
-        %     ft_sourcemovie(cfg, sourceLCMV)
-        sourceReconst.LCMV = sourceLCMV;
-        %     sourceReconst.sourceModel = forwardProblem.sourceModel;
-        
-        %% DICS
-        %             case 'DICS'
-        % this chunk of code creates a 'dummy' reference channel to be used for
-        % the coherence analysis
-        for i = 1 : length(Modalities)
-            refdata = [];
-            trial = cell(size(rawData.(Modalities{i}).trial));
-            for k = 1 : numel(trial)
-                trial{k} = sin(2 * pi * freq * rawData.(Modalities{i}).time{k});
+            % note, it should be transposed
+            % cfg.dip.frequency = 10;
+            % cfg.dip.amplitude = 1; % per dipole
+            % cfg.dip.phase = pi/6; % In radians
+            % cfg.ntrials = 3;
+            % cfg.triallength = 1; % seconds
+            cfg.fsample = 250;
+            time = (-0.5*cfg.fsample : 1 *cfg.fsample)/cfg.fsample; % manually create a time axis
+            freq = sourceReconst.freq; % Source activity oscillation frequency
+            signal = zeros(1, length(time));
+            signal(time >= 0) = sin(2 * pi * freq * time(time >= 0)); % manually create a signal (sine wave)
+            % signal(time >= 0) = 1; % manually create a signal (step signal)
+            cfg.dip.signal = cell(1, sourceReconst.trialsNum);
+            for i = 1 : sourceReconst.trialsNum
+                cfg.dip.signal{i} = signal;  % # of trials
+            end % for i = 1 : my_cfg.sourceReconst.trialNum
+            cfg.relnoise = sourceReconst.relNoise;
+            rawData = [];
+            rawData.EEG = ft_dipolesimulation(cfg);
+            for i = 1 : length(rawData.EEG.time) % Correct the time course
+                rawData.EEG.time{i} = time;
             end
-            refdata.trial = trial;
-            refdata.time = rawData.(Modalities{i}).time;
-            refdata.label = {'refchan'};
-            rawDataAppend = ft_appenddata([], rawData.(Modalities{i}), refdata);
-            rawDataAppend.fsample = rawData.(Modalities{i}).fsample;
             
-            % re-segment the data into pre and post stimulus onset intervals
+            cfg.senstype = 'meg';
+            cfg.headmodel = vol.brain; % volume conduction model (headmodel)
+            cfg.grad = sens.MEG;
+            cfg.channel = LeadField.(SourceModels{j}).MEG.label;
+            temp = forwardProblem.(SourceModels{j}).maxMom(LeadField.(SourceModels{j}).MEG.inside, :)';
+            cfg.dip.mom = temp(:);
+            rawData.MEG = ft_dipolesimulation(cfg);
+            for i = 1 : length(rawData.MEG.time) % Correct the time course
+                rawData.MEG.time{i} = time;
+            end
+            
+            % figure; % Plot raw data
+            % plot(rawData.time{1}, rawData.trial{1})
+            
+            for i = 1 : length(rawData.EEG.trial) % Demeaning the raw data
+                %         mean(rawData.trial{i}(1,1:find(rawData.time{i} >= 0, 1) - 1)) %[mean(rawData.trial{i}(1,1:find(rawData.time{i} >= 0, 1) - 1)) mean(rawData.trial{i}(1,find(rawData.time{i} >= 0, 1):end))]
+                rawData.EEG.trial{i} = ft_preproc_polyremoval(rawData.EEG.trial{i}, 0, 1, find(rawData.EEG.time{i} >= 0, 1) - 1); % this will also demean and detrend
+                %         mean(rawData.trial{i}(1,1:find(rawData.time{i} >= 0, 1) - 1)) %[mean(rawData.trial{i}(1,1:find(rawData.time{i} >= 0, 1) - 1)) mean(rawData.trial{i}(1,find(rawData.time{i} >= 0, 1):end))]
+                rawData.MEG.trial{i} = ft_preproc_polyremoval(rawData.MEG.trial{i}, 0, 1, find(rawData.MEG.time{i} >= 0, 1) - 1); % this will also demean and detrend
+            end % for i = 1 : length(rawData.trial)
+            
             cfg = [];
-            cfg.toilim = [-inf 0-1/rawDataAppend.fsample];
-            rawDataAppendPre = ft_redefinetrial(cfg, rawDataAppend);
+            cfg.toilim = [-inf 0-1./rawData.EEG.fsample];
+            rawDataPre.EEG = ft_redefinetrial(cfg, rawData.EEG);
             cfg.toilim = [0 inf];
-            rawDataAppendPost = ft_redefinetrial(cfg, rawDataAppend);
+            rawDataPost.EEG = ft_redefinetrial(cfg, rawData.EEG);
             
-            % append data to facilitate the computation of a 'common' spatial filter
-            rawDataAppendAll = ft_appenddata([], rawDataAppendPre, rawDataAppendPost);
-            
-            % calculate the cross-spectral density matrics
             cfg = [];
-            cfg.method = 'mtmfft';
-            cfg.output = 'fourier'; % powandcsd, fourier
-            cfg.taper = 'hanning';
-            cfg.foilim = [freq freq];
-            freqPre = ft_freqanalysis(cfg, rawDataAppendPre);
-            freqPost = ft_freqanalysis(cfg, rawDataAppendPost);
-            freqAll = ft_freqanalysis(cfg, rawDataAppendAll);
+            cfg.toilim = [-inf 0-1./rawData.MEG.fsample];
+            rawDataPre.MEG = ft_redefinetrial(cfg, rawData.MEG);
+            cfg.toilim = [0 inf];
+            rawDataPost.MEG = ft_redefinetrial(cfg, rawData.MEG);
             
-            % perform source reconstruction using the dics method
             cfg = [];
-            cfg.method = 'dics';
-            cfg.frequency = freq;
-            %     cfg.latency   = [0 0.160];
-            cfg.channel = rawDataAppend.label;
-            if strcmp(Modalities{i}, 'EEG') %ft_senstype(sens, 'eeg')
-                cfg.senstype = 'eeg';
-                cfg.headmodel = vol.head; % volume conduction model (headmodel)
-                cfg.elec = sens.(Modalities{i});
-            elseif strcmp(Modalities{i}, 'MEG') % ft_senstype(sens, 'meg')
-                cfg.senstype = 'meg';
-                cfg.headmodel = vol.brain; % volume conduction model (headmodel)
-                cfg.grad = sens.(Modalities{i});
-            end % if ft_senstype(sens, 'eeg')
-            %     cfg.grid = LF;
-            cfg.grid = forwardProblem.sourceModel;
-            eval(['cfg.grid.leadfield = LF.',Modalities{i},'LF.leadfield;']) % leadfield
-            cfg.dics.keepfilter = 'yes';
-            cfg.dics.fixedori = 'no'; % To be generalised
-            cfg.dics.projectnoise = 'yes';
-            cfg.dics.lambda = sourceReconst.lambda;
-            cfg.dics.realfilter = 'yes';
-            %     cfg.dics.keepcsd = 'yes';
-            cfg.refchan = {'refchan'};
-            sourceDICS.(Modalities{i}) = ft_sourceanalysis(cfg, freqAll);
-            sourceDICS.(Modalities{i}).avg.NAI = abs(sourceDICS.(Modalities{i}).avg.pow) ./ sourceDICS.(Modalities{i}).avg.noise; % Neural Activity Index (NAI)
+            cfg.covariance = 'yes';
+            cfg.covariancewindow = [-inf 0-1./rawData.EEG.fsample];
+            timeLock.EEG = ft_timelockanalysis(cfg, rawData.EEG);
+            % timeLock.fsample = rawData.fsample;
             
-            %         sourceallNAI = sourceDICS;
-            %     sourceallNAI.avg.pow = abs(sourceallNAI.avg.pow) ./ sourceallNAI.avg.noise; % Neural Activity Index (NAI)
+            cfg = [];
+            cfg.covariance = 'yes';
+            cfg.covariancewindow = [-inf 0-1./rawData.MEG.fsample];
+            timeLock.MEG = ft_timelockanalysis(cfg, rawData.MEG);
+            
+            cfg = [];
+            cfg.covariance = 'yes';
+            timeLockPre.EEG = ft_timelockanalysis(cfg, rawDataPre.EEG);
+            timeLockPost.EEG = ft_timelockanalysis(cfg, rawDataPost.EEG);
+            % figure; plot(timeLock.time, timeLock.avg(:, :));
+            cfg = [];
+            cfg.covariance = 'yes';
+            timeLockPre.MEG = ft_timelockanalysis(cfg, rawDataPre.MEG);
+            timeLockPost.MEG = ft_timelockanalysis(cfg, rawDataPost.MEG);
             
             
-            % apply common filters to pre and post stimulus data
-            cfg.grid.filter = sourceDICS.(Modalities{i}).avg.filter;
-            % now we need to extract the dipole pairs' full csd matrix with respect
-            % to the reference channel, which is not possible in the traditional
-            % DICS implementation, but can be achieved with pcc
-            %     cfg.method   = 'pcc';
-            cfg = rmfield(cfg, 'dics');
-            sourceDICSPre = ft_sourceanalysis(cfg, freqPre);
-            sourceDICSPost = ft_sourceanalysis(cfg, freqPost);
-            
-            sourceDICS.(Modalities{i}).avg.relPow = (abs(sourceDICSPost.avg.pow) - abs(sourceDICSPre.avg.pow)) ./ abs(sourceDICSPre.avg.pow);
-            
-            %         % contrast post stimulus onset activity with respect to baseline
-            %     sourceDICSPre.time = 0; % FT_MATH requires the time axis needs to be the same
-            %     sourceDICSPost.time = 0; % FT_MATH requires the time axis needs to be the same
-            %     cfg = [];
-            %     cfg.operation = '(abs(x2)-abs(x1))./abs(x1)';
-            %     cfg.parameter = 'avg.pow';
-            %     RelPow   = ft_math(cfg, sourceDICSPre, sourceDICSPost);
-            
-            %     RelPow = sourceDICSPost;
-            % RelPow.avg.pow = (abs(sourceDICSPost.avg.coh) - abs(sourceDICSPre.avg.coh))./abs(sourceDICSPre.avg.coh);
-            % % RelPow.avg.pow = ((sourceDICSPost.avg.pow) - (sourceDICSPre.avg.pow))./(sourceDICSPre.avg.pow);
-            
-            %     cfg = [];
-            %     cfg.method = 'surface';
-            %     cfg.funparameter = 'pow';  %avg.pow
-            %     cfg.maskparameter = cfg.funparameter;
-            %     % cfg.funcolorlim    = [0.0 1.2];
-            %     cfg.funcolormap    = 'jet';
-            %     % cfg.ancolormap    = 'jet';
-            %     % cfg.opacitylim     = [0.0 1.2];
-            %     % cfg.opacitymap     = 'rampup';
-            %     cfg.projmethod     = 'nearest';
-            %     % cfg.surffile       = 'surface_white_both.mat';
-            %     % cfg.surfdownsample = 10;
-            %     ft_sourceplot(cfg, sourceallNAI);
-            %     view ([0 90])
-            
-            
-            % % ind = source2.time >= 0;
+            %% LCMV
+            %     switch my_cfg.sourceReconst.method
+            %         case 'LCMV'
+            Modalities = {'EEG', 'MEG'};
+            for i = 1 : length(Modalities)
+                cfg = [];
+                cfg.method = 'lcmv';
+                % cfg.grid = leadfield;
+                cfg.grid = forwardProblem.(SourceModels{j}).sourceModel;
+                cfg.grid.leadfield = LeadField.(SourceModels{j}).(Modalities{i}).leadfield;
+                %             eval(['cfg.grid.leadfield = LeadField.(SourceModels{j}).',Modalities{i},'.leadfield;']) % leadfield
+                if strcmp(Modalities{i}, 'EEG') %ft_senstype(sens, 'eeg')
+                    cfg.senstype = 'eeg';
+                    cfg.headmodel = vol.head; % volume conduction model (headmodel)
+                    cfg.elec = sens.(Modalities{i});
+                elseif strcmp(Modalities{i}, 'MEG') %ft_senstype(sens, 'meg')
+                    cfg.senstype = 'meg';
+                    cfg.headmodel = vol.brain; % volume conduction model (headmodel)
+                    cfg.grad = sens.(Modalities{i});
+                end
+                cfg.channel = timeLock.(Modalities{i}).label;
+                cfg.lcmv.keepfilter = 'yes';
+                cfg.lcmv.fixedori = 'no'; % project on axis of most variance using SVD
+                cfg.lcmv.projectnoise = 'yes';
+                % cfg.lcmv.weightnorm = 'nai';
+                cfg.lcmv.lambda = sourceReconst.lambda;
+                sourceLCMV.(Modalities{i}) = ft_sourceanalysis(cfg, timeLock.(Modalities{i}));
+                % sourceLCMV.avg.pow = abs(sourceLCMV.avg.pow);
+                sourceLCMV.(Modalities{i}).avg.NAI = abs(sourceLCMV.(Modalities{i}).avg.pow) ./ sourceLCMV.(Modalities{i}).avg.noise; % Neural Activity Index (NAI)
+                
+                
+                % Instantpow = zeros(size(cfg.grid.pos, 1), length(sourceLCMV.time));
+                % h = waitbar(0, 'Please wait...');
+                % for i = 1 : length(timeLock.time)
+                %     cfgInst = [];
+                %     cfgInst.latency = [timeLock.time(1) timeLock.time(i)];
+                %     timelockInst = ft_selectdata(cfgInst, timeLock);
+                %     temp = ft_sourceanalysis(cfg, timelockInst);
+                %     Instantpow(:, i) = abs(temp.avg.pow) ./ temp.avg.noise;
+                %     waitbar(i / length(sourceLCMV.time))
+                % end
+                % close(h)
+                % sourceLCMV.avg.Instantpow = abs(Instantpow);
+                
+                %     source2NAI = source2;
+                %     source2NAI.avg.pow = abs(source2NAI.avg.pow) ./ source2NAI.avg.noise; % Neural Activity Index (NAI)
+                
+                % second and third call to ft_sourceanalysis now applying the precomputed filters to pre and %post intervals
+                cfg.grid.filter = sourceLCMV.(Modalities{i}).avg.filter; % Same cfg as the previous LCMV
+                cfg = rmfield(cfg, 'lcmv');
+                cfg.lcmv.projectnoise = 'yes';
+                sourceLCMVPre.(Modalities{i}) = ft_sourceanalysis(cfg, timeLockPre.(Modalities{i}));
+                sourceLCMVPost.(Modalities{i}) = ft_sourceanalysis(cfg, timeLockPost.(Modalities{i}));
+                
+                sourceLCMV.(Modalities{i}).avg.relPow = (abs(sourceLCMVPost.(Modalities{i}).avg.pow) - abs(sourceLCMVPre.(Modalities{i}).avg.pow)) ./ abs(sourceLCMVPre.(Modalities{i}).avg.pow);
+                
+                %     % contrast post stimulus onset activity with respect to baseline
+                %     sourceLCMVPre.time = 0; % FT_MATH requires the time axis needs to be the same
+                %     sourceLCMVPost.time = 0; % FT_MATH requires the time axis needs to be the same
+                %     cfg = [];
+                %     cfg.operation = '(abs(x2)-abs(x1))./abs(x1)';
+                %     cfg.parameter = 'avg.pow';
+                %     RelPow = ft_math(cfg, sourceLCMVPre, sourceLCMVPost);
+                
+                %
+                % sourcePreNAI = sourceLCMVPre;
+                % sourcePreNAI.avg.pow = sourcePreNAI.avg.pow ./ sourcePreNAI.avg.noise; % Neural Activity Index (NAI)
+                %
+                % sourcePostNAI = sourceLCMVPost;
+                % sourcePostNAI.avg.pow = sourcePostNAI.avg.pow ./ sourcePostNAI.avg.noise; % Neural Activity Index (NAI)
+                %
+                % RelPowNAI = sourcePostNAI;
+                % RelPowNAI.avg.pow = (abs(sourcePostNAI.avg.pow) - abs(sourcePreNAI.avg.pow))./abs(sourcePreNAI.avg.pow);
+                
+                % figure
+                % ft_plot_mesh(grid, 'vertexcolor', source2.avg.pow, 'edgecolor', 'none', 'colormap', 'jet'); % , 'surfaceonly', 'yes'
+                % lighting gouraud; material dull
+                
+                %     cfg = [];
+                %     cfg.method = 'surface';
+                %     cfg.funparameter = 'avg.pow';  %avg.pow
+                %     cfg.maskparameter = cfg.funparameter;
+                %     % cfg.funcolorlim    = [0.0 1.2];
+                %     cfg.funcolormap    = 'jet';
+                %     % cfg.ancolormap    = 'jet';
+                %     % cfg.opacitylim     = [0.0 1.2];
+                %     % cfg.opacitymap     = 'rampup';
+                %     cfg.projmethod     = 'nearest';
+                %     % cfg.surffile       = 'surface_white_both.mat';
+                %     % cfg.surfdownsample = 10;
+                %     ft_sourceplot(cfg, RelPow);
+                %     view ([0 90])
+                % figure
+                % ft_plot_mesh(forwardProblem.sourceModel, 'vertexcolor', sourceLCMV.avg.relPow, 'edgecolor', 'none', 'colormap', 'jet');
+                %     lighting gouraud; material dull
+                
+                % ind = source2.time >= 0;
+                % momPowAvgTim = nan(size(source2.avg.mom, 1), 1);
+                momPow = nan(size(sourceLCMV.(Modalities{i}).avg.mom, 1), length(sourceLCMV.(Modalities{i}).time));
+                for ii = 1 : size(momPow, 1)
+                    if sourceLCMV.(Modalities{i}).inside(ii)
+                        momPow(ii, :) = sqrt(sum(abs(sourceLCMV.(Modalities{i}).avg.mom{ii}).^2, 1));
+                        % momPowNAI(i, :) = sqrt(sum(abs(sourceLCMV.avg.mom{i}).^2, 1)) / sourceLCMV.avg.noise(i);
+                        % momPowNAI(i, :) = mean(sqrt(sum(abs(sourceLCMV.avg.mom{i}).^2, 1))) / sourceLCMV.avg.noise(i);
+                        %         momPowAvgTim(i) = mean(abs(momPow(i, ind)));
+                    end % if sourceLCMV.inside(i)
+                end % for i = 1 : size(momPow, 1)
+                % sourceLCMV.avg.momPowAvgTim = momPowAvgTim;
+                sourceLCMV.(Modalities{i}).avg.momPow = momPow;
+            end % for i = 1 : length(Modalities)
+            % % ind = find(source2.time >= 0);
             % % momPowAvgTim = nan(size(source2.avg.mom, 1), 1);
-            % momPow = nan(size(sourceall.avg.mom, 1), length(sourceall.time));
+            % momPow = nan(size(RelPow.avg.mom, 1), length(RelPow.time));
             % for i=1:size(momPow, 1)
-            %     if sourceall.inside(i)
-            %         momPow(i, :) = sqrt(sum(abs(sourceall.avg.mom{i}).^2, 1));
-            % % momPowNAI(i, :) = sqrt(sum(abs(sourceall.avg.mom{i}).^2, 1)) / sourceall.avg.noise(i);
-            % % momPowNAI(i, :) = mean(sqrt(sum(abs(sourceall.avg.mom{i}).^2, 1))) / sourceall.avg.noise(i);
+            %     if RelPow.inside(i)
+            %         momPow(i, :) = (sqrt(sum(abs(sourceLCMVPost.avg.mom{i}).^2, 1)) - sqrt(sum(abs(sourceLCMVPre.avg.mom{i}).^2, 1))) ./ sqrt(sum(abs(sourceLCMVPre.avg.mom{i}).^2, 1));
+            % %         momPow(i, :) = sqrt(sum(abs((sourceLCMVPost.avg.mom{i} - sourceLCMVPre.avg.mom{i}) ./ sourceLCMVPre.avg.mom{i}).^2, 1));
+            %
+            %         %     momPowAvgTim(i) = mean(abs(momPow(i, ind)));
             % %         momPowAvgTim(i) = mean(abs(momPow(i, ind)));
             %     end
             % end
-            % % sourceall.avg.momPowAvgTim = momPowAvgTim;
-            % sourceall.avg.momPow = momPow;
+            % % source2.avg.momPowAvgTim = momPowAvgTim;
+            % RelPow.avg.momPow = momPow;
             %
+            
+            % momPow = nan(size(source2.avg.mom, 1), size(source2.avg.mom{i, 1}, 2));
+            % for i = 1 : size(source2.avg.mom, 1)
+            % momPow(i, :) = sqrt(sum((source2.avg.mom{i, 1}).^2));
+            % end
+            % source2.avg.momPow = momPow;
+            
+            % figure
+            % plot(source2.time, source2.avg.mom{1})
+            
+            % source is the result from a beamformer source estimation.
             % cfg = [];
-            % cfg.funparameter = 'momPow'; % 'momPow', 'pow'
-            % ft_sourcemovie(cfg, sourceall)
-        end % for i = 1 : length(Modalities)
-        sourceReconst.DICS = sourceDICS;
-        %     end % switch my_cfg.sourceReconst.method
-        sourceReconst.forwardProblem = forwardProblem;
+            % cfg.projectmom = 'yes';
+            % sdSource2 = ft_sourcedescriptives(cfg, source2);
+            % % figure
+            % %         ft_plot_mesh(grid, 'vertexcolor', sdSource2.avg.pow, 'edgecolor', 'k', 'colormap', 'jet'); % , 'surfaceonly', 'yes'
+            % %         lighting gouraud; material dull
+            %
+            % momPow = nan(size(sdSource2.avg.mom, 1), size(sdSource2.avg.mom{i, 1}, 2));
+            %   for i=1:size(momPow, 1)
+            %     momPow(i,:) = sqrt(sum(abs(sdSource2.avg.mom{i}).^2, 1));
+            %   end
+            % sdSource2.avg.momPow = momPow;
+            
+            %     cfg = [];
+            %     cfg.funparameter = 'momPow'; % 'momPow', 'pow'
+            %     ft_sourcemovie(cfg, sourceLCMV)
+            LCMV = sourceLCMV;
+            sourceReconst.(SourceModels{j}).LCMV = LCMV;
+            %     sourceReconst.sourceModel = forwardProblem.sourceModel;
+            
+            %% DICS
+            %             case 'DICS'
+            % this chunk of code creates a 'dummy' reference channel to be used for
+            % the coherence analysis
+            for i = 1 : length(Modalities)
+                refdata = [];
+                trial = cell(size(rawData.(Modalities{i}).trial));
+                for k = 1 : numel(trial)
+                    trial{k} = sin(2 * pi * freq * rawData.(Modalities{i}).time{k});
+                end
+                refdata.trial = trial;
+                refdata.time = rawData.(Modalities{i}).time;
+                refdata.label = {'refchan'};
+                rawDataAppend = ft_appenddata([], rawData.(Modalities{i}), refdata);
+                rawDataAppend.fsample = rawData.(Modalities{i}).fsample;
+                
+                % re-segment the data into pre and post stimulus onset intervals
+                cfg = [];
+                cfg.toilim = [-inf 0-1/rawDataAppend.fsample];
+                rawDataAppendPre = ft_redefinetrial(cfg, rawDataAppend);
+                cfg.toilim = [0 inf];
+                rawDataAppendPost = ft_redefinetrial(cfg, rawDataAppend);
+                
+                % append data to facilitate the computation of a 'common' spatial filter
+                rawDataAppendAll = ft_appenddata([], rawDataAppendPre, rawDataAppendPost);
+                
+                % calculate the cross-spectral density matrics
+                cfg = [];
+                cfg.method = 'mtmfft';
+                cfg.output = 'fourier'; % powandcsd, fourier
+                cfg.taper = 'hanning';
+                cfg.foilim = [freq freq];
+                freqPre = ft_freqanalysis(cfg, rawDataAppendPre);
+                freqPost = ft_freqanalysis(cfg, rawDataAppendPost);
+                freqAll = ft_freqanalysis(cfg, rawDataAppendAll);
+                
+                % perform source reconstruction using the dics method
+                cfg = [];
+                cfg.method = 'dics';
+                cfg.frequency = freq;
+                %     cfg.latency   = [0 0.160];
+                cfg.channel = rawDataAppend.label;
+                if strcmp(Modalities{i}, 'EEG') %ft_senstype(sens, 'eeg')
+                    cfg.senstype = 'eeg';
+                    cfg.headmodel = vol.head; % volume conduction model (headmodel)
+                    cfg.elec = sens.(Modalities{i});
+                elseif strcmp(Modalities{i}, 'MEG') % ft_senstype(sens, 'meg')
+                    cfg.senstype = 'meg';
+                    cfg.headmodel = vol.brain; % volume conduction model (headmodel)
+                    cfg.grad = sens.(Modalities{i});
+                end % if ft_senstype(sens, 'eeg')
+                %     cfg.grid = LeadField.(SourceModels{j}).(Modalities{i});
+                cfg.grid = forwardProblem.(SourceModels{j}).sourceModel;
+                cfg.grid.leadfield = LeadField.(SourceModels{j}).(Modalities{i}).leadfield;
+                %             eval(['cfg.grid.leadfield = LF.',Modalities{i},'LF.leadfield;']) % leadfield
+                cfg.dics.keepfilter = 'yes';
+                cfg.dics.fixedori = 'no'; % To be generalised
+                cfg.dics.projectnoise = 'yes';
+                cfg.dics.lambda = sourceReconst.lambda;
+                cfg.dics.realfilter = 'yes';
+                %     cfg.dics.keepcsd = 'yes';
+                cfg.refchan = {'refchan'};
+                sourceDICS.(Modalities{i}) = ft_sourceanalysis(cfg, freqAll);
+                sourceDICS.(Modalities{i}).avg.NAI = abs(sourceDICS.(Modalities{i}).avg.pow) ./ sourceDICS.(Modalities{i}).avg.noise; % Neural Activity Index (NAI)
+                
+                %         sourceallNAI = sourceDICS;
+                %     sourceallNAI.avg.pow = abs(sourceallNAI.avg.pow) ./ sourceallNAI.avg.noise; % Neural Activity Index (NAI)
+                
+                
+                % apply common filters to pre and post stimulus data
+                cfg.grid.filter = sourceDICS.(Modalities{i}).avg.filter;
+                % now we need to extract the dipole pairs' full csd matrix with respect
+                % to the reference channel, which is not possible in the traditional
+                % DICS implementation, but can be achieved with pcc
+                %     cfg.method   = 'pcc';
+                cfg = rmfield(cfg, 'dics');
+                sourceDICSPre = ft_sourceanalysis(cfg, freqPre);
+                sourceDICSPost = ft_sourceanalysis(cfg, freqPost);
+                
+                sourceDICS.(Modalities{i}).avg.relPow = (abs(sourceDICSPost.avg.pow) - abs(sourceDICSPre.avg.pow)) ./ abs(sourceDICSPre.avg.pow);
+                
+                %         % contrast post stimulus onset activity with respect to baseline
+                %     sourceDICSPre.time = 0; % FT_MATH requires the time axis needs to be the same
+                %     sourceDICSPost.time = 0; % FT_MATH requires the time axis needs to be the same
+                %     cfg = [];
+                %     cfg.operation = '(abs(x2)-abs(x1))./abs(x1)';
+                %     cfg.parameter = 'avg.pow';
+                %     RelPow   = ft_math(cfg, sourceDICSPre, sourceDICSPost);
+                
+                %     RelPow = sourceDICSPost;
+                % RelPow.avg.pow = (abs(sourceDICSPost.avg.coh) - abs(sourceDICSPre.avg.coh))./abs(sourceDICSPre.avg.coh);
+                % % RelPow.avg.pow = ((sourceDICSPost.avg.pow) - (sourceDICSPre.avg.pow))./(sourceDICSPre.avg.pow);
+                
+                %     cfg = [];
+                %     cfg.method = 'surface';
+                %     cfg.funparameter = 'pow';  %avg.pow
+                %     cfg.maskparameter = cfg.funparameter;
+                %     % cfg.funcolorlim    = [0.0 1.2];
+                %     cfg.funcolormap    = 'jet';
+                %     % cfg.ancolormap    = 'jet';
+                %     % cfg.opacitylim     = [0.0 1.2];
+                %     % cfg.opacitymap     = 'rampup';
+                %     cfg.projmethod     = 'nearest';
+                %     % cfg.surffile       = 'surface_white_both.mat';
+                %     % cfg.surfdownsample = 10;
+                %     ft_sourceplot(cfg, sourceallNAI);
+                %     view ([0 90])
+                
+                
+                % % ind = source2.time >= 0;
+                % % momPowAvgTim = nan(size(source2.avg.mom, 1), 1);
+                % momPow = nan(size(sourceall.avg.mom, 1), length(sourceall.time));
+                % for i=1:size(momPow, 1)
+                %     if sourceall.inside(i)
+                %         momPow(i, :) = sqrt(sum(abs(sourceall.avg.mom{i}).^2, 1));
+                % % momPowNAI(i, :) = sqrt(sum(abs(sourceall.avg.mom{i}).^2, 1)) / sourceall.avg.noise(i);
+                % % momPowNAI(i, :) = mean(sqrt(sum(abs(sourceall.avg.mom{i}).^2, 1))) / sourceall.avg.noise(i);
+                % %         momPowAvgTim(i) = mean(abs(momPow(i, ind)));
+                %     end
+                % end
+                % % sourceall.avg.momPowAvgTim = momPowAvgTim;
+                % sourceall.avg.momPow = momPow;
+                %
+                % cfg = [];
+                % cfg.funparameter = 'momPow'; % 'momPow', 'pow'
+                % ft_sourcemovie(cfg, sourceall)
+            end % for i = 1 : length(Modalities)
+            DICS = sourceDICS;
+            sourceReconst.(SourceModels{j}).DICS = DICS;
+            %     end % switch my_cfg.sourceReconst.method
+            sourceReconst.(SourceModels{j}).forwardProblem = forwardProblem.(SourceModels{j});
+        end % for j = 1 : length(SourceModels)
         save(opt.cfg.EEG.IPDir, 'sourceReconst');
         
         
@@ -4067,16 +4862,18 @@ set(opt.pbIP, 'BackgroundColor', [152 251 152] / 255)
 % set(opt.pbVol, 'Enable', 'on', 'FontWeight', 'bold')
 % set(opt.panelVol, 'ForegroundColor', [0 0 0], 'FontWeight', 'bold')
 
-set(opt.cbIPDICSPowEEG, 'Enable', 'on')
-set(opt.cbIPDICSPowMEG, 'Enable', 'on')
-set(opt.cbIPLCMVPowEEG, 'Enable', 'on')
-set(opt.cbIPLCMVMomEEG, 'Enable', 'on')
-set(opt.cbIPLCMVPowMEG, 'Enable', 'on')
-set(opt.cbIPLCMVMomMEG, 'Enable', 'on')
-set(opt.txtLCMVLabel, 'Enable', 'on')
-set(opt.txtDICSLabel, 'Enable', 'on')
-set(opt.txtEEGLabel, 'Enable', 'on')
-set(opt.txtMEGLabel, 'Enable', 'on')
+if get(opt.pmFPSource, 'Value') ~= 1
+    set(opt.cbIPDICSPowEEG, 'Enable', 'on')
+    set(opt.cbIPDICSPowMEG, 'Enable', 'on')
+    set(opt.cbIPLCMVPowEEG, 'Enable', 'on')
+    set(opt.cbIPLCMVMomEEG, 'Enable', 'on')
+    set(opt.cbIPLCMVPowMEG, 'Enable', 'on')
+    set(opt.cbIPLCMVMomMEG, 'Enable', 'on')
+    set(opt.txtLCMVLabel, 'Enable', 'on')
+    set(opt.txtDICSLabel, 'Enable', 'on')
+    set(opt.txtEEGLabel, 'Enable', 'on')
+    set(opt.txtMEGLabel, 'Enable', 'on')
+end
 
 setappdata(h, 'opt', opt);
 
@@ -4102,7 +4899,7 @@ if get(opt.cbIPDICSPowEEG, 'Value') == 0 && get(opt.cbIPDICSPowMEG, 'Value') == 
         %         opt.cfg.EEG = rmfield(opt.cfg.EEG, temp);
     end % if any(isfield(opt.cfg.EEG, allHandle))
     
-    opt.cfg.EEG = rmfield(opt.cfg.EEG, 'sourceReconst');
+    % % %     opt.cfg.EEG = rmfield(opt.cfg.EEG, 'sourceReconst');
     
     %     allHandle = {'MRIhx'}; % Delete previous slices
     %     if all(~isfield(opt.cfg.EEG, allHandle))
@@ -4218,17 +5015,59 @@ else
     setappdata(h, 'opt', opt);
     
     if get(opt.cbIPDICSPowEEG, 'Value') == 1 %
-        valNorm = opt.cfg.EEG.sourceReconst.DICS.EEG.avg.relPow;
-        valNorm = (valNorm - min(valNorm(:))) / (max(valNorm(:)) - min(valNorm(:))); % Normalizing the values
-        opt.cfg.EEG.DICSPowEEGh = ft_plot_mesh_mod(opt.cfg.EEG.sourceReconst.forwardProblem.sourceModel, 'vertexcolor', valNorm, 'edgecolor', 'none', 'colormap', 'jet');
+        if get(opt.pmFPSource, 'Value') == 5 || get(opt.pmFPSource, 'Value') == 6
+            valNorm = opt.cfg.EEG.sourceReconst.(opt.SourceModelSel).DICS.EEG.avg.relPow(opt.LOI.posRange, 1);
+            valNorm = (valNorm - min(valNorm(:))) / (max(valNorm(:)) - min(valNorm(:))); % Normalizing the values
+            selectedSourceModel = [];
+            selectedSourceModel.pos = opt.cfg.EEG.sourceReconst.(opt.SourceModelSel).forwardProblem.sourceModel.pos(opt.LOI.posRange, :);
+            selectedSourceModel.inside = opt.cfg.EEG.sourceReconst.(opt.SourceModelSel).forwardProblem.sourceModel.inside(opt.LOI.posRange);
+            selectedSourceModel.tri = opt.cfg.EEG.sourceReconst.(opt.SourceModelSel).forwardProblem.sourceModel.tri(opt.LOI.triRange, :) - opt.LOI.triValCorr;
+            opt.cfg.EEG.DICSPowEEGh = ft_plot_mesh_mod(selectedSourceModel, 'vertexcolor', valNorm, 'edgecolor', 'none', 'colormap', 'jet');
+        else
+            valNorm = opt.cfg.EEG.sourceReconst.(opt.SourceModelSel).DICS.EEG.avg.relPow;
+            valNorm = (valNorm - min(valNorm(:))) / (max(valNorm(:)) - min(valNorm(:))); % Normalizing the values
+            opt.cfg.EEG.DICSPowEEGh = ft_plot_mesh_mod(opt.cfg.EEG.sourceReconst.(opt.SourceModelSel).forwardProblem.sourceModel, 'vertexcolor', valNorm, 'edgecolor', 'none', 'colormap', 'jet');
+        end % if get(opt.pmFPSource, 'Value') == 5 || get(opt.pmFPSource, 'Value') == 6
+        if ~isfield(opt, 'lighth')
+            opt.lighth = light;
+        end
+        lighting gouraud; material dull
     elseif get(opt.cbIPDICSPowMEG, 'Value') == 1 %
-        valNorm = opt.cfg.EEG.sourceReconst.DICS.MEG.avg.relPow;
-        valNorm = (valNorm - min(valNorm(:))) / (max(valNorm(:)) - min(valNorm(:))); % Normalizing the values
-        opt.cfg.EEG.DICSPowMEGh = ft_plot_mesh_mod(opt.cfg.EEG.sourceReconst.forwardProblem.sourceModel, 'vertexcolor', valNorm, 'edgecolor', 'none', 'colormap', 'jet');
+        if get(opt.pmFPSource, 'Value') == 5 || get(opt.pmFPSource, 'Value') == 6
+            valNorm = opt.cfg.EEG.sourceReconst.(opt.SourceModelSel).DICS.MEG.avg.relPow(opt.LOI.posRange, 1);
+            valNorm = (valNorm - min(valNorm(:))) / (max(valNorm(:)) - min(valNorm(:))); % Normalizing the values
+            selectedSourceModel = [];
+            selectedSourceModel.pos = opt.cfg.EEG.sourceReconst.(opt.SourceModelSel).forwardProblem.sourceModel.pos(opt.LOI.posRange, :);
+            selectedSourceModel.inside = opt.cfg.EEG.sourceReconst.(opt.SourceModelSel).forwardProblem.sourceModel.inside(opt.LOI.posRange);
+            selectedSourceModel.tri = opt.cfg.EEG.sourceReconst.(opt.SourceModelSel).forwardProblem.sourceModel.tri(opt.LOI.triRange, :) - opt.LOI.triValCorr;
+            opt.cfg.EEG.DICSPowMEGh = ft_plot_mesh_mod(selectedSourceModel, 'vertexcolor', valNorm, 'edgecolor', 'none', 'colormap', 'jet');
+        else
+            valNorm = opt.cfg.EEG.sourceReconst.(opt.SourceModelSel).DICS.MEG.avg.relPow;
+            valNorm = (valNorm - min(valNorm(:))) / (max(valNorm(:)) - min(valNorm(:))); % Normalizing the values
+            opt.cfg.EEG.DICSPowMEGh = ft_plot_mesh_mod(opt.cfg.EEG.sourceReconst.(opt.SourceModelSel).forwardProblem.sourceModel, 'vertexcolor', valNorm, 'edgecolor', 'none', 'colormap', 'jet');
+        end
+        if ~isfield(opt, 'lighth')
+            opt.lighth = light;
+        end
+        lighting gouraud; material dull
     elseif get(opt.cbIPLCMVPowEEG, 'Value') == 1 %
-        valNorm = opt.cfg.EEG.sourceReconst.LCMV.EEG.avg.relPow;
-        valNorm = (valNorm - min(valNorm(:))) / (max(valNorm(:)) - min(valNorm(:))); % Normalizing the values
-        opt.cfg.EEG.LCMVPowEEGh = ft_plot_mesh_mod(opt.cfg.EEG.sourceReconst.forwardProblem.sourceModel, 'vertexcolor', valNorm, 'edgecolor', 'none', 'colormap', 'jet');
+        if get(opt.pmFPSource, 'Value') == 5 || get(opt.pmFPSource, 'Value') == 6
+            valNorm = opt.cfg.EEG.sourceReconst.(opt.SourceModelSel).LCMV.EEG.avg.relPow(opt.LOI.posRange, 1);
+            valNorm = (valNorm - min(valNorm(:))) / (max(valNorm(:)) - min(valNorm(:))); % Normalizing the values
+            selectedSourceModel = [];
+            selectedSourceModel.pos = opt.cfg.EEG.sourceReconst.(opt.SourceModelSel).forwardProblem.sourceModel.pos(opt.LOI.posRange, :);
+            selectedSourceModel.inside = opt.cfg.EEG.sourceReconst.(opt.SourceModelSel).forwardProblem.sourceModel.inside(opt.LOI.posRange);
+            selectedSourceModel.tri = opt.cfg.EEG.sourceReconst.(opt.SourceModelSel).forwardProblem.sourceModel.tri(opt.LOI.triRange, :) - opt.LOI.triValCorr;
+            opt.cfg.EEG.LCMVPowEEGh = ft_plot_mesh_mod(selectedSourceModel, 'vertexcolor', valNorm, 'edgecolor', 'none', 'colormap', 'jet');
+        else
+            valNorm = opt.cfg.EEG.sourceReconst.(opt.SourceModelSel).LCMV.EEG.avg.relPow;
+            valNorm = (valNorm - min(valNorm(:))) / (max(valNorm(:)) - min(valNorm(:))); % Normalizing the values
+            opt.cfg.EEG.LCMVPowEEGh = ft_plot_mesh_mod(opt.cfg.EEG.sourceReconst.(opt.SourceModelSel).forwardProblem.sourceModel, 'vertexcolor', valNorm, 'edgecolor', 'none', 'colormap', 'jet');
+        end
+        if ~isfield(opt, 'lighth')
+            opt.lighth = light;
+        end
+        lighting gouraud; material dull
     elseif get(opt.cbIPLCMVMomEEG, 'Value') == 1 %
         %         valNorm = opt.cfg.EEG.sourceReconst.LCMV.EEG.avg.momPow;
         %         valNorm = (valNorm - min(valNorm(:))) ./ (max(valNorm(:)) - min(valNorm(:)));
@@ -4255,17 +5094,46 @@ else
         % delete(temp);
         %         opt.cfg.EEG = rmfield(opt.cfg.EEG, 'LCMVMomEEGh');
         
+        selectedSourceModel = opt.cfg.EEG.sourceReconst.(opt.SourceModelSel).LCMV.EEG;
+        if get(opt.pmFPSource, 'Value') == 5 || get(opt.pmFPSource, 'Value') == 6
+            selectedSourceModel.pos = selectedSourceModel.pos(opt.LOI.posRange, :);
+            selectedSourceModel.inside = selectedSourceModel.inside(opt.LOI.posRange);
+            selectedSourceModel.tri = selectedSourceModel.tri(opt.LOI.triRange, :) - opt.LOI.triValCorr;
+            selectedSourceModel.avg.pow = selectedSourceModel.avg.pow(opt.LOI.posRange);
+            selectedSourceModel.avg.noise = selectedSourceModel.avg.noise(opt.LOI.posRange);
+            selectedSourceModel.avg.NAI = selectedSourceModel.avg.NAI(opt.LOI.posRange);
+            selectedSourceModel.avg.relPow = selectedSourceModel.avg.relPow(opt.LOI.posRange);
+            selectedSourceModel.avg.momPow = selectedSourceModel.avg.momPow(opt.LOI.posRange, :);
+            selectedSourceModel.avg.filter = [];
+            selectedSourceModel.avg.mom = [];
+        end
+        
         cfg = [];
         cfg.funparameter = 'momPow'; % 'momPow', 'pow'
-        ft_sourcemovie(cfg, opt.cfg.EEG.sourceReconst.LCMV.EEG);
+        %         ft_sourcemovie(cfg, opt.cfg.EEG.sourceReconst.(opt.SourceModelSel).LCMV.EEG);
+        ft_sourcemovie(cfg, selectedSourceModel);
         % if exist('M', 'var')
         set(opt.cbIPLCMVMomEEG, 'Value', 0)
         % end
         
     elseif get(opt.cbIPLCMVPowMEG, 'Value') == 1 %
-        valNorm = opt.cfg.EEG.sourceReconst.LCMV.MEG.avg.relPow;
-        valNorm = (valNorm - min(valNorm(:))) / (max(valNorm(:)) - min(valNorm(:))); % Normalizing the values
-        opt.cfg.EEG.LCMVPowMEGh = ft_plot_mesh_mod(opt.cfg.EEG.sourceReconst.forwardProblem.sourceModel, 'vertexcolor', valNorm, 'edgecolor', 'none', 'colormap', 'jet');
+        if get(opt.pmFPSource, 'Value') == 5 || get(opt.pmFPSource, 'Value') == 6
+            valNorm = opt.cfg.EEG.sourceReconst.(opt.SourceModelSel).LCMV.MEG.avg.relPow(opt.LOI.posRange, 1);
+            valNorm = (valNorm - min(valNorm(:))) / (max(valNorm(:)) - min(valNorm(:))); % Normalizing the values
+            selectedSourceModel = [];
+            selectedSourceModel.pos = opt.cfg.EEG.sourceReconst.(opt.SourceModelSel).forwardProblem.sourceModel.pos(opt.LOI.posRange, :);
+            selectedSourceModel.inside = opt.cfg.EEG.sourceReconst.(opt.SourceModelSel).forwardProblem.sourceModel.inside(opt.LOI.posRange);
+            selectedSourceModel.tri = opt.cfg.EEG.sourceReconst.(opt.SourceModelSel).forwardProblem.sourceModel.tri(opt.LOI.triRange, :) - opt.LOI.triValCorr;
+            opt.cfg.EEG.LCMVPowMEGh = ft_plot_mesh_mod(selectedSourceModel, 'vertexcolor', valNorm, 'edgecolor', 'none', 'colormap', 'jet');
+        else
+            valNorm = opt.cfg.EEG.sourceReconst.(opt.SourceModelSel).LCMV.MEG.avg.relPow;
+            valNorm = (valNorm - min(valNorm(:))) / (max(valNorm(:)) - min(valNorm(:))); % Normalizing the values
+            opt.cfg.EEG.LCMVPowMEGh = ft_plot_mesh_mod(opt.cfg.EEG.sourceReconst.(opt.SourceModelSel).forwardProblem.sourceModel, 'vertexcolor', valNorm, 'edgecolor', 'none', 'colormap', 'jet');
+        end
+        if ~isfield(opt, 'lighth')
+            opt.lighth = light;
+        end
+        lighting gouraud; material dull
     elseif get(opt.cbIPLCMVMomMEG, 'Value') == 1 %
         %         valNorm = opt.cfg.EEG.sourceReconst.LCMV.MEG.avg.momPow;
         %         valNorm = (valNorm - min(valNorm(:))) ./ (max(valNorm(:)) - min(valNorm(:)));
@@ -4290,9 +5158,24 @@ else
         % delete(opt.cfg.EEG.LCMVMomMEGh);
         %         opt.cfg.EEG = rmfield(opt.cfg.EEG, 'LCMVMomMEGh');
         
+        selectedSourceModel = opt.cfg.EEG.sourceReconst.(opt.SourceModelSel).LCMV.MEG;
+        if get(opt.pmFPSource, 'Value') == 5 || get(opt.pmFPSource, 'Value') == 6
+            selectedSourceModel.pos = selectedSourceModel.pos(opt.LOI.posRange, :);
+            selectedSourceModel.inside = selectedSourceModel.inside(opt.LOI.posRange);
+            selectedSourceModel.tri = selectedSourceModel.tri(opt.LOI.triRange, :) - opt.LOI.triValCorr;
+            selectedSourceModel.avg.pow = selectedSourceModel.avg.pow(opt.LOI.posRange);
+            selectedSourceModel.avg.noise = selectedSourceModel.avg.noise(opt.LOI.posRange);
+            selectedSourceModel.avg.NAI = selectedSourceModel.avg.NAI(opt.LOI.posRange);
+            selectedSourceModel.avg.relPow = selectedSourceModel.avg.relPow(opt.LOI.posRange);
+            selectedSourceModel.avg.momPow = selectedSourceModel.avg.momPow(opt.LOI.posRange, :);
+            selectedSourceModel.avg.filter = [];
+            selectedSourceModel.avg.mom = [];
+        end
+        
         cfg = [];
         cfg.funparameter = 'momPow'; % 'momPow', 'pow'
-        ft_sourcemovie(cfg, opt.cfg.EEG.sourceReconst.LCMV.MEG);
+        %         ft_sourcemovie(cfg, opt.cfg.EEG.sourceReconst.(opt.SourceModelSel).LCMV.MEG);
+        ft_sourcemovie(cfg, selectedSourceModel);
         % if exist('M', 'var')
         set(opt.cbIPLCMVMomMEG, 'Value', 0)
         % end
@@ -5664,18 +6547,26 @@ Elements = {'pbMRI', 'cbMRI', 'cbFiducl', 'pbSegMRI', 'cbSegBrain', ...
     'cbMeshGray', 'cbMeshCSF', 'pbVol', 'cbVolEEG', 'cbVolMEG', ...
     'pbSrc', 'cbSrcWhite', 'cbSrcPial', 'cbSrcBetween', 'pbSns', 'cbSnsEEG', ...
     'cbSnsMEG', 'pbLF', 'pbFP', 'sEEGSourceUp', 'sEEGSourceLeft', 'sEEGSourceBottom', ...
-    'txtEEGSourceUp', 'txtEEGSourceLeft', 'txtEEGSourceBottom', 'cbFPSource', ...
+    'txtEEGSourceUp', 'txtEEGSourceLeft', 'txtEEGSourceBottom', 'pmFPSource', ...
     'cbFPEEG', 'cbFPMEG', 'pbIP', 'cbIPDICSPowEEG', 'cbIPDICSPowMEG', 'cbIPLCMVPowEEG', ...
     'cbIPLCMVMomEEG', 'cbIPLCMVPowMEG', 'cbIPLCMVMomMEG', 'txtLCMVLabel', 'txtDICSLabel', ...
-    'txtEEGLabel', 'txtMEGLabel'};
+    'txtEEGLabel', 'txtMEGLabel', 'txtSourceLabel', 'panelbgLOF'};
 
 CurrentState = [];
 for i = 1 : length(Elements)
-    CurrentState.(Elements{i}) = get(opt.(Elements{i}), 'Enable');
+    if ~strcmp(Elements{i}, 'panelbgLOF')
+        CurrentState.(Elements{i}) = get(opt.(Elements{i}), 'Enable');
+    elseif strcmp(Elements{i}, 'panelbgLOF')
+        CurrentState.(Elements{i}) = get(opt.(Elements{i}), 'Visible');
+    end
 end % for i = 1 : length(Elements)
 
 for i = 1 : length(Elements)
-    set(opt.(Elements{i}), 'Enable', 'off');
+    if ~strcmp(Elements{i}, 'panelbgLOF')
+        set(opt.(Elements{i}), 'Enable', 'off');
+    elseif strcmp(Elements{i}, 'panelbgLOF')
+        set(opt.(Elements{i}), 'Visible', 'off');
+    end
 end % for i = 1 : length(Elements)
 % set(opt.AxeEEGSource, 'Visible', 'off')
 CurrentState.Elements = Elements;
@@ -5686,7 +6577,11 @@ h = getparent(h);
 opt = getappdata(h, 'opt');
 
 for i = 1 : length(CurrentState.Elements)
-    set(opt.(CurrentState.Elements{i}), 'Enable', CurrentState.(CurrentState.Elements{i}));
+    if ~strcmp(CurrentState.Elements{i}, 'panelbgLOF')
+        set(opt.(CurrentState.Elements{i}), 'Enable', CurrentState.(CurrentState.Elements{i}));
+    elseif strcmp(CurrentState.Elements{i}, 'panelbgLOF')
+        set(opt.(CurrentState.Elements{i}), 'Visible', CurrentState.(CurrentState.Elements{i}));
+    end
 end % for i = 1 : length(Elements)
 
 % axes(opt.AxeEEGSource)
@@ -6091,6 +6986,200 @@ if ~holdflag
 end
 
 warning(ws); % revert to original state
+
+function [pntr, trir, texr] = refine(pnt, tri, method, varargin)
+
+% REFINE a 3D surface that is described by a triangulation
+%
+% Use as
+%   [pnt, tri]          = refine(pnt, tri)
+%   [pnt, tri]          = refine(pnt, tri, 'banks')
+%   [pnt, tri, texture] = refine(pnt, tri, 'banks', texture)
+%   [pnt, tri]          = refine(pnt, tri, 'updown', numtri)
+%
+% If no method is specified, the default is to refine the mesh globally by bisecting
+% each edge according to the algorithm described in Banks, 1983.
+%
+% The Banks method allows the specification of a subset of triangles to be refined
+% according to Banks' algorithm. Adjacent triangles will be gracefully dealt with.
+%
+% The alternative 'updown' method refines the mesh a couple of times
+% using Banks' algorithm, followed by a downsampling using the REDUCEPATCH
+% function.
+%
+% If the textures of the vertices are specified, the textures for the new
+% vertices are computed
+%
+% The Banks method is a memory efficient implementation which remembers the
+% previously inserted vertices. The refinement algorithm executes in linear
+% time with the number of triangles. It is mentioned in
+% http://www.cs.rpi.edu/~flaherje/pdf/fea8.pdf, which also contains the original
+% reference.
+
+% Copyright (C) 2002-2014, Robert Oostenveld
+%
+% This file is part of FieldTrip, see http://www.fieldtriptoolbox.org
+% for the documentation and details.
+%
+%    FieldTrip is free software: you can redistribute it and/or modify
+%    it under the terms of the GNU General Public License as published by
+%    the Free Software Foundation, either version 3 of the License, or
+%    (at your option) any later version.
+%
+%    FieldTrip is distributed in the hope that it will be useful,
+%    but WITHOUT ANY WARRANTY; without even the implied warranty of
+%    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%    GNU General Public License for more details.
+%
+%    You should have received a copy of the GNU General Public License
+%    along with FieldTrip. If not, see <http://www.gnu.org/licenses/>.
+%
+
+if nargin<3
+    method = 'banks';
+end
+
+texture = [];
+numtri  = [];
+
+if nargin>3
+    switch lower(method)
+        case 'banks'
+            texture = varargin{1};
+        case 'updown'
+            numtri = varargin{1};
+    end % switch
+end
+
+switch lower(method)
+    case 'banks'
+        if ~isempty(texture)
+            npnt   = size(pnt,1);
+            ntri   = size(tri,1);
+            ntex   = size(texture,1);
+            
+            assert(ntex==ntri, 'invalid size of texture');
+            
+            insert = spalloc(3*npnt,3*npnt,3*ntri);
+            trir  = zeros(4*ntri,3);      % allocate memory for the new triangles
+            pntr  = zeros(npnt+3*ntri,3); % allocate memory for the maximum number of new vertices
+            texr  = zeros(ntex+3*ntri,2);
+            pntr(1:npnt,:) = pnt;         % insert the original vertices
+            texr(1:ntex,:) = texture;
+            current = npnt;
+            
+            for i=1:ntri
+                
+                if ~insert(tri(i,1),tri(i,2))
+                    current = current + 1;
+                    pntr(current,:) = (pnt(tri(i,1),:) + pnt(tri(i,2),:))/2;
+                    texr(current,:) = (texture(tri(i,1),:) + texture(tri(i,2),:))/2;
+                    insert(tri(i,1),tri(i,2)) = current;
+                    insert(tri(i,2),tri(i,1)) = current;
+                    v12 = current;
+                else
+                    v12 = insert(tri(i,1),tri(i,2));
+                end
+                
+                if ~insert(tri(i,2),tri(i,3))
+                    current = current + 1;
+                    pntr(current,:) = (pnt(tri(i,2),:) + pnt(tri(i,3),:))/2;
+                    texr(current,:) = (texture(tri(i,2),:) + texture(tri(i,3),:))/2;
+                    insert(tri(i,2),tri(i,3)) = current;
+                    insert(tri(i,3),tri(i,2)) = current;
+                    v23 = current;
+                else
+                    v23 = insert(tri(i,2),tri(i,3));
+                end
+                
+                if ~insert(tri(i,3),tri(i,1))
+                    current = current + 1;
+                    pntr(current,:) = (pnt(tri(i,3),:) + pnt(tri(i,1),:))/2;
+                    texr(current,:) = (texture(tri(i,3),:) + texture(tri(i,1),:))/2;
+                    insert(tri(i,3),tri(i,1)) = current;
+                    insert(tri(i,1),tri(i,3)) = current;
+                    v31 = current;
+                else
+                    v31 = insert(tri(i,3),tri(i,1));
+                end
+                
+                % add the 4 new triangles with the correct indices
+                trir(4*(i-1)+1, :) = [tri(i,1) v12 v31];
+                trir(4*(i-1)+2, :) = [tri(i,2) v23 v12];
+                trir(4*(i-1)+3, :) = [tri(i,3) v31 v23];
+                trir(4*(i-1)+4, :) = [v12 v23 v31];
+                
+            end
+            pntr = pntr(1:current, :);
+            texr = texr(1:current, :);
+            
+        else
+            % there is no texture
+            
+            npnt   = size(pnt,1);
+            ntri   = size(tri,1);
+            insert = spalloc(3*npnt,3*npnt,3*ntri);
+            
+            trir  = zeros(4*ntri,3);      % allocate memory for the new triangles
+            pntr  = zeros(npnt+3*ntri,3); % allocate memory for the maximum number of new vertices
+            pntr(1:npnt,:) = pnt;         % insert the original vertices
+            current = npnt;
+            
+            for i=1:ntri
+                
+                if ~insert(tri(i,1),tri(i,2))
+                    current = current + 1;
+                    pntr(current,:) = (pnt(tri(i,1),:) + pnt(tri(i,2),:))/2;
+                    insert(tri(i,1),tri(i,2)) = current;
+                    insert(tri(i,2),tri(i,1)) = current;
+                    v12 = current;
+                else
+                    v12 = insert(tri(i,1),tri(i,2));
+                end
+                
+                if ~insert(tri(i,2),tri(i,3))
+                    current = current + 1;
+                    pntr(current,:) = (pnt(tri(i,2),:) + pnt(tri(i,3),:))/2;
+                    insert(tri(i,2),tri(i,3)) = current;
+                    insert(tri(i,3),tri(i,2)) = current;
+                    v23 = current;
+                else
+                    v23 = insert(tri(i,2),tri(i,3));
+                end
+                
+                if ~insert(tri(i,3),tri(i,1))
+                    current = current + 1;
+                    pntr(current,:) = (pnt(tri(i,3),:) + pnt(tri(i,1),:))/2;
+                    insert(tri(i,3),tri(i,1)) = current;
+                    insert(tri(i,1),tri(i,3)) = current;
+                    v31 = current;
+                else
+                    v31 = insert(tri(i,3),tri(i,1));
+                end
+                
+                % add the 4 new triangles with the correct indices
+                trir(4*(i-1)+1, :) = [tri(i,1) v12 v31];
+                trir(4*(i-1)+2, :) = [tri(i,2) v23 v12];
+                trir(4*(i-1)+3, :) = [tri(i,3) v31 v23];
+                trir(4*(i-1)+4, :) = [v12 v23 v31];
+            end
+            % remove the space for the vertices that was not used
+            pntr = pntr(1:current, :);
+        end
+        
+    case 'updown'
+        ntri = size(tri,1);
+        while ntri<numtri
+            % increase the number of triangles by a factor of 4
+            [pnt, tri] = refine(pnt, tri, 'banks');
+            ntri = size(tri,1);
+        end
+        % reduce number of triangles using MATLAB function
+        [trir, pntr] = reducepatch(tri, pnt, numtri);
+        
+    otherwise
+        ft_error('unsupported method "%s"', method);
+end
 
 function [tri] = projecttri(pnt, method)
 
