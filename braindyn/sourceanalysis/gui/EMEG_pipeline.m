@@ -1,4 +1,4 @@
-function EMEG_pipeline_ver2
+function EMEG_pipeline
 clc
 close all
 restoredefaultpath
@@ -83,9 +83,9 @@ cbIPDICSPowEEG = uicontrol(panelIP, 'Style', 'checkbox', 'String', 'Power', 'Val
 % cbIPDICSMom = uicontrol(panelIP, 'Style', 'checkbox', 'String', 'Moment (DICS)', 'Value', 0, 'Units', 'normalized', 'Position', [Lin(2) Bin(1) Win Hin(2)], 'Enable', 'off');
 cbIPDICSPowMEG = uicontrol(panelIP, 'Style', 'checkbox', 'String', 'Power', 'Value', 0, 'Units', 'normalized', 'Position', [Lin(3) Bin(1)-.1 Win Hin(2)], 'Enable', 'off', 'callback', @InverseProblem_checkBox);
 cbIPLCMVPowEEG = uicontrol(panelIP, 'Style', 'checkbox', 'String', 'Power', 'Value', 0, 'Units', 'normalized', 'Position', [Lin(1) Bin(2)-.1 Win Hin(2)], 'Enable', 'off', 'callback', @InverseProblem_checkBox);
-cbIPLCMVMomEEG = uicontrol(panelIP, 'Style', 'checkbox', 'String', 'Moment', 'Value', 0, 'Units', 'normalized', 'Position', [Lin(2)-.05 Bin(2)-.1 Win Hin(2)], 'Enable', 'off', 'callback', @InverseProblem_checkBox);
+pbIPLCMVMomEEG = uicontrol(panelIP, 'Style', 'pushbutton', 'String', 'Moment', 'Value', 0, 'Units', 'normalized', 'Position', [Lin(2)-.05 Bin(2)-.15 Win-.04 Hin(2)-.02], 'Enable', 'off', 'callback', @IPEEGMom);
 cbIPLCMVPowMEG = uicontrol(panelIP, 'Style', 'checkbox', 'String', 'Power', 'Value', 0, 'Units', 'normalized', 'Position', [Lin(3) Bin(2)-.1 Win Hin(2)], 'Enable', 'off', 'callback', @InverseProblem_checkBox);
-cbIPLCMVMomMEG = uicontrol(panelIP, 'Style', 'checkbox', 'String', 'Moment', 'Value', 0, 'Units', 'normalized', 'Position', [Lin(4)-.05 Bin(2)-.1 Win Hin(2)], 'Enable', 'off', 'callback', @InverseProblem_checkBox);
+pbIPLCMVMomMEG = uicontrol(panelIP, 'Style', 'pushbutton', 'String', 'Moment', 'Value', 0, 'Units', 'normalized', 'Position', [Lin(4)-.05 Bin(2)-.15 Win-.04 Hin(2)-.02], 'Enable', 'off', 'callback', @IPMEGMom);
 txtLCMVLabel = uicontrol(panelIP, 'Style', 'text', 'String', 'LCMV', 'Units', 'normalized' , 'Position', [.261 Bin(2) Lin(1)-.001-.261 .2], 'horizontalalignment', 'center', 'Enable', 'off', 'FontSize', 6, 'BackgroundColor', 0.8*ones(1, 3));
 txtDICSLabel = uicontrol(panelIP, 'Style', 'text', 'String', 'DICS', 'Units', 'normalized' , 'Position', [.261 Bin(1) Lin(1)-.001-.261 .2], 'horizontalalignment', 'center', 'Enable', 'off', 'FontSize', 6, 'BackgroundColor', 0.8*ones(1, 3));
 txtEEGLabel = uicontrol(panelIP, 'Style', 'text', 'String', 'EEG', 'Units', 'normalized' , 'Position', [Lin(1) .8 Lin(2)+Win-Lin(1)-.09 .2], 'horizontalalignment', 'center', 'Enable', 'off', 'FontSize', 6, 'BackgroundColor', 0.8*ones(1, 3));
@@ -95,9 +95,12 @@ B = B + 1.1 * H;
 panelFP = uipanel(panelPipeline, 'Title', ' 8- Forward problem', 'Units', 'normalized', 'Position', [L B W H], 'ForegroundColor', 0.4*[1 1 1]); %
 pbFP = uicontrol(panelFP, 'Style', 'pushbutton', 'String', 'Forward problem', 'Units', 'normalized', 'Position', PB, 'Enable', 'off', 'callback', @ForwardProblem, 'FontSize', 8);
 % cbFPSource = uicontrol(panelFP, 'Style', 'checkbox', 'String', 'Source', 'Value', 0, 'Units', 'normalized', 'Position', [Lin(1) Bin(1) Win Hin(1)], 'Enable', 'off', 'callback', @ForwardProblem_checkBox);
-pmFPSource = uicontrol(panelFP, 'Style', 'popupmenu', 'String', {'', 'White matter', 'In-between', 'Pial', 'White matter + Pial', 'White matter + In-between + Pial'}, 'Value', 1, 'Units', 'normalized', 'Position', [Lin(1) 0.25 Lin(2)+Win-Lin(1)-.09 0.5], 'Enable', 'off', 'callback', @ForwardProblem_popupmenu); % Lin(1) 0.25 2*Win-.05 0.5
-cbFPEEG = uicontrol(panelFP, 'Style', 'checkbox', 'String', 'EEG', 'Value', 0, 'Units', 'normalized', 'Position', [Lin(3) Bin(1) Win Hin(1)], 'Enable', 'off', 'callback', @ForwardProblem_checkBox);
-cbFPMEG = uicontrol(panelFP, 'Style', 'checkbox', 'String', 'MEG', 'Value', 0, 'Units', 'normalized', 'Position', [Lin(4)-.01 Bin(1) Win Hin(1)], 'Enable', 'off', 'callback', @ForwardProblem_checkBox);
+pmFPSource = uicontrol(panelFP, 'Style', 'popupmenu', 'String', {'', 'White matter', 'In-between', 'Pial', 'White matter + Pial', 'White matter + In-between + Pial'}, 'Value', 1, 'Units', 'normalized', 'Position', [Lin(1) 0.25 Lin(2)+Win-Lin(1)-.19 0.5], 'Enable', 'off', 'callback', @ForwardProblem_popupmenu); % Lin(1) 0.25 2*Win-.05 0.5
+pbFPSourceMovie = uicontrol(panelFP, 'Style', 'pushbutton', 'String', 'TC', 'Units', 'normalized', 'Position', [Lin(2)+Win-.19 0.25 .1 0.5], 'Enable', 'off', 'FontSize', 8, 'callback', @FPActualSourceTC);
+cbFPEEG = uicontrol(panelFP, 'Style', 'checkbox', 'String', 'EEG', 'Value', 0, 'Units', 'normalized', 'Position', [Lin(3) 0.5 Win 0.3], 'Enable', 'off', 'callback', @ForwardProblem_checkBox);
+pbFPEEGMovie = uicontrol(panelFP, 'Style', 'pushbutton', 'String', 'TC', 'Units', 'normalized', 'Position', [Lin(3) 0.05 .11 .4], 'FontSize', 8, 'Enable', 'off', 'callback', @FPActualEEGTC);
+cbFPMEG = uicontrol(panelFP, 'Style', 'checkbox', 'String', 'MEG', 'Value', 0, 'Units', 'normalized', 'Position', [Lin(4)-.01 0.5 Win 0.3], 'Enable', 'off', 'callback', @ForwardProblem_checkBox);
+pbFPMEGMovie = uicontrol(panelFP, 'Style', 'pushbutton', 'String', 'TC', 'Units', 'normalized', 'Position', [Lin(4)-.01 0.05 .11 .4], 'FontSize', 8, 'Enable', 'off', 'callback', @FPActualMEGTC);
 txtSourceLabel = uicontrol(panelFP, 'Style', 'text', 'String', 'Source models', 'Units', 'normalized' , 'Position', [Lin(1) .8 Lin(2)+Win-Lin(1)-.09 .2], 'horizontalalignment', 'center', 'Enable', 'off', 'FontSize', 6, 'BackgroundColor', 0.8*ones(1, 3));
 
 B = B + 1.1 * H;
@@ -255,6 +258,9 @@ opt.pbIP = pbIP;
 opt.pbOk = pbOk;
 opt.pbFT = pbFT;
 opt.pbSub = pbSub;
+opt.pbFPSourceMovie = pbFPSourceMovie;
+opt.pbFPEEGMovie = pbFPEEGMovie;
+opt.pbFPMEGMovie = pbFPMEGMovie;
 
 opt.cbMRI = cbMRI;
 opt.cbMeshBrain = cbMeshBrain;
@@ -284,9 +290,9 @@ opt.cbFPMEG = cbFPMEG;
 opt.cbIPDICSPowEEG = cbIPDICSPowEEG;
 opt.cbIPDICSPowMEG = cbIPDICSPowMEG;
 opt.cbIPLCMVPowEEG = cbIPLCMVPowEEG;
-opt.cbIPLCMVMomEEG = cbIPLCMVMomEEG;
+opt.pbIPLCMVMomEEG = pbIPLCMVMomEEG;
 opt.cbIPLCMVPowMEG = cbIPLCMVPowMEG;
-opt.cbIPLCMVMomMEG = cbIPLCMVMomMEG;
+opt.pbIPLCMVMomMEG = pbIPLCMVMomMEG;
 
 opt.rbWhite = rbWhite;
 opt.rbBetween = rbBetween;
@@ -449,13 +455,13 @@ h = getparent(h);
 opt = getappdata(h, 'opt');
 % % --------------------------------- Temporary
 % % folder_name = 'D:\Related tools\FieldTrip\fieldtrip-master\fieldtrip-master'; % Office
-% % folder_name = 'D:\Andrea\Utilities\FT\fieldtrip-20171218'; % Office
-% folder_name = 'E:\Ph.D\Related works\FT\Toolbox\fieldtrip-20180603'; % Laptop
+% folder_name = 'D:\Andrea\Utilities\FT\fieldtrip-20171218'; % Office
+% % folder_name = 'E:\Ph.D\Related works\FT\Toolbox\fieldtrip-20180603'; % Laptop
 % opt.cfg.EEG.EEGsensLoad = fullfile(folder_name, filesep, 'template', filesep, 'electrode', filesep, 'standard_1020.elc'); % sensor file directory
 % addpath(folder_name)
 % ft_defaults;
-% % folder_name = 'D:\Related tools\FieldTrip\tutorial\Dataset\Subject01'; % Office
-% folder_name = 'E:\Ph.D\Related works\FT\Toolbox\tutorial\Subject01'; % Laptop
+% folder_name = 'D:\Related tools\FieldTrip\tutorial\Dataset\Subject01 - Copie'; % Office
+% % folder_name = 'E:\Ph.D\Related works\FT\Toolbox\tutorial\Subject01'; % Laptop
 % opt.cfg.address.subject = folder_name;
 % addressLoad = [folder_name filesep 'Pipeline Results'];
 % if exist(addressLoad, 'dir') ~= 7 % If the directory does not exist, creates the directory
@@ -587,7 +593,7 @@ if exist(opt.cfg.EEG.MRIDir, 'file')
                 set(opt.(panels{i}), 'ForegroundColor', 0.4*[1 1 1], 'FontWeight', 'normal');
             end % for i = 1 : length(checkBoxes)
             
-            pushButtons = {'pbMRI', 'pbSegMRI', 'pbMesh', 'pbVol', 'pbSrc', 'pbSns', 'pbLF', 'pbFP', 'pbIP'};
+            pushButtons = {'pbMRI', 'pbSegMRI', 'pbMesh', 'pbVol', 'pbSrc', 'pbSns', 'pbLF', 'pbFP', 'pbFPSourceMovie', 'pbFPEEGMovie', 'pbFPMEGMovie', 'pbIP', 'pbIPLCMVMomEEG', 'pbIPLCMVMomMEG'};
             for i = 1 : length(pushButtons)
                 if i > 1
                     set(opt.(pushButtons{i}), 'BackgroundColor', 0.94*[1 1 1], 'FontWeight', 'normal', 'Enable', 'off');
@@ -603,7 +609,7 @@ if exist(opt.cfg.EEG.MRIDir, 'file')
                 'cbSrcWhite', 'cbSrcPial', 'cbSrcBetween', ...
                 'cbSnsEEG', 'cbSnsMEG', ...
                 'pmFPSource', 'cbFPEEG', 'cbFPMEG', ...
-                'cbIPDICSPowEEG', 'cbIPDICSPowMEG', 'cbIPLCMVPowEEG', 'cbIPLCMVMomEEG', 'cbIPLCMVPowMEG', 'cbIPLCMVMomMEG'};
+                'cbIPDICSPowEEG', 'cbIPDICSPowMEG', 'cbIPLCMVPowEEG', 'cbIPLCMVPowMEG'};
             for i = 1 : length(checkBoxes)
                 if  strcmp(checkBoxes{i}, 'pmFPSource')
                     set(opt.(checkBoxes{i}), 'Enable', 'off', 'Value', 1);
@@ -984,7 +990,7 @@ if exist(opt.cfg.EEG.segMRIDir, 'file')
                 set(opt.(panels{i}), 'ForegroundColor', 0.4*[1 1 1], 'FontWeight', 'normal');
             end % for i = 1 : length(checkBoxes)
             
-            pushButtons = {'pbMRI', 'pbSegMRI', 'pbMesh', 'pbVol', 'pbSrc', 'pbSns', 'pbLF', 'pbFP', 'pbIP'};
+            pushButtons = {'pbMRI', 'pbSegMRI', 'pbMesh', 'pbVol', 'pbSrc', 'pbSns', 'pbLF', 'pbFP', 'pbFPSourceMovie', 'pbFPEEGMovie', 'pbFPMEGMovie', 'pbIP', 'pbIPLCMVMomEEG', 'pbIPLCMVMomMEG'};
             for i = 2 : length(pushButtons)
                 if i > 2
                     set(opt.(pushButtons{i}), 'BackgroundColor', 0.94*[1 1 1], 'FontWeight', 'normal', 'Enable', 'off');
@@ -1000,7 +1006,7 @@ if exist(opt.cfg.EEG.segMRIDir, 'file')
                 'cbSrcWhite', 'cbSrcPial', 'cbSrcBetween', ...
                 'cbSnsEEG', 'cbSnsMEG', ...
                 'pmFPSource', 'cbFPEEG', 'cbFPMEG', ...
-                'cbIPDICSPowEEG', 'cbIPDICSPowMEG', 'cbIPLCMVPowEEG', 'cbIPLCMVMomEEG', 'cbIPLCMVPowMEG', 'cbIPLCMVMomMEG'};
+                'cbIPDICSPowEEG', 'cbIPDICSPowMEG', 'cbIPLCMVPowEEG', 'cbIPLCMVPowMEG'};
             for i = 3 : length(checkBoxes)
                 if  strcmp(checkBoxes{i}, 'pmFPSource')
                     set(opt.(checkBoxes{i}), 'Enable', 'off', 'Value', 1);
@@ -1363,7 +1369,7 @@ if exist(opt.cfg.EEG.meshDir, 'file')
                 set(opt.(panels{i}), 'ForegroundColor', 0.4*[1 1 1], 'FontWeight', 'normal');
             end % for i = 1 : length(checkBoxes)
             
-            pushButtons = {'pbMRI', 'pbSegMRI', 'pbMesh', 'pbVol', 'pbSrc', 'pbSns', 'pbLF', 'pbFP', 'pbIP'};
+            pushButtons = {'pbMRI', 'pbSegMRI', 'pbMesh', 'pbVol', 'pbSrc', 'pbSns', 'pbLF', 'pbFP', 'pbFPSourceMovie', 'pbFPEEGMovie', 'pbFPMEGMovie', 'pbIP', 'pbIPLCMVMomEEG', 'pbIPLCMVMomMEG'};
             for i = 3 : length(pushButtons)
                 if i > 3
                     set(opt.(pushButtons{i}), 'BackgroundColor', 0.94*[1 1 1], 'FontWeight', 'normal', 'Enable', 'off');
@@ -1379,7 +1385,7 @@ if exist(opt.cfg.EEG.meshDir, 'file')
                 'cbSrcWhite', 'cbSrcPial', 'cbSrcBetween', ...
                 'cbSnsEEG', 'cbSnsMEG', ...
                 'pmFPSource', 'cbFPEEG', 'cbFPMEG', ...
-                'cbIPDICSPowEEG', 'cbIPDICSPowMEG', 'cbIPLCMVPowEEG', 'cbIPLCMVMomEEG', 'cbIPLCMVPowMEG', 'cbIPLCMVMomMEG'};
+                'cbIPDICSPowEEG', 'cbIPDICSPowMEG', 'cbIPLCMVPowEEG', 'cbIPLCMVPowMEG'};
             for i = 10 : length(checkBoxes)
                 if  strcmp(checkBoxes{i}, 'pmFPSource')
                     set(opt.(checkBoxes{i}), 'Enable', 'off', 'Value', 1);
@@ -1733,7 +1739,7 @@ if exist(opt.cfg.EEG.volDir, 'file')
                 set(opt.(panels{i}), 'ForegroundColor', 0.4*[1 1 1], 'FontWeight', 'normal');
             end % for i = 1 : length(checkBoxes)
             
-            pushButtons = {'pbMRI', 'pbSegMRI', 'pbMesh', 'pbVol', 'pbSrc', 'pbSns', 'pbLF', 'pbFP', 'pbIP'};
+            pushButtons = {'pbMRI', 'pbSegMRI', 'pbMesh', 'pbVol', 'pbSrc', 'pbSns', 'pbLF', 'pbFP', 'pbFPSourceMovie', 'pbFPEEGMovie', 'pbFPMEGMovie', 'pbIP', 'pbIPLCMVMomEEG', 'pbIPLCMVMomMEG'};
             for i = 4 : length(pushButtons)
                 if i > 4
                     set(opt.(pushButtons{i}), 'BackgroundColor', 0.94*[1 1 1], 'FontWeight', 'normal', 'Enable', 'off');
@@ -1749,7 +1755,7 @@ if exist(opt.cfg.EEG.volDir, 'file')
                 'cbSrcWhite', 'cbSrcPial', 'cbSrcBetween', ...
                 'cbSnsEEG', 'cbSnsMEG', ...
                 'pmFPSource', 'cbFPEEG', 'cbFPMEG', ...
-                'cbIPDICSPowEEG', 'cbIPDICSPowMEG', 'cbIPLCMVPowEEG', 'cbIPLCMVMomEEG', 'cbIPLCMVPowMEG', 'cbIPLCMVMomMEG'};
+                'cbIPDICSPowEEG', 'cbIPDICSPowMEG', 'cbIPLCMVPowEEG', 'cbIPLCMVPowMEG'};
             for i = 16 : length(checkBoxes)
                 if  strcmp(checkBoxes{i}, 'pmFPSource')
                     set(opt.(checkBoxes{i}), 'Enable', 'off', 'Value', 1);
@@ -2119,7 +2125,7 @@ if exist(opt.cfg.EEG.sourceModelDir, 'file')
                 set(opt.(panels{i}), 'ForegroundColor', 0.4*[1 1 1], 'FontWeight', 'normal');
             end % for i = 1 : length(checkBoxes)
             
-            pushButtons = {'pbMRI', 'pbSegMRI', 'pbMesh', 'pbVol', 'pbSrc', 'pbSns', 'pbLF', 'pbFP', 'pbIP'};
+            pushButtons = {'pbMRI', 'pbSegMRI', 'pbMesh', 'pbVol', 'pbSrc', 'pbSns', 'pbLF', 'pbFP', 'pbFPSourceMovie', 'pbFPEEGMovie', 'pbFPMEGMovie', 'pbIP', 'pbIPLCMVMomEEG', 'pbIPLCMVMomMEG'};
             for i = 5 : length(pushButtons)
                 if i > 5
                     set(opt.(pushButtons{i}), 'BackgroundColor', 0.94*[1 1 1], 'FontWeight', 'normal', 'Enable', 'off');
@@ -2135,7 +2141,7 @@ if exist(opt.cfg.EEG.sourceModelDir, 'file')
                 'cbSrcWhite', 'cbSrcPial', 'cbSrcBetween', ...
                 'cbSnsEEG', 'cbSnsMEG', ...
                 'pmFPSource', 'cbFPEEG', 'cbFPMEG', ...
-                'cbIPDICSPowEEG', 'cbIPDICSPowMEG', 'cbIPLCMVPowEEG', 'cbIPLCMVMomEEG', 'cbIPLCMVPowMEG', 'cbIPLCMVMomMEG'};
+                'cbIPDICSPowEEG', 'cbIPDICSPowMEG', 'cbIPLCMVPowEEG', 'cbIPLCMVPowMEG'};
             for i = 18 : length(checkBoxes)
                 if  strcmp(checkBoxes{i}, 'pmFPSource')
                     set(opt.(checkBoxes{i}), 'Enable', 'off', 'Value', 1);
@@ -2470,7 +2476,7 @@ if exist(opt.cfg.EEG.sensDir, 'file')
                 set(opt.(panels{i}), 'ForegroundColor', 0.4*[1 1 1], 'FontWeight', 'normal');
             end % for i = 1 : length(checkBoxes)
             
-            pushButtons = {'pbMRI', 'pbSegMRI', 'pbMesh', 'pbVol', 'pbSrc', 'pbSns', 'pbLF', 'pbFP', 'pbIP'};
+            pushButtons = {'pbMRI', 'pbSegMRI', 'pbMesh', 'pbVol', 'pbSrc', 'pbSns', 'pbLF', 'pbFP', 'pbFPSourceMovie', 'pbFPEEGMovie', 'pbFPMEGMovie', 'pbIP', 'pbIPLCMVMomEEG', 'pbIPLCMVMomMEG'};
             for i = 6 : length(pushButtons)
                 if i > 6
                     set(opt.(pushButtons{i}), 'BackgroundColor', 0.94*[1 1 1], 'FontWeight', 'normal', 'Enable', 'off');
@@ -2486,7 +2492,7 @@ if exist(opt.cfg.EEG.sensDir, 'file')
                 'cbSrcWhite', 'cbSrcPial', 'cbSrcBetween', ...
                 'cbSnsEEG', 'cbSnsMEG', ...
                 'pmFPSource', 'cbFPEEG', 'cbFPMEG', ...
-                'cbIPDICSPowEEG', 'cbIPDICSPowMEG', 'cbIPLCMVPowEEG', 'cbIPLCMVMomEEG', 'cbIPLCMVPowMEG', 'cbIPLCMVMomMEG'};
+                'cbIPDICSPowEEG', 'cbIPDICSPowMEG', 'cbIPLCMVPowEEG', 'cbIPLCMVPowMEG'};
             for i = 21 : length(checkBoxes)
                 if  strcmp(checkBoxes{i}, 'pmFPSource')
                     set(opt.(checkBoxes{i}), 'Enable', 'off', 'Value', 1);
@@ -2790,7 +2796,7 @@ if exist(opt.cfg.EEG.LFDir, 'file')
                 set(opt.(panels{i}), 'ForegroundColor', 0.4*[1 1 1], 'FontWeight', 'normal');
             end % for i = 1 : length(checkBoxes)
             
-            pushButtons = {'pbMRI', 'pbSegMRI', 'pbMesh', 'pbVol', 'pbSrc', 'pbSns', 'pbLF', 'pbFP', 'pbIP'};
+            pushButtons = {'pbMRI', 'pbSegMRI', 'pbMesh', 'pbVol', 'pbSrc', 'pbSns', 'pbLF', 'pbFP', 'pbFPSourceMovie', 'pbFPEEGMovie', 'pbFPMEGMovie', 'pbIP', 'pbIPLCMVMomEEG', 'pbIPLCMVMomMEG'};
             for i = 7 : length(pushButtons)
                 if i > 7
                     set(opt.(pushButtons{i}), 'BackgroundColor', 0.94*[1 1 1], 'FontWeight', 'normal', 'Enable', 'off');
@@ -2806,7 +2812,7 @@ if exist(opt.cfg.EEG.LFDir, 'file')
                 'cbSrcWhite', 'cbSrcPial', 'cbSrcBetween', ...
                 'cbSnsEEG', 'cbSnsMEG', ...
                 'pmFPSource', 'cbFPEEG', 'cbFPMEG', ...
-                'cbIPDICSPowEEG', 'cbIPDICSPowMEG', 'cbIPLCMVPowEEG', 'cbIPLCMVMomEEG', 'cbIPLCMVPowMEG', 'cbIPLCMVMomMEG'};
+                'cbIPDICSPowEEG', 'cbIPDICSPowMEG', 'cbIPLCMVPowEEG', 'cbIPLCMVPowMEG'};
             for i = 23 : length(checkBoxes)
                 if  strcmp(checkBoxes{i}, 'pmFPSource')
                     set(opt.(checkBoxes{i}), 'Enable', 'off', 'Value', 1);
@@ -3011,7 +3017,7 @@ if exist(opt.cfg.EEG.FPDir, 'file')
                 set(opt.(panels{i}), 'ForegroundColor', 0.4*[1 1 1], 'FontWeight', 'normal');
             end % for i = 1 : length(checkBoxes)
             
-            pushButtons = {'pbMRI', 'pbSegMRI', 'pbMesh', 'pbVol', 'pbSrc', 'pbSns', 'pbLF', 'pbFP', 'pbIP'};
+            pushButtons = {'pbMRI', 'pbSegMRI', 'pbMesh', 'pbVol', 'pbSrc', 'pbSns', 'pbLF', 'pbFP', 'pbFPSourceMovie', 'pbFPEEGMovie', 'pbFPMEGMovie', 'pbIP', 'pbIPLCMVMomEEG', 'pbIPLCMVMomMEG'};
             for i = 8 : length(pushButtons)
                 if i > 8
                     set(opt.(pushButtons{i}), 'BackgroundColor', 0.94*[1 1 1], 'FontWeight', 'normal', 'Enable', 'off');
@@ -3027,7 +3033,7 @@ if exist(opt.cfg.EEG.FPDir, 'file')
                 'cbSrcWhite', 'cbSrcPial', 'cbSrcBetween', ...
                 'cbSnsEEG', 'cbSnsMEG', ...
                 'pmFPSource', 'cbFPEEG', 'cbFPMEG', ...
-                'cbIPDICSPowEEG', 'cbIPDICSPowMEG', 'cbIPLCMVPowEEG', 'cbIPLCMVMomEEG', 'cbIPLCMVPowMEG', 'cbIPLCMVMomMEG'};
+                'cbIPDICSPowEEG', 'cbIPDICSPowMEG', 'cbIPLCMVPowEEG', 'cbIPLCMVPowMEG'};
             for i = 23 : length(checkBoxes)
                 if  strcmp(checkBoxes{i}, 'pmFPSource')
                     set(opt.(checkBoxes{i}), 'Enable', 'off', 'Value', 1);
@@ -3382,40 +3388,45 @@ if recompute
                     edges(size(sourceModel.tri, 1)*(i - 1) + 1 : size(sourceModel.tri, 1)*i, :) = sourceModel.tri(:, sel(i, :));
                 end % for i = 1 : size(sel, 1)
                 segments = [(1 : size(edges, 1))' edges];
-                %         Freq_FP = 10;
-                %         time_FP = linspace(0, 1/Freq_FP, 10); % Time vector specific for fprward problem 1/Freq_FP
-                %         Oscil_FP =  abs(sin(2 * pi * Freq_FP * time_FP)); % ones(1, length(time_FP));%
+                Freq_FP = 10;
+                time_FP = linspace(0, 1, 100); % Time vector specific for fprward problem 1/Freq_FP
+                Oscil_FP =  abs(sin(2 * pi * Freq_FP * time_FP)); % ones(1, length(time_FP));%
                 %         % patchWidth = 100; % # of neighbours
                 %         % activePatchInd = nan(length(AllSourceCenterInd), patchWidth);
                 %         % activePatchAmp = nan(length(AllSourceCenterInd), patchWidth);
                 activePatchAmp = nan(length(AllSourceCenterInd), size(sourceModel.pos, 1));
-                sourceActivity = cell(length(AllSourceCenterInd), 1); %zeros(size(grid.pos)); length(time_FP)
+                sourceActivity = cell(length(AllSourceCenterInd), length(time_FP)); %zeros(size(grid.pos)); length(time_FP)
                 sourceActivityPow = cell(1, length(AllSourceCenterInd));
                 EEGActivity = cell(1, size(activePatchAmp, 1)); %nan(size(LF.LF_cat, 1), length(AllSourceCenterInd));
+                EEGActivityMax = cell(1, size(activePatchAmp, 1)); %nan(size(LF.LF_cat, 1), length(AllSourceCenterInd));
                 MEGActivity = cell(1, size(activePatchAmp, 1)); %nan(size(LF.LF_cat, 1), length(AllSourceCenterInd));
+                MEGActivityMax = cell(1, size(activePatchAmp, 1)); %nan(size(LF.LF_cat, 1), length(AllSourceCenterInd));
                 sigma2 = get(opt.sFPSigma2, 'Value');
                 for i = 1 : length(AllSourceCenterInd)
                     [patchCenterAllDist, ~] = dijkstra(nodes, segments, AllSourceCenterInd(i));
                     activePatchAmp(i, :) = exp(-((patchCenterAllDist.^2) / (2 * sigma2) ));
-                    
-                    sourceActivityPow{i} = nan(size(activePatchAmp, 2), 1); % length(time_FP)
-                    ii = 1 ; % Time counter
-                    sourceActivity{i, ii} = zeros(size(sourceModel.pos));
                     if strcmp(SourceModels{j}, 'white')
                         dipMom = rand(1, 3);
                     else
                         dipMom = forwardProblem.white.dipMom;
-                    end
+                    end % if strcmp(SourceModels{j}, 'white')
                     maxMom = repmat(activePatchAmp(i, :)', 1, 3) .* repmat(dipMom./norm(dipMom), size(activePatchAmp(i, :), 2), 1);
                     maxPow = sqrt(sum(maxMom.^ 2, 2));
-                    sourceActivity{i, ii} = maxMom;
-                    sourceActivityPow{i}(:, ii) = sqrt(sum(sourceActivity{i, ii}.^ 2, 2));
+                    sourceActivityPow{i} = nan(size(activePatchAmp, 2), 1); % length(time_FP)
                     LF = LeadField.(SourceModels{j});
-                    temp = sourceActivity{i, ii}(LF.EEG.inside, :)';
-                    EEGActivity{i}(:, ii) = LF.EEG.LF_cat * temp(:);
-                    temp = sourceActivity{i, ii}(LF.MEG.inside, :)';
-                    MEGActivity{i}(:, ii) = LF.MEG.LF_cat * temp(:);
-                end % for i = 1 : length(AllSourceCenterInd)
+                    temp = maxMom(LF.EEG.inside, :)';
+                    EEGActivityMax{i} = LF.EEG.LF_cat * temp(:);
+                    MEGActivityMax{i} = LF.MEG.LF_cat * temp(:);
+                    for ii = 1 : length(time_FP) % Time counter
+                        sourceActivity{i, ii} = zeros(size(sourceModel.pos));
+                        sourceActivity{i, ii} = Oscil_FP(ii) * maxMom;
+                        sourceActivityPow{i}(:, ii) = sqrt(sum(sourceActivity{i, ii}.^ 2, 2));
+                        temp = sourceActivity{i, ii}(LF.EEG.inside, :)';
+                        EEGActivity{i}(:, ii) = LF.EEG.LF_cat * temp(:);
+                        temp = sourceActivity{i, ii}(LF.MEG.inside, :)';
+                        MEGActivity{i}(:, ii) = LF.MEG.LF_cat * temp(:);
+                    end % for i = 1 : length(AllSourceCenterInd)
+                end % for ii = 1 : length(time_FP)
                 
                 forwardProblem.(SourceModels{j}) = [];
                 forwardProblem.(SourceModels{j}).maxMom = maxMom;
@@ -3426,13 +3437,15 @@ if recompute
                 forwardProblem.(SourceModels{j}).sourceActivityWidth = sigma2;
                 forwardProblem.(SourceModels{j}).sourceActivityPow = sourceActivityPow;
                 forwardProblem.(SourceModels{j}).EEGActivity = EEGActivity;
+                forwardProblem.(SourceModels{j}).EEGActivityMax = EEGActivityMax;
                 forwardProblem.(SourceModels{j}).MEGActivity = MEGActivity;
+                forwardProblem.(SourceModels{j}).MEGActivityMax = MEGActivityMax;
                 forwardProblem.(SourceModels{j}).activePatchAmp = activePatchAmp;
                 forwardProblem.(SourceModels{j}).Msc.segments = segments;
                 forwardProblem.(SourceModels{j}).Msc.AllSourceCenterInd = AllSourceCenterInd;
                 %             forwardProblem.(SourceModels{j}).Msc.nodes = nodes;
-                %                 forwardProblem.(SourceModels{j}).Msc.time_FP = time_FP;
-                %                 forwardProblem.(SourceModels{j}).Msc.Oscil_FP = Oscil_FP;
+                forwardProblem.(SourceModels{j}).Msc.time_FP = time_FP;
+                forwardProblem.(SourceModels{j}).Msc.Oscil_FP = Oscil_FP;
                 forwardProblem.(SourceModels{j}).Msc.LeadField = LeadField.(SourceModels{j});
             elseif strcmp(SourceModels{j}, 'whitePial')
                 forwardProblem.(SourceModels{j}) = [];
@@ -3440,23 +3453,25 @@ if recompute
                 forwardProblem.(SourceModels{j}).dipMom = dipMom;
                 forwardProblem.(SourceModels{j}).maxPow = [forwardProblem.white.maxPow; forwardProblem.pial.maxPow];
                 forwardProblem.(SourceModels{j}).sourceModel = sourceModel;
-                %             for i = 1 : length(forwardProblem.white.Msc.time_FP)
-                i = 1;
-                forwardProblem.(SourceModels{j}).sourceActivity{1, i} = [forwardProblem.white.sourceActivity{1, i}; forwardProblem.pial.sourceActivity{1, i}];
-                temp2 = forwardProblem.(SourceModels{j}).sourceActivity{1, i}(LeadField.(SourceModels{j}).EEG.inside, :)';
-                forwardProblem.(SourceModels{j}).EEGActivity{1}(:, i) = LeadField.(SourceModels{j}).EEG.LF_cat * temp2(:);
-                temp2 = forwardProblem.(SourceModels{j}).sourceActivity{1, i}(LeadField.(SourceModels{j}).MEG.inside, :)';
-                forwardProblem.(SourceModels{j}).MEGActivity{1}(:, i) = LeadField.(SourceModels{j}).MEG.LF_cat * temp2(:);
-                %             end
+                for i = 1 : length(forwardProblem.white.Msc.time_FP)
+                    forwardProblem.(SourceModels{j}).sourceActivity{1, i} = [forwardProblem.white.sourceActivity{1, i}; forwardProblem.pial.sourceActivity{1, i}];
+                    temp2 = forwardProblem.(SourceModels{j}).sourceActivity{1, i}(LeadField.(SourceModels{j}).EEG.inside, :)';
+                    forwardProblem.(SourceModels{j}).EEGActivity{1}(:, i) = LeadField.(SourceModels{j}).EEG.LF_cat * temp2(:);
+                    temp2 = forwardProblem.(SourceModels{j}).sourceActivity{1, i}(LeadField.(SourceModels{j}).MEG.inside, :)';
+                    forwardProblem.(SourceModels{j}).MEGActivity{1}(:, i) = LeadField.(SourceModels{j}).MEG.LF_cat * temp2(:);
+                end % for i = 1 : length(forwardProblem.white.Msc.time_FP)
+                temp2 = forwardProblem.(SourceModels{j}).maxMom(LeadField.(SourceModels{j}).EEG.inside, :)';
+                forwardProblem.(SourceModels{j}).EEGActivityMax{1} = LeadField.(SourceModels{j}).EEG.LF_cat * temp2(:);
+                temp2 = forwardProblem.(SourceModels{j}).maxMom(LeadField.(SourceModels{j}).MEG.inside, :)';
+                forwardProblem.(SourceModels{j}).MEGActivityMax{1} = LeadField.(SourceModels{j}).MEG.LF_cat * temp2(:);
                 forwardProblem.(SourceModels{j}).sourceActivityWidth = sigma2;
                 forwardProblem.(SourceModels{j}).sourceActivityPow{1} = [forwardProblem.white.sourceActivityPow{1}; forwardProblem.pial.sourceActivityPow{1}];
-                %             forwardProblem.(SourceModels{j}).Field = [forwardProblem.white.Field{1}; forwardProblem.pial.Field{1}];
                 forwardProblem.(SourceModels{j}).activePatchAmp = [forwardProblem.white.activePatchAmp forwardProblem.pial.activePatchAmp];
                 forwardProblem.(SourceModels{j}).Msc.segments = [forwardProblem.white.Msc.segments; forwardProblem.pial.Msc.segments + repmat([size(forwardProblem.white.Msc.segments, 1) size(forwardProblem.white.sourceModel.pos, 1)*ones(1, 2)], size(forwardProblem.pial.Msc.segments, 1), 1)];
                 forwardProblem.(SourceModels{j}).Msc.AllSourceCenterInd = [forwardProblem.white.Msc.AllSourceCenterInd forwardProblem.pial.Msc.AllSourceCenterInd + size(forwardProblem.white.sourceModel.pos, 1)];
                 %             forwardProblem.(SourceModels{j}).Msc.nodes = nodes;
-                %             forwardProblem.(SourceModels{j}).Msc.time_FP = time_FP;
-                %             forwardProblem.(SourceModels{j}).Msc.Oscil_FP = Oscil_FP;
+                forwardProblem.(SourceModels{j}).Msc.time_FP = time_FP;
+                forwardProblem.(SourceModels{j}).Msc.Oscil_FP = Oscil_FP;
                 forwardProblem.(SourceModels{j}).Msc.LeadField = LeadField.(SourceModels{j});
             elseif strcmp(SourceModels{j}, 'whiteBetweenPial')
                 forwardProblem.(SourceModels{j}) = [];
@@ -3464,25 +3479,27 @@ if recompute
                 forwardProblem.(SourceModels{j}).dipMom = dipMom;
                 forwardProblem.(SourceModels{j}).maxPow = [forwardProblem.white.maxPow; forwardProblem.between.maxPow; forwardProblem.pial.maxPow];
                 forwardProblem.(SourceModels{j}).sourceModel = sourceModel;
-                %             for i = 1 : length(forwardProblem.white.Msc.time_FP)
-                i = 1;
-                forwardProblem.(SourceModels{j}).sourceActivity{1, i} = [forwardProblem.white.sourceActivity{1, i}; forwardProblem.between.sourceActivity{1, i}; forwardProblem.pial.sourceActivity{1, i}];
-                temp2 = forwardProblem.(SourceModels{j}).sourceActivity{1, i}(LeadField.(SourceModels{j}).EEG.inside, :)';
-                forwardProblem.(SourceModels{j}).EEGActivity{1}(:, i) = LeadField.(SourceModels{j}).EEG.LF_cat * temp2(:);
-                temp2 = forwardProblem.(SourceModels{j}).sourceActivity{1, i}(LeadField.(SourceModels{j}).MEG.inside, :)';
-                forwardProblem.(SourceModels{j}).MEGActivity{1}(:, i) = LeadField.(SourceModels{j}).MEG.LF_cat * temp2(:);
-                %             end
+                for i = 1 : length(forwardProblem.white.Msc.time_FP)
+                    forwardProblem.(SourceModels{j}).sourceActivity{1, i} = [forwardProblem.white.sourceActivity{1, i}; forwardProblem.between.sourceActivity{1, i}; forwardProblem.pial.sourceActivity{1, i}];
+                    temp2 = forwardProblem.(SourceModels{j}).sourceActivity{1, i}(LeadField.(SourceModels{j}).EEG.inside, :)';
+                    forwardProblem.(SourceModels{j}).EEGActivity{1}(:, i) = LeadField.(SourceModels{j}).EEG.LF_cat * temp2(:);
+                    temp2 = forwardProblem.(SourceModels{j}).sourceActivity{1, i}(LeadField.(SourceModels{j}).MEG.inside, :)';
+                    forwardProblem.(SourceModels{j}).MEGActivity{1}(:, i) = LeadField.(SourceModels{j}).MEG.LF_cat * temp2(:);
+                end % for i = 1 : length(forwardProblem.white.Msc.time_FP)
+                temp2 = forwardProblem.(SourceModels{j}).maxMom(LeadField.(SourceModels{j}).EEG.inside, :)';
+                forwardProblem.(SourceModels{j}).EEGActivityMax{1} = LeadField.(SourceModels{j}).EEG.LF_cat * temp2(:);
+                temp2 = forwardProblem.(SourceModels{j}).maxMom(LeadField.(SourceModels{j}).MEG.inside, :)';
+                forwardProblem.(SourceModels{j}).MEGActivityMax{1} = LeadField.(SourceModels{j}).MEG.LF_cat * temp2(:);
                 forwardProblem.(SourceModels{j}).sourceActivityWidth = sigma2;
                 forwardProblem.(SourceModels{j}).sourceActivityPow{1} = [forwardProblem.white.sourceActivityPow{1}; forwardProblem.between.sourceActivityPow{1}; forwardProblem.pial.sourceActivityPow{1}];
-                %             forwardProblem.(SourceModels{j}).Field = [forwardProblem.white.Field{1}; forwardProblem.pial.Field{1}];
                 forwardProblem.(SourceModels{j}).activePatchAmp = [forwardProblem.white.activePatchAmp forwardProblem.between.activePatchAmp forwardProblem.pial.activePatchAmp];
                 forwardProblem.(SourceModels{j}).Msc.segments = [forwardProblem.white.Msc.segments; ...
                     forwardProblem.between.Msc.segments + repmat([size(forwardProblem.white.Msc.segments, 1) size(forwardProblem.white.sourceModel.pos, 1)*ones(1, 2)], size(forwardProblem.between.Msc.segments, 1), 1); ...
                     forwardProblem.pial.Msc.segments + repmat([size(forwardProblem.white.Msc.segments, 1)+size(forwardProblem.between.Msc.segments, 1) (size(forwardProblem.white.sourceModel.pos, 1) + size(forwardProblem.between.sourceModel.pos, 1))*ones(1, 2)], size(forwardProblem.pial.Msc.segments, 1), 1)];
                 forwardProblem.(SourceModels{j}).Msc.AllSourceCenterInd = [forwardProblem.white.Msc.AllSourceCenterInd forwardProblem.between.Msc.AllSourceCenterInd+size(forwardProblem.white.sourceModel.pos, 1) forwardProblem.pial.Msc.AllSourceCenterInd+size(forwardProblem.white.sourceModel.pos, 1)+size(forwardProblem.between.sourceModel.pos, 1)];
                 %             forwardProblem.(SourceModels{j}).Msc.nodes = nodes;
-                %             forwardProblem.(SourceModels{j}).Msc.time_FP = time_FP;
-                %             forwardProblem.(SourceModels{j}).Msc.Oscil_FP = Oscil_FP;
+                forwardProblem.(SourceModels{j}).Msc.time_FP = time_FP;
+                forwardProblem.(SourceModels{j}).Msc.Oscil_FP = Oscil_FP;
                 forwardProblem.(SourceModels{j}).Msc.LeadField = LeadField.(SourceModels{j});
             end % if ismember(SourceModels{j}, {'white', 'pial', 'between'})
         end % for j = 1 : length(SourceModels)
@@ -3722,14 +3739,14 @@ else
     end % if isfield(opt.cfg.EEG, 'MRIhx')
     
     if get(opt.cbFPEEG, 'Value') == 1 && ~isfield(opt.cfg.EEG, 'FPEEGh')
-        valNorm = opt.cfg.EEG.ForwardProblem.(opt.SourceModelSel).EEGActivity{1}(:, 1);
+        valNorm = opt.cfg.EEG.ForwardProblem.(opt.SourceModelSel).EEGActivityMax{1}; %EEGActivity{1}(:, 1);
         valNorm = (valNorm - min(valNorm(:))) / (max(valNorm(:)) - min(valNorm(:))); % Normalizing the values
         opt.cfg.EEG.FPEEGh = ft_plot_topo3d_mod(opt.cfg.EEG.ForwardProblem.sens.EEG.chanpos(ismember(opt.cfg.EEG.ForwardProblem.sens.EEG.label, opt.cfg.EEG.ForwardProblem.(opt.SourceModelSel).Msc.LeadField.EEG.label), :), valNorm, 'colormap', 'jet', 'refine', 3);
     elseif get(opt.cbFPEEG, 'Value') == 0 && isfield(opt.cfg.EEG, 'FPEEGh')
         delete(opt.cfg.EEG.FPEEGh)
         opt.cfg.EEG = rmfield(opt.cfg.EEG, 'FPEEGh');
     elseif get(opt.cbFPMEG, 'Value') == 1 && ~isfield(opt.cfg.EEG, 'FPMEGh')
-        valNorm = opt.cfg.EEG.ForwardProblem.(opt.SourceModelSel).MEGActivity{1}(:, 1);
+        valNorm = opt.cfg.EEG.ForwardProblem.(opt.SourceModelSel).MEGActivityMax{1}; %MEGActivity{1}(:, 1);
         valNorm = (valNorm - min(valNorm(:))) / (max(valNorm(:)) - min(valNorm(:))); % Normalizing the values
         opt.cfg.EEG.FPMEGh = ft_plot_topo3d_mod(opt.cfg.EEG.ForwardProblem.sens.MEG.chanpos(ismember(opt.cfg.EEG.ForwardProblem.sens.MEG.label, opt.cfg.EEG.ForwardProblem.(opt.SourceModelSel).Msc.LeadField.MEG.label), :), valNorm, 'colormap', 'jet', 'refine', 3);
     elseif get(opt.cbFPMEG, 'Value') == 0 && isfield(opt.cfg.EEG, 'FPMEGh')
@@ -3756,6 +3773,102 @@ else
     %     end % if exist('ToBeDeleted', 'var')
 end
 setappdata(h, 'opt', opt);
+
+function FPActualSourceTC(h, eventdata)
+h = getparent(h);
+opt = getappdata(h, 'opt');
+
+SourceTC = opt.cfg.EEG.ForwardProblem.(opt.SourceModelSel).sourceModel;
+if get(opt.pmFPSource, 'Value') == 5 || get(opt.pmFPSource, 'Value') == 6
+    SourceTC.pos = SourceTC.pos(opt.LOI.posRange, :);
+    SourceTC.inside = SourceTC.inside(opt.LOI.posRange);
+    SourceTC.tri = SourceTC.tri(opt.LOI.triRange, :) - opt.LOI.triValCorr;
+    SourceTC.avg.pow = opt.cfg.EEG.ForwardProblem.(opt.SourceModelSel).sourceActivityPow{1}(opt.LOI.posRange, :);
+else
+    SourceTC.avg.pow = opt.cfg.EEG.ForwardProblem.(opt.SourceModelSel).sourceActivityPow{1};
+end
+
+SourceTC.time  = opt.cfg.EEG.ForwardProblem.(opt.SourceModelSel).Msc.time_FP;
+
+cfg = [];
+cfg.funparameter = 'pow';
+ft_sourcemovie(cfg, SourceTC)
+
+function FPActualEEGTC(h, eventdata)
+h = getparent(h);
+opt = getappdata(h, 'opt');
+
+EEGTC.pos = opt.cfg.EEG.ForwardProblem.sens.EEG.chanpos(ismember(opt.cfg.EEG.ForwardProblem.sens.EEG.label, opt.cfg.EEG.ForwardProblem.(opt.SourceModelSel).Msc.LeadField.EEG.label), :);
+EEGTC.pow = opt.cfg.EEG.ForwardProblem.(opt.SourceModelSel).EEGActivity{1};
+EEGTC.time = opt.cfg.EEG.ForwardProblem.(opt.SourceModelSel).Msc.time_FP;
+[az, el, ~] = cart2sph(EEGTC.pos(:,1), EEGTC.pos(:,2), EEGTC.pos(:,3));
+[x, y] = pol2cart(az, pi/2 - el);
+prj = [x, y];
+EEGTC.tri = delaunay(prj(:,1), prj(:,2));
+
+cfg = [];
+cfg.funparameter = 'pow'; % 'momPow', 'pow'
+ft_sourcemovie(cfg, EEGTC)
+
+function FPActualMEGTC(h, eventdata)
+h = getparent(h);
+opt = getappdata(h, 'opt');
+
+MEGTC.pos = opt.cfg.EEG.ForwardProblem.sens.MEG.chanpos(ismember(opt.cfg.EEG.ForwardProblem.sens.MEG.label, opt.cfg.EEG.ForwardProblem.(opt.SourceModelSel).Msc.LeadField.MEG.label), :);
+MEGTC.pow = opt.cfg.EEG.ForwardProblem.(opt.SourceModelSel).MEGActivity{1};
+MEGTC.time = opt.cfg.EEG.ForwardProblem.(opt.SourceModelSel).Msc.time_FP;
+[az, el, ~] = cart2sph(MEGTC.pos(:,1), MEGTC.pos(:,2), MEGTC.pos(:,3));
+[x, y] = pol2cart(az, pi/2 - el);
+prj = [x, y];
+MEGTC.tri = delaunay(prj(:,1), prj(:,2));
+
+cfg = [];
+cfg.funparameter = 'pow'; % 'momPow', 'pow'
+ft_sourcemovie(cfg, MEGTC)
+
+function IPEEGMom(h, eventdata)
+h = getparent(h);
+opt = getappdata(h, 'opt');
+
+selectedSourceModel = opt.cfg.EEG.sourceReconst.(opt.SourceModelSel).LCMV.EEG;
+if get(opt.pmFPSource, 'Value') == 5 || get(opt.pmFPSource, 'Value') == 6
+    selectedSourceModel.pos = selectedSourceModel.pos(opt.LOI.posRange, :);
+    selectedSourceModel.inside = selectedSourceModel.inside(opt.LOI.posRange);
+    selectedSourceModel.tri = selectedSourceModel.tri(opt.LOI.triRange, :) - opt.LOI.triValCorr;
+    selectedSourceModel.avg.pow = selectedSourceModel.avg.pow(opt.LOI.posRange);
+    selectedSourceModel.avg.noise = selectedSourceModel.avg.noise(opt.LOI.posRange);
+    selectedSourceModel.avg.NAI = selectedSourceModel.avg.NAI(opt.LOI.posRange);
+    selectedSourceModel.avg.relPow = selectedSourceModel.avg.relPow(opt.LOI.posRange);
+    selectedSourceModel.avg.momPow = selectedSourceModel.avg.momPow(opt.LOI.posRange, :);
+    selectedSourceModel.avg.filter = [];
+    selectedSourceModel.avg.mom = [];
+end
+
+cfg = [];
+cfg.funparameter = 'momPow';
+ft_sourcemovie(cfg, selectedSourceModel);
+
+function IPMEGMom(h, eventdata)
+h = getparent(h);
+opt = getappdata(h, 'opt');
+
+selectedSourceModel = opt.cfg.EEG.sourceReconst.(opt.SourceModelSel).LCMV.MEG;
+if get(opt.pmFPSource, 'Value') == 5 || get(opt.pmFPSource, 'Value') == 6
+    selectedSourceModel.pos = selectedSourceModel.pos(opt.LOI.posRange, :);
+    selectedSourceModel.inside = selectedSourceModel.inside(opt.LOI.posRange);
+    selectedSourceModel.tri = selectedSourceModel.tri(opt.LOI.triRange, :) - opt.LOI.triValCorr;
+    selectedSourceModel.avg.pow = selectedSourceModel.avg.pow(opt.LOI.posRange);
+    selectedSourceModel.avg.noise = selectedSourceModel.avg.noise(opt.LOI.posRange);
+    selectedSourceModel.avg.NAI = selectedSourceModel.avg.NAI(opt.LOI.posRange);
+    selectedSourceModel.avg.relPow = selectedSourceModel.avg.relPow(opt.LOI.posRange);
+    selectedSourceModel.avg.momPow = selectedSourceModel.avg.momPow(opt.LOI.posRange, :);
+    selectedSourceModel.avg.filter = [];
+    selectedSourceModel.avg.mom = [];
+end
+
+cfg = [];
+cfg.funparameter = 'momPow';
+ft_sourcemovie(cfg, selectedSourceModel);
 
 function FPRotate(h, eventdata)
 h = getparent(h);
@@ -3798,7 +3911,7 @@ if get(opt.pmFPSource, 'Value') == 2  %&& ~isfield(opt.cfg.EEG, 'FPSrch')
         set(opt.panelbgLOF, 'SelectedObject', opt.rbWhite, 'Visible', 'off');
     end
     opt.SourceModelSel = SourceModels{1};
-    valNorm = opt.cfg.EEG.ForwardProblem.(opt.SourceModelSel).sourceActivityPow{1}(:, 1);
+    valNorm = opt.cfg.EEG.ForwardProblem.(opt.SourceModelSel).maxPow; %sourceActivityPow{1}(:, 1);
     valNorm = (valNorm - min(valNorm(:))) / (max(valNorm(:)) - min(valNorm(:))); % Normalizing the values
     temp = ft_plot_mesh_mod(opt.cfg.EEG.ForwardProblem.(opt.SourceModelSel).sourceModel, 'vertexcolor', valNorm, 'edgecolor', 'none', 'colormap', 'jet');
     if ~isfield(opt, 'lighth')
@@ -3813,14 +3926,17 @@ if get(opt.pmFPSource, 'Value') == 2  %&& ~isfield(opt.cfg.EEG, 'FPSrch')
     if strcmp(get(opt.cbFPEEG, 'Enable'), 'off') || strcmp(get(opt.cbFPMEG, 'Enable'), 'off')
         set(opt.cbFPEEG, 'Enable', 'on')
         set(opt.cbFPMEG, 'Enable', 'on')
+        set(opt.pbFPSourceMovie, 'Enable', 'on')
+        set(opt.pbFPEEGMovie, 'Enable', 'on')
+        set(opt.pbFPMEGMovie, 'Enable', 'on')
     end % if strcmp(get(opt.cbFPEEG, 'Enable'), 'off') || strcmp(get(opt.cbFPMEG, 'Enable'), 'off')
     if all(get(opt.pbIP, 'BackgroundColor') == [152 251 152] / 255) && strcmp(get(opt.cbIPDICSPowEEG, 'Enable'), 'off') % If IP push button is green
         set(opt.cbIPDICSPowEEG, 'Enable', 'on')
         set(opt.cbIPDICSPowMEG, 'Enable', 'on')
         set(opt.cbIPLCMVPowEEG, 'Enable', 'on')
-        set(opt.cbIPLCMVMomEEG, 'Enable', 'on')
+        set(opt.pbIPLCMVMomEEG, 'Enable', 'on')
         set(opt.cbIPLCMVPowMEG, 'Enable', 'on')
-        set(opt.cbIPLCMVMomMEG, 'Enable', 'on')
+        set(opt.pbIPLCMVMomMEG, 'Enable', 'on')
         set(opt.txtLCMVLabel, 'Enable', 'on')
         set(opt.txtDICSLabel, 'Enable', 'on')
         set(opt.txtEEGLabel, 'Enable', 'on')
@@ -3837,7 +3953,7 @@ if get(opt.pmFPSource, 'Value') == 2  %&& ~isfield(opt.cfg.EEG, 'FPSrch')
     
     %     set(opt.cbFPEEG, 'Enable', 'on', 'Value', 0)
     if get(opt.cbFPEEG, 'Value') == 1
-        valNorm = opt.cfg.EEG.ForwardProblem.(opt.SourceModelSel).EEGActivity{1}(:, 1);
+        valNorm = opt.cfg.EEG.ForwardProblem.(opt.SourceModelSel).EEGActivityMax{1};
         valNorm = (valNorm - min(valNorm(:))) / (max(valNorm(:)) - min(valNorm(:))); % Normalizing the values
         temp = ft_plot_topo3d_mod(opt.cfg.EEG.ForwardProblem.sens.EEG.chanpos(ismember(opt.cfg.EEG.ForwardProblem.sens.EEG.label, opt.cfg.EEG.ForwardProblem.(opt.SourceModelSel).Msc.LeadField.EEG.label), :), valNorm, 'colormap', 'jet', 'refine', 3);
         if isfield(opt.cfg.EEG, 'FPEEGh')
@@ -3848,7 +3964,7 @@ if get(opt.pmFPSource, 'Value') == 2  %&& ~isfield(opt.cfg.EEG, 'FPSrch')
     end % if get(opt.cbFPEEG, 'Value') == 1
     %     set(opt.cbFPMEG, 'Enable', 'on', 'Value', 0)
     if get(opt.cbFPMEG, 'Value') == 1
-        valNorm = opt.cfg.EEG.ForwardProblem.(opt.SourceModelSel).MEGActivity{1}(:, 1);
+        valNorm = opt.cfg.EEG.ForwardProblem.(opt.SourceModelSel).MEGActivityMax{1};
         valNorm = (valNorm - min(valNorm(:))) / (max(valNorm(:)) - min(valNorm(:))); % Normalizing the values
         temp = ft_plot_topo3d_mod(opt.cfg.EEG.ForwardProblem.sens.MEG.chanpos(ismember(opt.cfg.EEG.ForwardProblem.sens.MEG.label, opt.cfg.EEG.ForwardProblem.(opt.SourceModelSel).Msc.LeadField.MEG.label), :), valNorm, 'colormap', 'jet', 'refine', 3);
         if isfield(opt.cfg.EEG, 'FPMEGh')
@@ -3863,7 +3979,7 @@ elseif get(opt.pmFPSource, 'Value') == 3 %&& ~isfield(opt.cfg.EEG, 'FPSrch')
         set(opt.panelbgLOF, 'SelectedObject', opt.rbWhite, 'Visible', 'off');
     end
     opt.SourceModelSel = SourceModels{2};
-    valNorm = opt.cfg.EEG.ForwardProblem.(opt.SourceModelSel).sourceActivityPow{1}(:, 1);
+    valNorm = opt.cfg.EEG.ForwardProblem.(opt.SourceModelSel).maxPow; %sourceActivityPow{1}(:, 1);
     valNorm = (valNorm - min(valNorm(:))) / (max(valNorm(:)) - min(valNorm(:))); % Normalizing the values
     temp = ft_plot_mesh_mod(opt.cfg.EEG.ForwardProblem.(opt.SourceModelSel).sourceModel, 'vertexcolor', valNorm, 'edgecolor', 'none', 'colormap', 'jet');
     if ~isfield(opt, 'lighth')
@@ -3878,14 +3994,17 @@ elseif get(opt.pmFPSource, 'Value') == 3 %&& ~isfield(opt.cfg.EEG, 'FPSrch')
     if strcmp(get(opt.cbFPEEG, 'Enable'), 'off') || strcmp(get(opt.cbFPMEG, 'Enable'), 'off')
         set(opt.cbFPEEG, 'Enable', 'on')
         set(opt.cbFPMEG, 'Enable', 'on')
+        set(opt.pbFPSourceMovie, 'Enable', 'on')
+        set(opt.pbFPEEGMovie, 'Enable', 'on')
+        set(opt.pbFPMEGMovie, 'Enable', 'on')
     end % if strcmp(get(opt.cbFPEEG, 'Enable'), 'off') || strcmp(get(opt.cbFPMEG, 'Enable'), 'off')
     if all(get(opt.pbIP, 'BackgroundColor') == [152 251 152] / 255) && strcmp(get(opt.cbIPDICSPowEEG, 'Enable'), 'off') % If IP push button is green
         set(opt.cbIPDICSPowEEG, 'Enable', 'on')
         set(opt.cbIPDICSPowMEG, 'Enable', 'on')
         set(opt.cbIPLCMVPowEEG, 'Enable', 'on')
-        set(opt.cbIPLCMVMomEEG, 'Enable', 'on')
+        set(opt.pbIPLCMVMomEEG, 'Enable', 'on')
         set(opt.cbIPLCMVPowMEG, 'Enable', 'on')
-        set(opt.cbIPLCMVMomMEG, 'Enable', 'on')
+        set(opt.pbIPLCMVMomMEG, 'Enable', 'on')
         set(opt.txtLCMVLabel, 'Enable', 'on')
         set(opt.txtDICSLabel, 'Enable', 'on')
         set(opt.txtEEGLabel, 'Enable', 'on')
@@ -3902,7 +4021,7 @@ elseif get(opt.pmFPSource, 'Value') == 3 %&& ~isfield(opt.cfg.EEG, 'FPSrch')
     
     %     set(opt.cbFPEEG, 'Enable', 'on', 'Value', 0)
     if get(opt.cbFPEEG, 'Value') == 1
-        valNorm = opt.cfg.EEG.ForwardProblem.(opt.SourceModelSel).EEGActivity{1}(:, 1);
+        valNorm = opt.cfg.EEG.ForwardProblem.(opt.SourceModelSel).EEGActivityMax{1};
         valNorm = (valNorm - min(valNorm(:))) / (max(valNorm(:)) - min(valNorm(:))); % Normalizing the values
         temp = ft_plot_topo3d_mod(opt.cfg.EEG.ForwardProblem.sens.EEG.chanpos(ismember(opt.cfg.EEG.ForwardProblem.sens.EEG.label, opt.cfg.EEG.ForwardProblem.(opt.SourceModelSel).Msc.LeadField.EEG.label), :), valNorm, 'colormap', 'jet', 'refine', 3);
         if isfield(opt.cfg.EEG, 'FPEEGh')
@@ -3913,7 +4032,7 @@ elseif get(opt.pmFPSource, 'Value') == 3 %&& ~isfield(opt.cfg.EEG, 'FPSrch')
     end % if get(opt.cbFPEEG, 'Value') == 1
     %     set(opt.cbFPMEG, 'Enable', 'on', 'Value', 0)
     if get(opt.cbFPMEG, 'Value') == 1
-        valNorm = opt.cfg.EEG.ForwardProblem.(opt.SourceModelSel).MEGActivity{1}(:, 1);
+        valNorm = opt.cfg.EEG.ForwardProblem.(opt.SourceModelSel).MEGActivityMax{1};
         valNorm = (valNorm - min(valNorm(:))) / (max(valNorm(:)) - min(valNorm(:))); % Normalizing the values
         temp = ft_plot_topo3d_mod(opt.cfg.EEG.ForwardProblem.sens.MEG.chanpos(ismember(opt.cfg.EEG.ForwardProblem.sens.MEG.label, opt.cfg.EEG.ForwardProblem.(opt.SourceModelSel).Msc.LeadField.MEG.label), :), valNorm, 'colormap', 'jet', 'refine', 3);
         if isfield(opt.cfg.EEG, 'FPMEGh')
@@ -3928,7 +4047,7 @@ elseif get(opt.pmFPSource, 'Value') == 4%&& ~isfield(opt.cfg.EEG, 'FPSrch')
         set(opt.panelbgLOF, 'SelectedObject', opt.rbWhite, 'Visible', 'off');
     end
     opt.SourceModelSel = SourceModels{3};
-    valNorm = opt.cfg.EEG.ForwardProblem.(opt.SourceModelSel).sourceActivityPow{1}(:, 1);
+    valNorm = opt.cfg.EEG.ForwardProblem.(opt.SourceModelSel).maxPow; %.sourceActivityPow{1}(:, 1);
     valNorm = (valNorm - min(valNorm(:))) / (max(valNorm(:)) - min(valNorm(:))); % Normalizing the values
     temp = ft_plot_mesh_mod(opt.cfg.EEG.ForwardProblem.(opt.SourceModelSel).sourceModel, 'vertexcolor', valNorm, 'edgecolor', 'none', 'colormap', 'jet');
     if ~isfield(opt, 'lighth')
@@ -3943,14 +4062,17 @@ elseif get(opt.pmFPSource, 'Value') == 4%&& ~isfield(opt.cfg.EEG, 'FPSrch')
     if strcmp(get(opt.cbFPEEG, 'Enable'), 'off') || strcmp(get(opt.cbFPMEG, 'Enable'), 'off')
         set(opt.cbFPEEG, 'Enable', 'on')
         set(opt.cbFPMEG, 'Enable', 'on')
+        set(opt.pbFPSourceMovie, 'Enable', 'on')
+        set(opt.pbFPEEGMovie, 'Enable', 'on')
+        set(opt.pbFPMEGMovie, 'Enable', 'on')
     end % if strcmp(get(opt.cbFPEEG, 'Enable'), 'off') || strcmp(get(opt.cbFPMEG, 'Enable'), 'off')
     if all(get(opt.pbIP, 'BackgroundColor') == [152 251 152] / 255) && strcmp(get(opt.cbIPDICSPowEEG, 'Enable'), 'off') % If IP push button is green
         set(opt.cbIPDICSPowEEG, 'Enable', 'on')
         set(opt.cbIPDICSPowMEG, 'Enable', 'on')
         set(opt.cbIPLCMVPowEEG, 'Enable', 'on')
-        set(opt.cbIPLCMVMomEEG, 'Enable', 'on')
+        set(opt.pbIPLCMVMomEEG, 'Enable', 'on')
         set(opt.cbIPLCMVPowMEG, 'Enable', 'on')
-        set(opt.cbIPLCMVMomMEG, 'Enable', 'on')
+        set(opt.pbIPLCMVMomMEG, 'Enable', 'on')
         set(opt.txtLCMVLabel, 'Enable', 'on')
         set(opt.txtDICSLabel, 'Enable', 'on')
         set(opt.txtEEGLabel, 'Enable', 'on')
@@ -3967,7 +4089,7 @@ elseif get(opt.pmFPSource, 'Value') == 4%&& ~isfield(opt.cfg.EEG, 'FPSrch')
     
     %     set(opt.cbFPEEG, 'Enable', 'on', 'Value', 0)
     if get(opt.cbFPEEG, 'Value') == 1
-        valNorm = opt.cfg.EEG.ForwardProblem.(opt.SourceModelSel).EEGActivity{1}(:, 1);
+        valNorm = opt.cfg.EEG.ForwardProblem.(opt.SourceModelSel).EEGActivityMax{1};
         valNorm = (valNorm - min(valNorm(:))) / (max(valNorm(:)) - min(valNorm(:))); % Normalizing the values
         temp = ft_plot_topo3d_mod(opt.cfg.EEG.ForwardProblem.sens.EEG.chanpos(ismember(opt.cfg.EEG.ForwardProblem.sens.EEG.label, opt.cfg.EEG.ForwardProblem.(opt.SourceModelSel).Msc.LeadField.EEG.label), :), valNorm, 'colormap', 'jet', 'refine', 3);
         if isfield(opt.cfg.EEG, 'FPEEGh')
@@ -3978,7 +4100,7 @@ elseif get(opt.pmFPSource, 'Value') == 4%&& ~isfield(opt.cfg.EEG, 'FPSrch')
     end % if get(opt.cbFPEEG, 'Value') == 1
     %     set(opt.cbFPMEG, 'Enable', 'on', 'Value', 0)
     if get(opt.cbFPMEG, 'Value') == 1
-        valNorm = opt.cfg.EEG.ForwardProblem.(opt.SourceModelSel).MEGActivity{1}(:, 1);
+        valNorm = opt.cfg.EEG.ForwardProblem.(opt.SourceModelSel).MEGActivityMax{1};
         valNorm = (valNorm - min(valNorm(:))) / (max(valNorm(:)) - min(valNorm(:))); % Normalizing the values
         temp = ft_plot_topo3d_mod(opt.cfg.EEG.ForwardProblem.sens.MEG.chanpos(ismember(opt.cfg.EEG.ForwardProblem.sens.MEG.label, opt.cfg.EEG.ForwardProblem.(opt.SourceModelSel).Msc.LeadField.MEG.label), :), valNorm, 'colormap', 'jet', 'refine', 3);
         if isfield(opt.cfg.EEG, 'FPMEGh')
@@ -4006,7 +4128,7 @@ elseif get(opt.pmFPSource, 'Value') == 5 %&& ~isfield(opt.cfg.EEG, 'FPSrch')
     end
     opt.LOI.posRange = posRange;
     opt.LOI.triRange = triRange;
-    valNorm = opt.cfg.EEG.ForwardProblem.(opt.SourceModelSel).sourceActivityPow{1}(posRange, 1);
+    valNorm = opt.cfg.EEG.ForwardProblem.(opt.SourceModelSel).maxPow(posRange, 1); %.sourceActivityPow{1}(posRange, 1);
     valNorm = (valNorm - min(valNorm(:))) / (max(valNorm(:)) - min(valNorm(:))); % Normalizing the values
     selectedSourceModel = [];
     selectedSourceModel.pos = opt.cfg.EEG.ForwardProblem.(opt.SourceModelSel).sourceModel.pos(posRange, :);
@@ -4032,14 +4154,17 @@ elseif get(opt.pmFPSource, 'Value') == 5 %&& ~isfield(opt.cfg.EEG, 'FPSrch')
     if strcmp(get(opt.cbFPEEG, 'Enable'), 'off') || strcmp(get(opt.cbFPMEG, 'Enable'), 'off')
         set(opt.cbFPEEG, 'Enable', 'on')
         set(opt.cbFPMEG, 'Enable', 'on')
+        set(opt.pbFPSourceMovie, 'Enable', 'on')
+        set(opt.pbFPEEGMovie, 'Enable', 'on')
+        set(opt.pbFPMEGMovie, 'Enable', 'on')
     end % if strcmp(get(opt.cbFPEEG, 'Enable'), 'off') || strcmp(get(opt.cbFPMEG, 'Enable'), 'off')
     if all(get(opt.pbIP, 'BackgroundColor') == [152 251 152] / 255) && strcmp(get(opt.cbIPDICSPowEEG, 'Enable'), 'off') % If IP push button is green
         set(opt.cbIPDICSPowEEG, 'Enable', 'on')
         set(opt.cbIPDICSPowMEG, 'Enable', 'on')
         set(opt.cbIPLCMVPowEEG, 'Enable', 'on')
-        set(opt.cbIPLCMVMomEEG, 'Enable', 'on')
+        set(opt.pbIPLCMVMomEEG, 'Enable', 'on')
         set(opt.cbIPLCMVPowMEG, 'Enable', 'on')
-        set(opt.cbIPLCMVMomMEG, 'Enable', 'on')
+        set(opt.pbIPLCMVMomMEG, 'Enable', 'on')
         set(opt.txtLCMVLabel, 'Enable', 'on')
         set(opt.txtDICSLabel, 'Enable', 'on')
         set(opt.txtEEGLabel, 'Enable', 'on')
@@ -4056,7 +4181,7 @@ elseif get(opt.pmFPSource, 'Value') == 5 %&& ~isfield(opt.cfg.EEG, 'FPSrch')
     
     %     set(opt.cbFPEEG, 'Enable', 'on', 'Value', 0)
     if get(opt.cbFPEEG, 'Value') == 1
-        valNorm = opt.cfg.EEG.ForwardProblem.(opt.SourceModelSel).EEGActivity{1}(:, 1);
+        valNorm = opt.cfg.EEG.ForwardProblem.(opt.SourceModelSel).EEGActivityMax{1};
         valNorm = (valNorm - min(valNorm(:))) / (max(valNorm(:)) - min(valNorm(:))); % Normalizing the values
         temp = ft_plot_topo3d_mod(opt.cfg.EEG.ForwardProblem.sens.EEG.chanpos(ismember(opt.cfg.EEG.ForwardProblem.sens.EEG.label, opt.cfg.EEG.ForwardProblem.(opt.SourceModelSel).Msc.LeadField.EEG.label), :), valNorm, 'colormap', 'jet', 'refine', 3);
         if isfield(opt.cfg.EEG, 'FPEEGh')
@@ -4067,7 +4192,7 @@ elseif get(opt.pmFPSource, 'Value') == 5 %&& ~isfield(opt.cfg.EEG, 'FPSrch')
     end % if get(opt.cbFPEEG, 'Value') == 1
     %     set(opt.cbFPMEG, 'Enable', 'on', 'Value', 0)
     if get(opt.cbFPMEG, 'Value') == 1
-        valNorm = opt.cfg.EEG.ForwardProblem.(opt.SourceModelSel).MEGActivity{1}(:, 1);
+        valNorm = opt.cfg.EEG.ForwardProblem.(opt.SourceModelSel).MEGActivityMax{1};
         valNorm = (valNorm - min(valNorm(:))) / (max(valNorm(:)) - min(valNorm(:))); % Normalizing the values
         temp = ft_plot_topo3d_mod(opt.cfg.EEG.ForwardProblem.sens.MEG.chanpos(ismember(opt.cfg.EEG.ForwardProblem.sens.MEG.label, opt.cfg.EEG.ForwardProblem.(opt.SourceModelSel).Msc.LeadField.MEG.label), :), valNorm, 'colormap', 'jet', 'refine', 3);
         if isfield(opt.cfg.EEG, 'FPMEGh')
@@ -4093,7 +4218,7 @@ elseif get(opt.pmFPSource, 'Value') == 6 %&& ~isfield(opt.cfg.EEG, 'FPSrch')
     end
     opt.LOI.posRange = posRange;
     opt.LOI.triRange = triRange;
-    valNorm = opt.cfg.EEG.ForwardProblem.(opt.SourceModelSel).sourceActivityPow{1}(posRange, 1);
+    valNorm = opt.cfg.EEG.ForwardProblem.(opt.SourceModelSel).maxPow(posRange, 1); %.sourceActivityPow{1}(posRange, 1);
     valNorm = (valNorm - min(valNorm(:))) / (max(valNorm(:)) - min(valNorm(:))); % Normalizing the values
     selectedSourceModel = [];
     selectedSourceModel.pos = opt.cfg.EEG.ForwardProblem.(opt.SourceModelSel).sourceModel.pos(posRange, :);
@@ -4122,14 +4247,17 @@ elseif get(opt.pmFPSource, 'Value') == 6 %&& ~isfield(opt.cfg.EEG, 'FPSrch')
     if strcmp(get(opt.cbFPEEG, 'Enable'), 'off') || strcmp(get(opt.cbFPMEG, 'Enable'), 'off')
         set(opt.cbFPEEG, 'Enable', 'on')
         set(opt.cbFPMEG, 'Enable', 'on')
+        set(opt.pbFPSourceMovie, 'Enable', 'on')
+        set(opt.pbFPEEGMovie, 'Enable', 'on')
+        set(opt.pbFPMEGMovie, 'Enable', 'on')
     end % if strcmp(get(opt.cbFPEEG, 'Enable'), 'off') || strcmp(get(opt.cbFPMEG, 'Enable'), 'off')
     if all(get(opt.pbIP, 'BackgroundColor') == [152 251 152] / 255) && strcmp(get(opt.cbIPDICSPowEEG, 'Enable'), 'off')% If IP push button is green
         set(opt.cbIPDICSPowEEG, 'Enable', 'on')
         set(opt.cbIPDICSPowMEG, 'Enable', 'on')
         set(opt.cbIPLCMVPowEEG, 'Enable', 'on')
-        set(opt.cbIPLCMVMomEEG, 'Enable', 'on')
+        set(opt.pbIPLCMVMomEEG, 'Enable', 'on')
         set(opt.cbIPLCMVPowMEG, 'Enable', 'on')
-        set(opt.cbIPLCMVMomMEG, 'Enable', 'on')
+        set(opt.pbIPLCMVMomMEG, 'Enable', 'on')
         set(opt.txtLCMVLabel, 'Enable', 'on')
         set(opt.txtDICSLabel, 'Enable', 'on')
         set(opt.txtEEGLabel, 'Enable', 'on')
@@ -4146,7 +4274,7 @@ elseif get(opt.pmFPSource, 'Value') == 6 %&& ~isfield(opt.cfg.EEG, 'FPSrch')
     
     %     set(opt.cbFPEEG, 'Enable', 'on', 'Value', 0)
     if get(opt.cbFPEEG, 'Value') == 1
-        valNorm = opt.cfg.EEG.ForwardProblem.(opt.SourceModelSel).EEGActivity{1}(:, 1);
+        valNorm = opt.cfg.EEG.ForwardProblem.(opt.SourceModelSel).EEGActivityMax{1};
         valNorm = (valNorm - min(valNorm(:))) / (max(valNorm(:)) - min(valNorm(:))); % Normalizing the values
         temp = ft_plot_topo3d_mod(opt.cfg.EEG.ForwardProblem.sens.EEG.chanpos(ismember(opt.cfg.EEG.ForwardProblem.sens.EEG.label, opt.cfg.EEG.ForwardProblem.(opt.SourceModelSel).Msc.LeadField.EEG.label), :), valNorm, 'colormap', 'jet', 'refine', 3);
         if isfield(opt.cfg.EEG, 'FPEEGh')
@@ -4157,7 +4285,7 @@ elseif get(opt.pmFPSource, 'Value') == 6 %&& ~isfield(opt.cfg.EEG, 'FPSrch')
     end % if get(opt.cbFPEEG, 'Value') == 1
     %     set(opt.cbFPMEG, 'Enable', 'on', 'Value', 0)
     if get(opt.cbFPMEG, 'Value') == 1
-        valNorm = opt.cfg.EEG.ForwardProblem.(opt.SourceModelSel).MEGActivity{1}(:, 1);
+        valNorm = opt.cfg.EEG.ForwardProblem.(opt.SourceModelSel).MEGActivityMax{1};
         valNorm = (valNorm - min(valNorm(:))) / (max(valNorm(:)) - min(valNorm(:))); % Normalizing the values
         temp = ft_plot_topo3d_mod(opt.cfg.EEG.ForwardProblem.sens.MEG.chanpos(ismember(opt.cfg.EEG.ForwardProblem.sens.MEG.label, opt.cfg.EEG.ForwardProblem.(opt.SourceModelSel).Msc.LeadField.MEG.label), :), valNorm, 'colormap', 'jet', 'refine', 3);
         if isfield(opt.cfg.EEG, 'FPMEGh')
@@ -4185,14 +4313,16 @@ elseif get(opt.pmFPSource, 'Value') == 1
         delete(opt.cfg.EEG.FPMEGh)
         opt.cfg.EEG = rmfield(opt.cfg.EEG, 'FPMEGh');
     end
-    
+    set(opt.pbFPSourceMovie, 'Enable', 'off')
+    set(opt.pbFPEEGMovie, 'Enable', 'off')
+    set(opt.pbFPMEGMovie, 'Enable', 'off')
     if all(get(opt.pbIP, 'BackgroundColor') == [152 251 152] / 255) % If IP push button is green
         set(opt.cbIPDICSPowEEG, 'Enable', 'off', 'Value', 0)
         set(opt.cbIPDICSPowMEG, 'Enable', 'off', 'Value', 0)
         set(opt.cbIPLCMVPowEEG, 'Enable', 'off', 'Value', 0)
-        set(opt.cbIPLCMVMomEEG, 'Enable', 'off', 'Value', 0)
+        set(opt.pbIPLCMVMomEEG, 'Enable', 'off')
         set(opt.cbIPLCMVPowMEG, 'Enable', 'off', 'Value', 0)
-        set(opt.cbIPLCMVMomMEG, 'Enable', 'off', 'Value', 0)
+        set(opt.pbIPLCMVMomMEG, 'Enable', 'off')
         set(opt.txtLCMVLabel, 'Enable', 'off', 'Value', 0)
         set(opt.txtDICSLabel, 'Enable', 'off', 'Value', 0)
         set(opt.txtEEGLabel, 'Enable', 'off', 'Value', 0)
@@ -4221,9 +4351,9 @@ switch eventdata.NewValue.String
         set(opt.cbIPDICSPowEEG, 'Value', 0)
         set(opt.cbIPDICSPowMEG, 'Value', 0)
         set(opt.cbIPLCMVPowEEG, 'Value', 0)
-        set(opt.cbIPLCMVMomEEG, 'Value', 0)
+        %         set(opt.cbIPLCMVMomEEG, 'Value', 0)
         set(opt.cbIPLCMVPowMEG, 'Value', 0)
-        set(opt.cbIPLCMVMomMEG, 'Value', 0)
+        %         set(opt.cbIPLCMVMomMEG, 'Value', 0)
         if any(isfield(opt.cfg.EEG, allHandleIP))
             temp = allHandleIP{isfield(opt.cfg.EEG, allHandleIP)};
             delete(opt.cfg.EEG.(temp))
@@ -4236,9 +4366,9 @@ switch eventdata.NewValue.String
         set(opt.cbIPDICSPowEEG, 'Value', 0)
         set(opt.cbIPDICSPowMEG, 'Value', 0)
         set(opt.cbIPLCMVPowEEG, 'Value', 0)
-        set(opt.cbIPLCMVMomEEG, 'Value', 0)
+        %         set(opt.cbIPLCMVMomEEG, 'Value', 0)
         set(opt.cbIPLCMVPowMEG, 'Value', 0)
-        set(opt.cbIPLCMVMomMEG, 'Value', 0)
+        %         set(opt.cbIPLCMVMomMEG, 'Value', 0)
         if any(isfield(opt.cfg.EEG, allHandleIP))
             temp = allHandleIP{isfield(opt.cfg.EEG, allHandleIP)};
             delete(opt.cfg.EEG.(temp))
@@ -4251,9 +4381,9 @@ switch eventdata.NewValue.String
         set(opt.cbIPDICSPowEEG, 'Value', 0)
         set(opt.cbIPDICSPowMEG, 'Value', 0)
         set(opt.cbIPLCMVPowEEG, 'Value', 0)
-        set(opt.cbIPLCMVMomEEG, 'Value', 0)
+        %         set(opt.cbIPLCMVMomEEG, 'Value', 0)
         set(opt.cbIPLCMVPowMEG, 'Value', 0)
-        set(opt.cbIPLCMVMomMEG, 'Value', 0)
+        %         set(opt.cbIPLCMVMomMEG, 'Value', 0)
         if any(isfield(opt.cfg.EEG, allHandleIP))
             temp = allHandleIP{isfield(opt.cfg.EEG, allHandleIP)};
             delete(opt.cfg.EEG.(temp))
@@ -4297,8 +4427,8 @@ if exist(opt.cfg.EEG.IPDir, 'file')
             %     set(opt.(panels{i}), 'ForegroundColor', 0.4*[1 1 1], 'FontWeight', 'normal');
             % end % for i = 1 : length(checkBoxes)
             
-            pushButtons = {'pbMRI', 'pbSegMRI', 'pbMesh', 'pbVol', 'pbSrc', 'pbSns', 'pbLF', 'pbFP', 'pbIP'};
-            for i = 9 : length(pushButtons)
+            pushButtons = {'pbMRI', 'pbSegMRI', 'pbMesh', 'pbVol', 'pbSrc', 'pbSns', 'pbLF', 'pbFP', 'pbFPSourceMovie', 'pbFPEEGMovie', 'pbFPMEGMovie', 'pbIP', 'pbIPLCMVMomEEG', 'pbIPLCMVMomMEG'};
+            for i = 12 : length(pushButtons)
                 if i > 9
                     set(opt.(pushButtons{i}), 'BackgroundColor', 0.94*[1 1 1], 'FontWeight', 'normal', 'Enable', 'off');
                 elseif i == 9
@@ -4313,7 +4443,7 @@ if exist(opt.cfg.EEG.IPDir, 'file')
                 'cbSrcWhite', 'cbSrcPial', 'cbSrcBetween', ...
                 'cbSnsEEG', 'cbSnsMEG', ...
                 'pmFPSource', 'cbFPEEG', 'cbFPMEG', ...
-                'cbIPDICSPowEEG', 'cbIPDICSPowMEG', 'cbIPLCMVPowEEG', 'cbIPLCMVMomEEG', 'cbIPLCMVPowMEG', 'cbIPLCMVMomMEG'};
+                'cbIPDICSPowEEG', 'cbIPDICSPowMEG', 'cbIPLCMVPowEEG', 'cbIPLCMVPowMEG'};
             for i = 26 : length(checkBoxes)
                 if  strcmp(checkBoxes{i}, 'pmFPSource')
                     set(opt.(checkBoxes{i}), 'Enable', 'off', 'Value', 1);
@@ -4866,9 +4996,9 @@ if get(opt.pmFPSource, 'Value') ~= 1
     set(opt.cbIPDICSPowEEG, 'Enable', 'on')
     set(opt.cbIPDICSPowMEG, 'Enable', 'on')
     set(opt.cbIPLCMVPowEEG, 'Enable', 'on')
-    set(opt.cbIPLCMVMomEEG, 'Enable', 'on')
+    set(opt.pbIPLCMVMomEEG, 'Enable', 'on')
     set(opt.cbIPLCMVPowMEG, 'Enable', 'on')
-    set(opt.cbIPLCMVMomMEG, 'Enable', 'on')
+    set(opt.pbIPLCMVMomMEG, 'Enable', 'on')
     set(opt.txtLCMVLabel, 'Enable', 'on')
     set(opt.txtDICSLabel, 'Enable', 'on')
     set(opt.txtEEGLabel, 'Enable', 'on')
@@ -4881,7 +5011,7 @@ function InverseProblem_checkBox(h, eventdata)
 h = getparent(h);
 opt = getappdata(h, 'opt');
 if get(opt.cbIPDICSPowEEG, 'Value') == 0 && get(opt.cbIPDICSPowMEG, 'Value') == 0 && get(opt.cbIPLCMVPowEEG, 'Value') == 0 && ...
-        get(opt.cbIPLCMVMomEEG, 'Value') == 0 && get(opt.cbIPLCMVPowMEG, 'Value') == 0 && get(opt.cbIPLCMVMomMEG, 'Value') == 0
+        get(opt.cbIPLCMVPowMEG, 'Value') == 0
     
     allHandle = {'DICSPowEEGh', 'DICSPowMEGh', 'LCMVPowEEGh', 'LCMVMomEEGh', 'LCMVPowMEGh', 'LCMVMomMEGh'}; % Delete previous slices
     if any(isfield(opt.cfg.EEG, allHandle))
@@ -4951,7 +5081,7 @@ else
             %             opt.cfg.EEG = rmfield(opt.cfg.EEG, 'SegWhitehx');
             %             opt.cfg.EEG = rmfield(opt.cfg.EEG, 'SegWhitehy');
             %             opt.cfg.EEG = rmfield(opt.cfg.EEG, 'SegWhitehz');
-            set(opt.cbIPLCMVMomEEG, 'Value', 0)
+            %             set(opt.cbIPLCMVMomEEG, 'Value', 0)
         elseif isfield(opt.cfg.EEG, 'LCMVPowMEGh') % Gray matter
             ToBeDeleted = 'LCMVPowMEGh';
             %             delete(opt.cfg.EEG.SegGrayhx)
@@ -4969,7 +5099,7 @@ else
             %             opt.cfg.EEG = rmfield(opt.cfg.EEG, 'SegCSFhx');
             %             opt.cfg.EEG = rmfield(opt.cfg.EEG, 'SegCSFhy');
             %             opt.cfg.EEG = rmfield(opt.cfg.EEG, 'SegCSFhz');
-            set(opt.cbIPLCMVMomMEG, 'Value', 0)
+            %             set(opt.cbIPLCMVMomMEG, 'Value', 0)
         end % if isfield(opt.cfg.EEG, 'SegBrainhx')
         %         [az, el] = view;
         [opt.view(1), opt.view(2)] = view;
@@ -5068,7 +5198,7 @@ else
             opt.lighth = light;
         end
         lighting gouraud; material dull
-    elseif get(opt.cbIPLCMVMomEEG, 'Value') == 1 %
+        %     elseif get(opt.cbIPLCMVMomEEG, 'Value') == 1 %
         %         valNorm = opt.cfg.EEG.sourceReconst.LCMV.EEG.avg.momPow;
         %         valNorm = (valNorm - min(valNorm(:))) ./ (max(valNorm(:)) - min(valNorm(:)));
         % %         while (get(opt.cbIPDICSPowEEG, 'Value') == 0 && get(opt.cbIPDICSPowMEG, 'Value') == 0 && get(opt.cbIPLCMVPowEEG, 'Value') == 0 && ...
@@ -5094,27 +5224,27 @@ else
         % delete(temp);
         %         opt.cfg.EEG = rmfield(opt.cfg.EEG, 'LCMVMomEEGh');
         
-        selectedSourceModel = opt.cfg.EEG.sourceReconst.(opt.SourceModelSel).LCMV.EEG;
-        if get(opt.pmFPSource, 'Value') == 5 || get(opt.pmFPSource, 'Value') == 6
-            selectedSourceModel.pos = selectedSourceModel.pos(opt.LOI.posRange, :);
-            selectedSourceModel.inside = selectedSourceModel.inside(opt.LOI.posRange);
-            selectedSourceModel.tri = selectedSourceModel.tri(opt.LOI.triRange, :) - opt.LOI.triValCorr;
-            selectedSourceModel.avg.pow = selectedSourceModel.avg.pow(opt.LOI.posRange);
-            selectedSourceModel.avg.noise = selectedSourceModel.avg.noise(opt.LOI.posRange);
-            selectedSourceModel.avg.NAI = selectedSourceModel.avg.NAI(opt.LOI.posRange);
-            selectedSourceModel.avg.relPow = selectedSourceModel.avg.relPow(opt.LOI.posRange);
-            selectedSourceModel.avg.momPow = selectedSourceModel.avg.momPow(opt.LOI.posRange, :);
-            selectedSourceModel.avg.filter = [];
-            selectedSourceModel.avg.mom = [];
-        end
-        
-        cfg = [];
-        cfg.funparameter = 'momPow'; % 'momPow', 'pow'
-        %         ft_sourcemovie(cfg, opt.cfg.EEG.sourceReconst.(opt.SourceModelSel).LCMV.EEG);
-        ft_sourcemovie(cfg, selectedSourceModel);
-        % if exist('M', 'var')
-        set(opt.cbIPLCMVMomEEG, 'Value', 0)
-        % end
+        %         selectedSourceModel = opt.cfg.EEG.sourceReconst.(opt.SourceModelSel).LCMV.EEG;
+        %         if get(opt.pmFPSource, 'Value') == 5 || get(opt.pmFPSource, 'Value') == 6
+        %             selectedSourceModel.pos = selectedSourceModel.pos(opt.LOI.posRange, :);
+        %             selectedSourceModel.inside = selectedSourceModel.inside(opt.LOI.posRange);
+        %             selectedSourceModel.tri = selectedSourceModel.tri(opt.LOI.triRange, :) - opt.LOI.triValCorr;
+        %             selectedSourceModel.avg.pow = selectedSourceModel.avg.pow(opt.LOI.posRange);
+        %             selectedSourceModel.avg.noise = selectedSourceModel.avg.noise(opt.LOI.posRange);
+        %             selectedSourceModel.avg.NAI = selectedSourceModel.avg.NAI(opt.LOI.posRange);
+        %             selectedSourceModel.avg.relPow = selectedSourceModel.avg.relPow(opt.LOI.posRange);
+        %             selectedSourceModel.avg.momPow = selectedSourceModel.avg.momPow(opt.LOI.posRange, :);
+        %             selectedSourceModel.avg.filter = [];
+        %             selectedSourceModel.avg.mom = [];
+        %         end
+        %
+        %         cfg = [];
+        %         cfg.funparameter = 'momPow'; % 'momPow', 'pow'
+        %         %         ft_sourcemovie(cfg, opt.cfg.EEG.sourceReconst.(opt.SourceModelSel).LCMV.EEG);
+        %         ft_sourcemovie(cfg, selectedSourceModel);
+        %         % if exist('M', 'var')
+        %         set(opt.cbIPLCMVMomEEG, 'Value', 0)
+        %         % end
         
     elseif get(opt.cbIPLCMVPowMEG, 'Value') == 1 %
         if get(opt.pmFPSource, 'Value') == 5 || get(opt.pmFPSource, 'Value') == 6
@@ -5134,7 +5264,7 @@ else
             opt.lighth = light;
         end
         lighting gouraud; material dull
-    elseif get(opt.cbIPLCMVMomMEG, 'Value') == 1 %
+        %     elseif get(opt.cbIPLCMVMomMEG, 'Value') == 1 %
         %         valNorm = opt.cfg.EEG.sourceReconst.LCMV.MEG.avg.momPow;
         %         valNorm = (valNorm - min(valNorm(:))) ./ (max(valNorm(:)) - min(valNorm(:)));
         % %         while (get(opt.cbIPDICSPowEEG, 'Value') == 0 && get(opt.cbIPDICSPowMEG, 'Value') == 0 && get(opt.cbIPLCMVPowEEG, 'Value') == 0 && ...
@@ -5158,27 +5288,27 @@ else
         % delete(opt.cfg.EEG.LCMVMomMEGh);
         %         opt.cfg.EEG = rmfield(opt.cfg.EEG, 'LCMVMomMEGh');
         
-        selectedSourceModel = opt.cfg.EEG.sourceReconst.(opt.SourceModelSel).LCMV.MEG;
-        if get(opt.pmFPSource, 'Value') == 5 || get(opt.pmFPSource, 'Value') == 6
-            selectedSourceModel.pos = selectedSourceModel.pos(opt.LOI.posRange, :);
-            selectedSourceModel.inside = selectedSourceModel.inside(opt.LOI.posRange);
-            selectedSourceModel.tri = selectedSourceModel.tri(opt.LOI.triRange, :) - opt.LOI.triValCorr;
-            selectedSourceModel.avg.pow = selectedSourceModel.avg.pow(opt.LOI.posRange);
-            selectedSourceModel.avg.noise = selectedSourceModel.avg.noise(opt.LOI.posRange);
-            selectedSourceModel.avg.NAI = selectedSourceModel.avg.NAI(opt.LOI.posRange);
-            selectedSourceModel.avg.relPow = selectedSourceModel.avg.relPow(opt.LOI.posRange);
-            selectedSourceModel.avg.momPow = selectedSourceModel.avg.momPow(opt.LOI.posRange, :);
-            selectedSourceModel.avg.filter = [];
-            selectedSourceModel.avg.mom = [];
-        end
-        
-        cfg = [];
-        cfg.funparameter = 'momPow'; % 'momPow', 'pow'
-        %         ft_sourcemovie(cfg, opt.cfg.EEG.sourceReconst.(opt.SourceModelSel).LCMV.MEG);
-        ft_sourcemovie(cfg, selectedSourceModel);
-        % if exist('M', 'var')
-        set(opt.cbIPLCMVMomMEG, 'Value', 0)
-        % end
+        %         selectedSourceModel = opt.cfg.EEG.sourceReconst.(opt.SourceModelSel).LCMV.MEG;
+        %         if get(opt.pmFPSource, 'Value') == 5 || get(opt.pmFPSource, 'Value') == 6
+        %             selectedSourceModel.pos = selectedSourceModel.pos(opt.LOI.posRange, :);
+        %             selectedSourceModel.inside = selectedSourceModel.inside(opt.LOI.posRange);
+        %             selectedSourceModel.tri = selectedSourceModel.tri(opt.LOI.triRange, :) - opt.LOI.triValCorr;
+        %             selectedSourceModel.avg.pow = selectedSourceModel.avg.pow(opt.LOI.posRange);
+        %             selectedSourceModel.avg.noise = selectedSourceModel.avg.noise(opt.LOI.posRange);
+        %             selectedSourceModel.avg.NAI = selectedSourceModel.avg.NAI(opt.LOI.posRange);
+        %             selectedSourceModel.avg.relPow = selectedSourceModel.avg.relPow(opt.LOI.posRange);
+        %             selectedSourceModel.avg.momPow = selectedSourceModel.avg.momPow(opt.LOI.posRange, :);
+        %             selectedSourceModel.avg.filter = [];
+        %             selectedSourceModel.avg.mom = [];
+        %         end
+        %
+        %         cfg = [];
+        %         cfg.funparameter = 'momPow'; % 'momPow', 'pow'
+        %         %         ft_sourcemovie(cfg, opt.cfg.EEG.sourceReconst.(opt.SourceModelSel).LCMV.MEG);
+        %         ft_sourcemovie(cfg, selectedSourceModel);
+        %         % if exist('M', 'var')
+        %         set(opt.cbIPLCMVMomMEG, 'Value', 0)
+        %         % end
     end % if get(opt.cbSegBrain, 'Value') == 1
     setappdata(h, 'opt', opt);
     %     if exist('az', 'var')
@@ -6549,7 +6679,7 @@ Elements = {'pbMRI', 'cbMRI', 'cbFiducl', 'pbSegMRI', 'cbSegBrain', ...
     'cbSnsMEG', 'pbLF', 'pbFP', 'sEEGSourceUp', 'sEEGSourceLeft', 'sEEGSourceBottom', ...
     'txtEEGSourceUp', 'txtEEGSourceLeft', 'txtEEGSourceBottom', 'pmFPSource', ...
     'cbFPEEG', 'cbFPMEG', 'pbIP', 'cbIPDICSPowEEG', 'cbIPDICSPowMEG', 'cbIPLCMVPowEEG', ...
-    'cbIPLCMVMomEEG', 'cbIPLCMVPowMEG', 'cbIPLCMVMomMEG', 'txtLCMVLabel', 'txtDICSLabel', ...
+    'pbIPLCMVMomEEG', 'cbIPLCMVPowMEG', 'pbIPLCMVMomMEG', 'txtLCMVLabel', 'txtDICSLabel', ...
     'txtEEGLabel', 'txtMEGLabel', 'txtSourceLabel', 'panelbgLOF'};
 
 CurrentState = [];
