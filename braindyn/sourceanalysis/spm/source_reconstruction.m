@@ -49,3 +49,22 @@ matlabbatch{batch_idx}.spm.meeg.source.invertiter.isstandard.custom.outinv = '';
 matlabbatch{batch_idx}.spm.meeg.source.invertiter.modality = {'All'};
 matlabbatch{batch_idx}.spm.meeg.source.invertiter.crossval = [pctest 1];
 [a,b]=spm_jobman('run', matlabbatch);
+
+% Get results
+D=spm_eeg_load(a{1}.D{1});
+goodchans=D.indchantype('MEG','good');
+M=D.inv{1}.inverse.M;
+U=D.inv{1}.inverse.U{1};
+nvertices=size(M,1)/2;
+It   = D.inv{1}.inverse.It;
+trial_times=D.inv{1}.inverse.pst;
+Dgood=squeeze(D(goodchans,It,:));
+ntrials=size(Dgood,3);
+MU=M*U;
+
+[outpath,outname,outext]=fileparts(a{1}.D{1});
+for t=1:ntrials
+    t
+    trial_data=MU*squeeze(Dgood(:,:,t));
+    write_metric_gifti(fullfile(outpath,sprintf('%s_%d.gii', outname, t)), trial_data);
+end
