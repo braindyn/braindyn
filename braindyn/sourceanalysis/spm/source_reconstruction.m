@@ -52,19 +52,26 @@ matlabbatch{batch_idx}.spm.meeg.source.invertiter.crossval = [pctest 1];
 
 % Get results
 D=spm_eeg_load(a{1}.D{1});
+
+% Include only good channels
 goodchans=D.indchantype('MEG','good');
 M=D.inv{1}.inverse.M;
 U=D.inv{1}.inverse.U{1};
-nvertices=size(M,1)/2;
+MU=M*U;
 It   = D.inv{1}.inverse.It;
-trial_times=D.inv{1}.inverse.pst;
 Dgood=squeeze(D(goodchans,It,:));
 ntrials=size(Dgood,3);
-MU=M*U;
 
+% Write each trial
 [outpath,outname,outext]=fileparts(a{1}.D{1});
 for t=1:ntrials
     t
     trial_data=MU*squeeze(Dgood(:,:,t));
-    write_metric_gifti(fullfile(outpath,sprintf('%s_%d.gii', outname, t)), trial_data);
+
+    c=file_array(fullfile(outpath,sprintf('%s_%d.dat', outname, t)), size(trial_data),'FLOAT32-LE',0,1,0);
+    c(:,:)=trial_data;
+
+    g = gifti;
+    g.cdata = c;
+    save(g, fullfile(outpath,sprintf('%s_%d.gii', outname, t)), 'ExternalFileBinary');
 end
