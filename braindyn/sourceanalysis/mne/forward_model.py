@@ -40,6 +40,7 @@ def create_bem_surfaces(subject, subjects_dir=None, plot=False):
         mne.viz.plot_bem(subject=subject, subjects_dir=subjects_dir,
                          brain_surfaces='white', orientation='coronal')
 
+
 def _create_bem_surfaces(subject, subjects_dir):
     subprocess.call(["mne", "watershed_bem", "-s", subject, "-d", subjects_dir])
 
@@ -78,7 +79,7 @@ def coregister(subject, nas, lpa, rpa, data_file, subjects_dir=None, plot=False)
 
     subjects_dir = get_subjects_dir(subjects_dir, raise_error=True)
 
-    trans=_coregister(subject, nas, lpa, rpa, data_file, subjects_dir)
+    trans = _coregister(subject, nas, lpa, rpa, data_file, subjects_dir)
 
     if plot:
         raw = mne.io.read_raw_fif(data_file)
@@ -91,13 +92,13 @@ def coregister(subject, nas, lpa, rpa, data_file, subjects_dir=None, plot=False)
 
 def _coregister(subject, nas, lpa, rpa, data_file, subjects_dir):
     # Read MEG based fiducials
-    hsp=mne.channels.read_dig_montage(fif=data_file)
+    hsp = mne.channels.read_dig_montage(fif=data_file)
 
     # MRI fiducial coords
-    scale=0.001
-    lpa=np.array(lpa)*scale
-    nas=np.array(nas)*scale
-    rpa=np.array(rpa)*scale
+    scale = 0.001
+    lpa = np.array(lpa) * scale
+    nas = np.array(nas) * scale
+    rpa = np.array(rpa) * scale
 
     # Write MRI-based fiducial coords to fif file
     dig = [{'kind': FIFF.FIFFV_POINT_CARDINAL,
@@ -109,12 +110,12 @@ def _coregister(subject, nas, lpa, rpa, data_file, subjects_dir):
            {'kind': FIFF.FIFFV_POINT_CARDINAL,
             'ident': FIFF.FIFFV_POINT_RPA,
             'r': rpa}]
-    fname=os.path.join(subjects_dir, subject, 'bem', '%s-fiducials.fif' % subject)
+    fname = os.path.join(subjects_dir, subject, 'bem', '%s-fiducials.fif' % subject)
     write_fiducials(fname, dig, FIFF.FIFFV_COORD_MRI)
 
     # Fit points
     n_scale_params = 0
-    parameters=[0,0,0,0,0,0,1,1,1]
+    parameters = [0, 0, 0, 0, 0, 0, 1, 1, 1]
     head_pts = np.vstack((hsp.lpa, hsp.nasion, hsp.rpa))
     mri_pts = np.vstack((lpa, nas, rpa))
     weights = [1.0, 10.0, 1.0]
@@ -129,11 +130,11 @@ def _coregister(subject, nas, lpa, rpa, data_file, subjects_dir):
     # Compute transformation
     head_mri_t = rotation(*parameters[:3]).T
     head_mri_t[:3, 3] = -np.dot(head_mri_t[:3, :3], parameters[3:6])
-    trans=Transform('head', 'mri', head_mri_t)
+    trans = Transform('head', 'mri', head_mri_t)
 
     # Write transformation to file
-    (raw_dir,raw_file)=os.path.split(data_file)
-    trans_fname=os.path.join(raw_dir, '%s-trans.fif' % (os.path.splitext(raw_file)[0]))
+    (raw_dir, raw_file) = os.path.split(data_file)
+    trans_fname = os.path.join(raw_dir, '%s-trans.fif' % (os.path.splitext(raw_file)[0]))
     write_trans(trans_fname, trans)
 
     return trans
@@ -158,7 +159,7 @@ def forward_model(subject, data_file, trans, source_space_surface='white.gii', i
             Filename of the inner skull surface. Default is inner_skull.surf.gii
         outer_skull_surf : str
             Filename of the outer skull surface. Default is outer_skull.surf.gii
-        outer_skinl_surf : str
+        outer_skin_surf : str
             Filename of the outer skin surface. Default is outer_skin.surf.gii
         out_fname : str or None
              Filename to write forward solution to (if not None)
@@ -173,8 +174,9 @@ def forward_model(subject, data_file, trans, source_space_surface='white.gii', i
 
     subjects_dir = get_subjects_dir(subjects_dir, raise_error=True)
 
-    (bem,src,fwd) = _forward(subject, data_file, trans, source_space_surface, inner_skull_surf, outer_skull_surf, outer_skin_surf,
-                   subjects_dir)
+    (bem, src, fwd) = _forward(subject, data_file, trans, source_space_surface, inner_skull_surf, outer_skull_surf,
+                               outer_skin_surf,
+                               subjects_dir)
 
     if plot:
         src.plot(subjects_dir=subjects_dir)
@@ -185,6 +187,7 @@ def forward_model(subject, data_file, trans, source_space_surface='white.gii', i
         mne.write_forward_solution(out_fname, fwd, overwrite=True)
 
     return (bem, src, fwd)
+
 
 def _forward(subject, data_file, trans, source_space_surface, inner_skull_surf, outer_skull_surf, outer_skin_surf,
              subjects_dir):
@@ -199,19 +202,18 @@ def _forward(subject, data_file, trans, source_space_surface, inner_skull_surf, 
     bem = make_bem_solution(model)
     fwd = mne.make_forward_solution(data_file, trans=trans, src=src, bem=bem,
                                     meg=True, eeg=False, mindist=5.0, n_jobs=2)
-    return (bem,src,fwd)
+    return bem, src, fwd
 
 
-
-if __name__=='__main__':
-    subj_id='gb070167-synth'
-    subjects_dir='/home/bonaiuto/Dropbox/Projects/inProgress/braindyn/data/gb070167'
-    data_file='/home/bonaiuto/Dropbox/Projects/inProgress/braindyn/data/gb070167/gb070167_1_raw.fif'
-    nas=[9.9898, 142.5147, -8.1787]
-    lpa=[-55.7659, 49.4636, -26.2089]
-    rpa=[88.7153, 62.4787, -29.1394]
-    #create_bem_surfaces('gb070167-synth','/home/bonaiuto/Dropbox/Projects/inProgress/braindyn/data/gb070167')
-    trans=coregister(subj_id, nas, lpa, rpa, data_file, subjects_dir=subjects_dir, plot=True)
+if __name__ == '__main__':
+    subj_id = 'gb070167-synth'
+    subjects_dir = '/home/bonaiuto/Dropbox/Projects/inProgress/braindyn/data/gb070167'
+    data_file = '/home/bonaiuto/Dropbox/Projects/inProgress/braindyn/data/gb070167/gb070167_1_raw.fif'
+    nas = [9.9898, 142.5147, -8.1787]
+    lpa = [-55.7659, 49.4636, -26.2089]
+    rpa = [88.7153, 62.4787, -29.1394]
+    # create_bem_surfaces('gb070167-synth','/home/bonaiuto/Dropbox/Projects/inProgress/braindyn/data/gb070167')
+    trans = coregister(subj_id, nas, lpa, rpa, data_file, subjects_dir=subjects_dir, plot=True)
     forward_model(subj_id, data_file, trans,
                   out_fname='/home/bonaiuto/Dropbox/Projects/inProgress/braindyn/data/gb070167/gb070167-fwd.fif',
                   subjects_dir=subjects_dir, plot=True)
