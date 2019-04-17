@@ -230,3 +230,272 @@ def _make_stc(data, vertices, src_type=None, tmin=None, tstep=None,
         raise ValueError('vertices has to be either a list with one or more '
                          'arrays or an array')
     return stc
+
+
+def apply_inverse_epochs(epochs, inverse_operator, lambda2, method="dSPM",
+                         label=None, nave=1, pick_ori=None,
+                         return_generator=False, prepared=False,
+                         method_params=None, verbose=None):
+    """Apply inverse operator to Epochs.
+
+    Parameters
+    ----------
+    epochs : Epochs object
+        Single trial epochs.
+    inverse_operator : dict
+        Inverse operator.
+    lambda2 : float
+        The regularization parameter.
+    method : "MNE" | "dSPM" | "sLORETA" | "eLORETA"
+        Use minimum norm, dSPM (default), sLORETA, or eLORETA.
+    label : Label | None
+        Restricts the source estimates to a given label. If None,
+        source estimates will be computed for the entire source space.
+    nave : int
+        Number of averages used to regularize the solution.
+        Set to 1 on single Epoch by default.
+    pick_ori : None | "normal" | "vector"
+        If "normal", rather than pooling the orientations by taking the norm,
+        only the radial component is kept. This is only implemented
+        when working with loose orientations.
+        If "vector", no pooling of the orientations is done and the vector
+        result will be returned in the form of a
+        :class:`mne.VectorSourceEstimate` object. This does not work when using
+        an inverse operator with fixed orientations.
+    return_generator : bool
+        Return a generator object instead of a list. This allows iterating
+        over the stcs without having to keep them all in memory.
+    prepared : bool
+        If True, do not call :func:`prepare_inverse_operator`.
+    method_params : dict | None
+        Additional options for eLORETA. See Notes of :func:`apply_inverse`.
+
+        .. versionadded:: 0.16
+    verbose : bool, str, int, or None
+        If not None, override default verbose level (see :func:`mne.verbose`
+        and :ref:`Logging documentation <tut_logging>` for more).
+
+    Returns
+    -------
+    stc : list of (SourceEstimate | VectorSourceEstimate | VolSourceEstimate)
+        The source estimates for all epochs.
+
+    See Also
+    --------
+    apply_inverse_raw : Apply inverse operator to raw object
+    apply_inverse : Apply inverse operator to evoked object
+    """
+    stcs = _apply_inverse_epochs_gen(
+        epochs, inverse_operator, lambda2, method=method, label=label,
+        nave=nave, pick_ori=pick_ori, verbose=verbose, prepared=prepared,
+        method_params=method_params)
+
+    if not return_generator:
+        # return a list
+        stcs = [stc for stc in stcs]
+
+    return stcs
+
+
+def _apply_inverse_epochs_gen(epochs, inverse_operator, lambda2, method='dSPM',
+                              label=None, nave=1, pick_ori=None,
+                              prepared=False, method_params=None,
+                              verbose=None):
+    """Generate inverse solutions for epochs. Used in apply_inverse_epochs."""
+    _check_method(method)
+    _check_ori(pick_ori, inverse_operator['source_ori'])
+    _check_ch_names(inverse_operator, epochs.info)
+
+    #
+    #   Set up the inverse according to the parameters
+    #
+    inv = _check_or_prepare(inverse_operator, nave, lambda2, method,
+                            method_params, prepared)
+
+    #
+    #   Pick the correct channels from the data
+    #
+    sel = _pick_channels_inverse_operator(epochs.ch_names, inv)
+    logger.info('Picked %d channels from the data' % len(sel))
+    logger.info('Computing inverse...')
+    K, noise_norm, vertno, source_nn = _assemble_kernel(inv, label, method,
+                                                        pick_ori)
+
+    tstep = 1.0 / epochs.info['sfreq']
+    tmin = epochs.times[0]
+
+    is_free_ori = (inverse_operator['source_ori'] ==
+                   FIFF.FIFFV_MNE_FREE_ORI and pick_ori != 'normal')
+
+    if pick_ori == 'vector' and noise_norm is not None:
+        noise_norm = noise_norm.repeat(3, axis=0)
+
+    if not is_free_ori and noise_norm is not None:
+        # premultiply kernel with noise normalization
+        K *= noise_norm
+
+    subject = _subject_from_inverse(inverse_operator)
+    for k, e in enumerate(epochs):
+        logger.info('Processing epoch : %d' % (k + 1))
+        if is_free_ori:
+            # Compute solution and combine current components (non-linear)
+            sol = np.dot(K, e[sel])  # apply imaging kernel
+
+            logger.info('combining the current components...')
+            if pick_ori != 'vector':
+                sol = combine_xyz(sol)
+
+            if noise_norm is not None:
+                sol *= noise_norm
+        else:
+            # Linear inverse: do computation here or delayed
+            if len(sel) < K.shape[1]:
+                sol = (K, e[sel])
+            else:
+                sol = np.dot(K, e[sel])
+
+        src_type = _get_src_type(inverse_operator['src'], vertno)
+        stc = _make_stc(sol, vertno, tmin=tmin, tstep=tstep, subject=subject,
+                        vector=(pick_ori == 'vector'), source_nn=source_nn,
+                        src_type=src_type)
+
+        yield stc
+
+    logger.info('[done]')
+
+
+def apply_inverse_raw(raw, inverse_operator, lambda2, method="dSPM",
+                      label=None, start=None, stop=None, nave=1,
+                      time_func=None, pick_ori=None, buffer_size=None,
+                      prepared=False, method_params=None, verbose=None):
+    """Apply inverse operator to Raw data.
+
+    Parameters
+    ----------
+    raw : Raw object
+        Raw data.
+    inverse_operator : dict
+        Inverse operator.
+    lambda2 : float
+        The regularization parameter.
+    method : "MNE" | "dSPM" | "sLORETA" | "eLORETA"
+        Use minimum norm, dSPM (default), sLORETA, or eLORETA.
+    label : Label | None
+        Restricts the source estimates to a given label. If None,
+        source estimates will be computed for the entire source space.
+    start : int
+        Index of first time sample (index not time is seconds).
+    stop : int
+        Index of first time sample not to include (index not time is seconds).
+    nave : int
+        Number of averages used to regularize the solution.
+        Set to 1 on raw data.
+    time_func : callable
+        Linear function applied to sensor space time series.
+    pick_ori : None | "normal" | "vector"
+        If "normal", rather than pooling the orientations by taking the norm,
+        only the radial component is kept. This is only implemented
+        when working with loose orientations.
+        If "vector", no pooling of the orientations is done and the vector
+        result will be returned in the form of a
+        :class:`mne.VectorSourceEstimate` object. This does not work when using
+        an inverse operator with fixed orientations.
+    buffer_size : int (or None)
+        If not None, the computation of the inverse and the combination of the
+        current components is performed in segments of length buffer_size
+        samples. While slightly slower, this is useful for long datasets as it
+        reduces the memory requirements by approx. a factor of 3 (assuming
+        buffer_size << data length).
+        Note that this setting has no effect for fixed-orientation inverse
+        operators.
+    prepared : bool
+        If True, do not call :func:`prepare_inverse_operator`.
+    method_params : dict | None
+        Additional options for eLORETA. See Notes of :func:`apply_inverse`.
+
+        .. versionadded:: 0.16
+    verbose : bool, str, int, or None
+        If not None, override default verbose level (see :func:`mne.verbose`
+        and :ref:`Logging documentation <tut_logging>` for more).
+
+    Returns
+    -------
+    stc : SourceEstimate | VectorSourceEstimate | VolSourceEstimate
+        The source estimates.
+
+    See Also
+    --------
+    apply_inverse_epochs : Apply inverse operator to epochs object
+    apply_inverse : Apply inverse operator to evoked object
+    """
+    _check_reference(raw, inverse_operator['info']['ch_names'])
+    _check_method(method)
+    _check_ori(pick_ori, inverse_operator['source_ori'])
+    _check_ch_names(inverse_operator, raw.info)
+
+    #
+    #   Set up the inverse according to the parameters
+    #
+    inv = _check_or_prepare(inverse_operator, nave, lambda2, method,
+                            method_params, prepared)
+
+    #
+    #   Pick the correct channels from the data
+    #
+    sel = _pick_channels_inverse_operator(raw.ch_names, inv)
+    logger.info('Applying inverse to raw...')
+    logger.info('    Picked %d channels from the data' % len(sel))
+    logger.info('    Computing inverse...')
+
+    data, times = raw[sel, start:stop]
+
+    if time_func is not None:
+        data = time_func(data)
+
+    K, noise_norm, vertno, source_nn = _assemble_kernel(inv, label, method,
+                                                        pick_ori)
+
+    is_free_ori = (inverse_operator['source_ori'] ==
+                   FIFF.FIFFV_MNE_FREE_ORI and pick_ori != 'normal')
+
+    if buffer_size is not None and is_free_ori:
+        # Process the data in segments to conserve memory
+        n_seg = int(np.ceil(data.shape[1] / float(buffer_size)))
+        logger.info('    computing inverse and combining the current '
+                    'components (using %d segments)...' % (n_seg))
+
+        # Allocate space for inverse solution
+        n_times = data.shape[1]
+
+        n_dipoles = K.shape[0] if pick_ori == 'vector' else K.shape[0] // 3
+        sol = np.empty((n_dipoles, n_times), dtype=np.result_type(K, data))
+
+        for pos in range(0, n_times, buffer_size):
+            sol_chunk = np.dot(K, data[:, pos:pos + buffer_size])
+            if pick_ori != 'vector':
+                sol_chunk = combine_xyz(sol_chunk)
+            sol[:, pos:pos + buffer_size] = sol_chunk
+
+            logger.info('        segment %d / %d done..'
+                        % (pos / buffer_size + 1, n_seg))
+    else:
+        sol = np.dot(K, data)
+        if is_free_ori and pick_ori != 'vector':
+            logger.info('    combining the current components...')
+            sol = combine_xyz(sol)
+
+    if noise_norm is not None:
+        if pick_ori == 'vector' and is_free_ori:
+            noise_norm = noise_norm.repeat(3, axis=0)
+        sol *= noise_norm
+
+    tmin = float(times[0])
+    tstep = 1.0 / raw.info['sfreq']
+    subject = _subject_from_inverse(inverse_operator)
+    src_type = _get_src_type(inverse_operator['src'], vertno)
+    stc = _make_stc(sol, vertno, tmin=tmin, tstep=tstep, subject=subject,
+                    vector=(pick_ori == 'vector'), source_nn=source_nn,
+                    src_type=src_type)
+    logger.info('[done]')
+
+    return stc
