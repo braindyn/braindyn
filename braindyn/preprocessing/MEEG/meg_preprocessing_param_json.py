@@ -11,7 +11,7 @@ import numpy as np
 ### PATHS
 ###############################################################################
 
-data_path = '/Users/annkos/braindyn/'
+data_path = 'C:/Users/Anne.K/Desktop/braindyn/'
 raw_fname = data_path + 'max_flicker_20190401_01.ds'
 
 ###############################################################################
@@ -37,9 +37,9 @@ npad="auto"
 ### EPOCHING PARAMETERS
 ###############################################################################
 
-event_id = {"flickera": 101,"flickerb": 102,"flickerc": 103, "flickerd": 104,"flickere": 105, "flickerf": 106} #name and trigger of events of interest
-tmin = -0.5  # start of each epoch 
-tmax = 5.5  # end of each epoch 
+event_id = [101,102,103,104,105,106] #name and trigger of events of interest
+epoch_tmin = -0.5  # start of each epoch 
+epoch_tmax = 2.5  # end of each epoch 
 baseline = (None, 0)  # means from the first instant to t = 0
 
 ###############################################################################
