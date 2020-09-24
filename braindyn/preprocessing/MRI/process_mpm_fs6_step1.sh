@@ -14,7 +14,7 @@
 #    freesurfer and runs recon-all
 #
 # USAGE:
-#    process_mpm.sh <subject_id> <data_directory>
+#    process_mpm_fs6_step1.sh <subject_id> <data_directory>
 #
 # INPUTS:
 #    subject_id : ID of the subject
