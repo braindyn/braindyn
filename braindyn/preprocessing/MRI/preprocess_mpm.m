@@ -2,8 +2,9 @@ function preprocess_mpm(data_dir, deriv_dir, subj_id, varargin)
 
 % Parse inputs
 defaults = struct('convert_dicom',true,'create_mpm',true,...
-    'robust_bias_correction',true,'align_to_headcast_t1',true,...
-    'headcast_t1','','t2','','t1_hres','','mt_prefix','mtw_mfc_3dflash','pd_prefix','pdw_mfc_3dflash',...
+    'robust_bias_correction',true,'average_t2',true,'align_to_headcast_t1',true,...
+    'headcast_t1','','t1_hres','','t2_prefix','T2_SAG_08mm_p3_TR3000_TEeff97_pe95',...
+    'mt_prefix','mtw_mfc_3dflash','pd_prefix','pdw_mfc_3dflash',...
     't1_prefix','t1w_mfc_3dflash','b1_map_prefix','mfc_seste_b1map',...
     'gre_map_prefix','gre_field_mapping_1acq_rl');  %define default values
 params = struct(varargin{:});
@@ -171,6 +172,46 @@ if params.create_mpm
     spm_jobman('run',matlabbatch);
 end
 
+if params.average_t2
+    % Average T2 volumes
+    spm_jobman('initcfg'); 
+    clear jobs
+    matlabbatch={};
+    batch_idx=1;
+    matlabbatch{batch_idx}.spm.util.imcalc.input = {};
+    matlabbatch{batch_idx}.spm.util.imcalc.output = fullfile(mri_dir,'T2');
+    matlabbatch{batch_idx}.spm.util.imcalc.outdir = {''};
+    matlabbatch{batch_idx}.spm.util.imcalc.expression = '(';%i1+i2)/2';
+    matlabbatch{batch_idx}.spm.util.imcalc.var = struct('name', {}, 'value', {});
+    matlabbatch{batch_idx}.spm.util.imcalc.options.dmtx = 0;
+    matlabbatch{batch_idx}.spm.util.imcalc.options.mask = 0;
+    matlabbatch{batch_idx}.spm.util.imcalc.options.interp = 1;
+    matlabbatch{batch_idx}.spm.util.imcalc.options.dtype = 4;
+
+    n_images=0;
+    fileList=dir(fullfile(mri_dir, [params.t2_prefix , '*']));
+    if ~isempty(fileList)
+        for ii=1:length(fileList)
+            seq_dir=fullfile(mri_dir, fileList(ii).name);
+            [files,~]=spm_select('List', seq_dir);
+            for f=1:size(files,1)
+                filename=deblank(files(f,:));
+                matlabbatch{batch_idx}.spm.util.imcalc.input{end+1}=fullfile(seq_dir,filename);
+                n_images=n_images+1;
+            end
+        end
+    end
+    matlabbatch{batch_idx}.spm.util.imcalc.input=matlabbatch{batch_idx}.spm.util.imcalc.input';
+    for i=1:n_images
+        if i>1
+            matlabbatch{batch_idx}.spm.util.imcalc.expression=sprintf('%s+',matlabbatch{batch_idx}.spm.util.imcalc.expression);
+        end
+        matlabbatch{batch_idx}.spm.util.imcalc.expression=sprintf('%si%d',matlabbatch{batch_idx}.spm.util.imcalc.expression,i);
+    end
+    matlabbatch{batch_idx}.spm.util.imcalc.expression=sprintf('%s)/%d',matlabbatch{batch_idx}.spm.util.imcalc.expression,n_images);
+    batch_idx=batch_idx+1;
+    spm_jobman('run',matlabbatch);
+end        
 
 if params.align_to_headcast_t1
     align_dir=fullfile(mri_dir,'headcast_aligned');
@@ -178,9 +219,8 @@ if params.align_to_headcast_t1
         mkdir(align_dir);
     end
     
-    if length(params.t2)
-        copyfile(params.t2, fullfile(align_dir, 'T2.nii'));
-        copyfile(params.t1_hires, fullfile(align_dir, 'T1_hires.nii'));
+    if length(params.t1_hres)
+        copyfile(params.t1_hres, fullfile(align_dir, 'T1_hires.nii'));
         
         spm_jobman('initcfg'); 
         clear jobs
@@ -188,7 +228,25 @@ if params.align_to_headcast_t1
         batch_idx=1;
         matlabbatch{batch_idx}.spm.spatial.coreg.estimate.ref = {params.headcast_t1};
         matlabbatch{batch_idx}.spm.spatial.coreg.estimate.source = {fullfile(align_dir, 'T1_hires.nii,1')};
-        matlabbatch{batch_idx}.spm.spatial.coreg.estimate.other = {fullfile(align_dir, 'T2.nii,1')};
+        %matlabbatch{batch_idx}.spm.spatial.coreg.estimate.other = {};
+        matlabbatch{batch_idx}.spm.spatial.coreg.estimate.eoptions.cost_fun = 'nmi';
+        matlabbatch{batch_idx}.spm.spatial.coreg.estimate.eoptions.sep = [4 2];
+        matlabbatch{batch_idx}.spm.spatial.coreg.estimate.eoptions.tol = [0.02 0.02 0.02 0.001 0.001 0.001 0.01 0.01 0.01 0.001 0.001 0.001];
+        matlabbatch{batch_idx}.spm.spatial.coreg.estimate.eoptions.fwhm = [7 7];
+        batch_idx=batch_idx+1;
+        spm_jobman('run',matlabbatch);
+    end
+    
+    if exist(fullfile(mri_dir, 'T2.nii'),'file')==2
+        copyfile(fullfile(mri_dir, 'T2.nii'), fullfile(align_dir, 'T2.nii'));
+        
+        spm_jobman('initcfg'); 
+        clear jobs
+        matlabbatch={};
+        batch_idx=1;
+        matlabbatch{batch_idx}.spm.spatial.coreg.estimate.ref = {params.headcast_t1};
+        matlabbatch{batch_idx}.spm.spatial.coreg.estimate.source = {fullfile(align_dir, 'T2.nii,1')};
+        %matlabbatch{batch_idx}.spm.spatial.coreg.estimate.other = {};
         matlabbatch{batch_idx}.spm.spatial.coreg.estimate.eoptions.cost_fun = 'nmi';
         matlabbatch{batch_idx}.spm.spatial.coreg.estimate.eoptions.sep = [4 2];
         matlabbatch{batch_idx}.spm.spatial.coreg.estimate.eoptions.tol = [0.02 0.02 0.02 0.001 0.001 0.001 0.01 0.01 0.01 0.001 0.001 0.001];
